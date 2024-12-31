@@ -68,6 +68,15 @@ class vehicule {
     
 }
 
+$data = new vehicule();
+$result = $data->ajouterVeh("Toyota", "1", 100, "Voiture de luxe");
+
+if (!$result) {
+    echo "Record inserted successfully";
+} else {
+    echo "Error inserting record";
+}
+
 ?>
 
 <img src="" alt="">
