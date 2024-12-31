@@ -65,11 +65,27 @@ class vehicule {
         }
     }
 
-    
+    public function supprimerVeh ($vehicule_id) {
+        $id = htmlspecialchars(intval($vehicule_id));
+
+        $query = "DELETE FROM vehicule WHERE vehicule_id = :id";
+        $stmt = $this->conn->prepare($query);
+
+        $param = [":id" => $vehicule_id];
+        $result = $stmt->execute($param);
+
+        if (!$result) {
+            echo "Record deleted successfully";
+        } else {
+            echo "Error deleting record";
+        }
+
+
+    }
 }
 
 // $data = new vehicule();
-// $result = $data->modifierVeh(1, "Toyota", "SUV", "Disponible", 100, "Vehicule de luxe");
+// $result = $data->supprimerVeh(1);
 
 // if (!$result) {
 //     echo "Record inserted successfully";
