@@ -84,8 +84,9 @@ class vehicule {
     }
 }
 
-// $data = new vehicule();
-// $result = $data->supprimerVeh(1);
+$data = new vehicule();
+$result = $data->affAllVehicule();
+var_dump($result);
 
 // if (!$result) {
 //     echo "Record inserted successfully";
