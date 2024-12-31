@@ -1,11 +1,15 @@
 <?php
 
-require_once "config/connect.php";
+require_once "../config/connect.php";
 
 class user {
-    private $conn;
-    private $email;
-    private $password;
+    protected $conn;
+    protected $email;
+    protected $password;
+    protected $name;
+    protected $last;
+    protected $role;
+
 
     public function __construct() {
         $db = new Database();
@@ -43,3 +47,39 @@ class user {
 }
 
 
+class client extends user {
+
+    public function __construct() {
+        parent::__construct();
+    }
+    
+    public function register($name, $last, $email, $password) {
+        $this->name = htmlspecialchars($name);
+        $this->last = htmlspecialchars($last);
+        $this->email = htmlspecialchars($email);
+        $this->password = md5($password);
+
+        $query = "INSERT INTO users (user_name, user_last, user_email, user_pw, role_id) VALUE (:name, :last, :email, :password, 1)";
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(":name", $this->name);
+        $stmt->bindParam(":last", $this->last);
+        $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":password", $this->password);
+
+        $stmt->execute();
+    }
+}
+
+$data = new client();
+
+$result = $data->register("John", "Doe", "john@gmail.com", "hitler");
+
+if ($result) {
+    echo 1;
+} else {
+    echo 0;
+}
+?>
+
+<img src="../" alt="">
