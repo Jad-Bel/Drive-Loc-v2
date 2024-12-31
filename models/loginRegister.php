@@ -64,6 +64,13 @@ class client extends user {
     }
 }
 
+class admin extends user {
+
+    public function __construct() {
+        parent::__construct();
+    }
+}
+
 // $data = new client();
 
 // $result = $data->register("John", "Doe", "john@gmail.com", "jadjadjad");
