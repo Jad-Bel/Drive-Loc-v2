@@ -6,9 +6,6 @@ class user {
     protected $conn;
     protected $email;
     protected $password;
-    protected $name;
-    protected $last;
-    protected $role;
 
 
     public function __construct() {
@@ -19,13 +16,11 @@ class user {
     public function login($email, $password) {
         $query = "SELECT * FROM users WHERE user_email = :email AND user_pw = :password";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":email", $email);
-        $stmt->bindParam(":password", $password);
-        $stmt->execute();
+        $stmt->execute([":email", $email, ":password", $password]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user) {
-            if ($password == $user['user_pw']) {
+            if (password_verify($password,$user['user_pw'])) {
                 session_start();
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['user_name'] = $user['user_name'];
@@ -37,12 +32,8 @@ class user {
                     header("Location: ../views/user.php");
                 }
                 exit;
-            } else {
-                echo "<script>alert('Invalid email or password.');</script>";
             }
-        } else {
-            echo "<script>alert('No user found with this email.');</script>";
-        }
+        } 
     } 
 }
 
@@ -53,33 +44,35 @@ class client extends user {
         parent::__construct();
     }
     
-    public function register($name, $last, $email, $password) {
-        $this->name = htmlspecialchars($name);
-        $this->last = htmlspecialchars($last);
-        $this->email = htmlspecialchars($email);
-        $this->password = md5($password);
+    public function register($name, $last, $email, $password, $role = 1) {
+        $name = htmlspecialchars($name);
+        $last = htmlspecialchars($last);
+        $email = htmlspecialchars($email);
+        
+        $password = password_hash($password, PASSWORD_BCRYPT);
 
-        $query = "INSERT INTO users (user_name, user_last, user_email, user_pw, role_id) VALUE (:name, :last, :email, :password, 1)";
+        $query = "INSERT INTO users (user_name, user_last, user_email, user_pw, role_id)
+                    VALUE (:name, :last, :email, :password, :role)";
         $stmt = $this->conn->prepare($query);
 
-        $stmt->bindParam(":name", $this->name);
-        $stmt->bindParam(":last", $this->last);
-        $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":password", $this->password);
-
-        $stmt->execute();
+        $param = [":name" => $name,
+                  ":last" => $last,
+                  ":email" => $email,
+                  ":password" => $password,
+                  ":role" => $role];
+        $stmt->execute($param);
     }
 }
 
-$data = new client();
+// $data = new client();
 
-$result = $data->register("John", "Doe", "john@gmail.com", "hitler");
+// $result = $data->register("John", "Doe", "john@gmail.com", "jadjadjad");
 
-if ($result) {
-    echo 1;
-} else {
-    echo 0;
-}
+// if ($result == true) {
+//     echo 1;
+// } else {
+//     echo 0;
+// }
 ?>
 
 <img src="../" alt="">
