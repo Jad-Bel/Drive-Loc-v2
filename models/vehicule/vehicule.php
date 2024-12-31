@@ -97,9 +97,9 @@ class vehicule {
     }
 }
 
-$data = new vehicule();
-$result = $data->affichierVeh(3);
-var_dump($result);
+// $data = new vehicule();
+// $result = $data->affichierVeh(3);
+// var_dump($result);
 
 // if (!$result) {
 //     echo "Record inserted successfully";
