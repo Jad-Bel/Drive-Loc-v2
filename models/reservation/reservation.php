@@ -58,7 +58,29 @@ class reservation {
             throw new Error("cannot cancel reservation:" . $e->getMessage());
         }
     }
+
+    public function modifierRes ($rsv_id, $user_id, $vehicule_id, $date_rsv, $date_pickup, $date_return, $lieu_pickup, $lieu_return) {
+        try {
+            $query = "UPDATE reservation SET rsv_id = :rsv_id, user_id = :user_id, vehicule_id = :vehicule_id, date_rsv = :date_rsv, date_pickup = :date_pickup, date_return = :date_return, lieu_pickup = :lieu_pickup, lieu_return = :lieu_return";
+            $stmt = $this->conn->prepare($query);
+
+            $param = [
+                        ":rsv_id" => $rsv_id,
+                        ":user_id" => $user_id,
+                        ":vehicule_id" => $vehicule_id,
+                        ":date_rsv" => $date_rsv,
+                        ":date_pickup" => $date_pickup,
+                        ":date_return" => $date_return, 
+                        ":lieu_pickup" => $lieu_pickup, 
+                        ":lieu_return" => $lieu_return
+                        ];
+
+            $stmt->execute($param);
+        } catch (Exception $e) {
+            throw new Error("cannot update reservation:" . $e->getMessage());
+        }
+    }
 }
 
 $rsv = new reservation();
-$res = $rsv->cancelRes(1);
+$res = $rsv->modifierRes(2, 8, 3, "2021-06-01", "2021-06-02", "2021-06-03", "Paris", "Lyon");
