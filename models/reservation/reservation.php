@@ -23,15 +23,20 @@ class reservation {
         }
     }
 
-    public function bookRes ($user_id, $vehicule_id, $date_rsv) {
+    public function bookRes ($user_id, $vehicule_id, $date_rsv, $date_pickup, $date_return, $lieu_pickup, $lieu_return) {
         try {
-            $query = "INSERT INTO reservation (user_id, vehicule_id, date_rsv) VALUE (:user_id, :vehicule_id, :date_rsv)";
+            $query = "INSERT INTO reservation (user_id, vehicule_id, date_rsv, date_pickup, date_return, lieu_pickup, lieu_return) VALUE (:user_id, :vehicule_id, :date_rsv, :date_pickup, :date_return, :lieu_pickup, :lieu_return)";
             $stmt = $this->conn->prepare($query);
 
             $param = [
                         ":user_id" => $user_id,
                         ":vehicule_id" => $vehicule_id,
-                        ":date_rsv" => $date_rsv];
+                        ":date_rsv" => $date_rsv,
+                        ":date_pickup" => $date_pickup,
+                        ":date_return" => $date_return, 
+                        ":lieu_pickup" => $lieu_pickup, 
+                        ":lieu_return" => $lieu_return
+                        ];
             
             $stmt->execute($param);
         } catch (Exception $e) {
@@ -40,10 +45,10 @@ class reservation {
 
     }
 
-    public function cancelRes ($res_id) {
+    public function cancelRes ($rsv_id) {
         try {
-            $id = htmlspecialchars(intval($res_id));
-            $query = "DELETE FROM reservation WHERE res_id = :id";
+            $id = htmlspecialchars(intval($rsv_id));
+            $query = "DELETE FROM reservation WHERE rsv_id = :id";
             $stmt = $this->conn->prepare($query);
 
             $param = [":id" => $id];
@@ -56,4 +61,4 @@ class reservation {
 }
 
 $rsv = new reservation();
-$res = $rsv->bookRes(7, 2, "2021-06-01");
+$res = $rsv->cancelRes(1);
