@@ -40,3 +40,6 @@ class reservation {
 
     }
 }
+
+$rsv = new reservation();
+$res = $rsv->bookRes(7, 2, "2021-06-01");
