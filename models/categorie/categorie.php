@@ -67,11 +67,11 @@ class categorie {
 }
 
 
-$ctg = new categorie();
-$result = $ctg->suppCat(1);
+// $ctg = new categorie();
+// $result = $ctg->suppCat(1);
 
-if ($result) {
-    echo "categorie ajouté";
-} else {
-    echo "erreur";
-}
+// if ($result) {
+//     echo "categorie ajouté";
+// } else {
+//     echo "erreur";
+// }
