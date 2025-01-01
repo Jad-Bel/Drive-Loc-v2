@@ -10,12 +10,16 @@ class reservation {
     }
 
     public function affAllReservation () {
-        $query = "SELECT * FROM reservation";
-        $stmt = $this->conn->prepare($query);
+        try {
+            $query = "SELECT * FROM reservation";
+            $stmt = $this->conn->prepare($query);
 
-        $stmt->execute();
+            $stmt->execute();
 
-        $reservation = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $reservation;
+            $reservation = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $reservation;
+        } catch (Exception $e) {
+            throw new Error("cannot get reservation:" . $e->getMessage());
+        }
     }
 }
