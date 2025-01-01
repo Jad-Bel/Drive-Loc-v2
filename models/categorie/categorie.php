@@ -9,12 +9,16 @@ class categorie {
     }
 
     public function affAllCategorie() {
-        $query = "SELECT * FROM categorie";
-        $stmt = $this->conn->prepare($query);
+        try {
+            $query = "SELECT * FROM categorie";
+            $stmt = $this->conn->prepare($query);
 
-        $stmt->execute();
+            $stmt->execute();
 
-        $categorie = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $categorie;
+            $categorie = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $categorie;
+        } catch (Exception $e) {
+            throw new Error("cannot get categorie:" . $e->getMessage());
+        }
     }
 }
