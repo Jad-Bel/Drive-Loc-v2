@@ -1,5 +1,5 @@
 <?php 
-
+include "../../config/connect.php";
 class categorie {
     private $conn;
 
@@ -64,4 +64,14 @@ class categorie {
         }
     }
 
+}
+
+
+$ctg = new categorie();
+$result = $ctg->ajouterCat("SUV");
+
+if ($result) {
+    echo "categorie ajouté";
+} else {
+    echo "erreur";
 }
