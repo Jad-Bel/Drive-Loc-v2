@@ -72,10 +72,10 @@ class avis {
     }
 }
 
-$data = new avis();
-$result = $data->suppAvis(5);
-if ($result) {
-    echo "Avis ajouté";
-} else {
-    echo "Erreur";
-}
+// $data = new avis();
+// $result = $data->modifierAvis(8, 8, 3, "une voiture très bien");
+// if ($result) {
+//     echo "Avis ajouté";
+// } else {
+//     echo "Erreur";
+// }
