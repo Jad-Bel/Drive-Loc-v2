@@ -82,5 +82,5 @@ class reservation {
     }
 }
 
-$rsv = new reservation();
-$res = $rsv->modifierRes(2, 8, 3, "2021-06-01", "2021-06-02", "2021-06-03", "Paris", "Lyon");
+// $rsv = new reservation();
+// $res = $rsv->modifierRes(2, 8, 3, "2021-06-01", "2021-06-02", "2021-06-03", "Paris", "Lyon");
