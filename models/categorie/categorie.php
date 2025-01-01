@@ -36,10 +36,10 @@ class categorie {
         }
     }
     
-    public function modifierCar ($categorie_id, $ctg_name) {
+    public function modifierCat ($categorie_id, $ctg_name) {
         try {
             $ctg_name = htmlspecialchars($ctg_name);
-            $query = "UPDATE categorie SET ctg_name = :ctg WHERE ctg_id = :id";
+            $query = "UPDATE categorie SET ctg_name = :ctg WHERE categorie_id = :id";
 
             $stmt = $this->conn->prepare($query);
             $param = [":ctg" => $ctg_name, ":id" => $categorie_id];
@@ -68,7 +68,7 @@ class categorie {
 
 
 $ctg = new categorie();
-$result = $ctg->ajouterCat("SUV");
+$result = $ctg->modifierCat(1, "SUV");
 
 if ($result) {
     echo "categorie ajouté";
