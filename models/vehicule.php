@@ -1,5 +1,5 @@
 <?php
-require_once '../../config/connect.php';
+include "../config/connect.php";
 
 class vehicule {
     private $conn;

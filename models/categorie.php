@@ -1,5 +1,6 @@
 <?php 
-include "../../config/connect.php";
+include "../config/connect.php";
+
 class categorie {
     private $conn;
 
