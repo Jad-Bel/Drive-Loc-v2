@@ -35,7 +35,15 @@ class categorie {
             throw new Error("cannot add categorie:" . $e->getMessage());
         }
     }
+    
+    public function modifierCar ($categorie_id, $ctg_name) {
+        try {
 
+        } catch (Exception $e) {
+            throw new Error("cannot update categorie:" . $e->getMessage());
+        }
+    }
+    
     public function suppCat ($ctg_id) {
         try {
             $id = htmlspecialchars(intval($ctg_id));
@@ -49,4 +57,5 @@ class categorie {
             throw new Error("cannot delete categorie:" . $e->getMessage());
         }
     }
+
 }
