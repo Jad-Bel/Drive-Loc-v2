@@ -53,7 +53,7 @@ class categorie {
     public function suppCat ($ctg_id) {
         try {
             $id = htmlspecialchars(intval($ctg_id));
-            $query = "DELETE FROM categorie WHERE ctg_id = :id";
+            $query = "DELETE FROM categorie WHERE categorie_id = :id";
             $stmt = $this->conn->prepare($query);
 
             $param = [":id" => $id];
@@ -68,7 +68,7 @@ class categorie {
 
 
 $ctg = new categorie();
-$result = $ctg->modifierCat(1, "SUV");
+$result = $ctg->suppCat(1);
 
 if ($result) {
     echo "categorie ajouté";
