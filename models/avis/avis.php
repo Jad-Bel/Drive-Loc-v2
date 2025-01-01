@@ -33,10 +33,23 @@ class avis {
 
         $stmt->execute($param);
     }
+
+    public function suppAvis ($avis_id) {
+        try {
+            $id = htmlspecialchars(intval($avis_id));
+            $query = "DELETE FROM avis WHERE avis_id = :id";
+            $stmt = $this->conn->prepare($query);
+            $param = [":id" => $id];
+
+            $stmt->execute($param);
+        } catch (Exception $e) {
+            throw new Error("cannot delete avis:" . $e->getMessage());
+        }
+    }
 }
 
 $data = new avis();
-$result = $data->ajouterAvis(7, 2, "test");
+$result = $data->suppAvis(5);
 if ($result) {
     echo "Avis ajouté";
 } else {
