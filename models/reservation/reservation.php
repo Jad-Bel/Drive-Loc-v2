@@ -22,4 +22,8 @@ class reservation {
             throw new Error("cannot get reservation:" . $e->getMessage());
         }
     }
+
+    public bookRes () {
+        
+    }
 }

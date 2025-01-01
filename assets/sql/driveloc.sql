@@ -41,3 +41,12 @@ CREATE TABLE avis (
   foreign key (user_id) REFERENCES users(user_id),
   FOREIGN key (vehicule_id) REFERENCES vehicule(vehicule_id)
 );
+
+CREATE TABLE reservation (
+	rsv_id int not null AUTO_INCREMENT PRIMARY key,
+  	user_id int not null,
+    vehicule_id int not null,
+    date_rsv date,
+    FOREIGN key (user_id) REFERENCES users(user_id),
+    FOREIGN key (vehicule_id) REFERENCES vehicule(vehicule_id)
+);
