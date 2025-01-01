@@ -35,4 +35,18 @@ class categorie {
             throw new Error("cannot add categorie:" . $e->getMessage());
         }
     }
+
+    public function suppCat ($ctg_id) {
+        try {
+            $id = htmlspecialchars(intval($ctg_id));
+            $query = "DELETE FROM categorie WHERE ctg_id = :id";
+            $stmt = $this->conn->prepare($query);
+
+            $param = [":id" => $id];
+
+            $stmt->execute($param);
+        } catch (Exception $e) {
+            throw new Error("cannot delete categorie:" . $e->getMessage());
+        }
+    }
 }
