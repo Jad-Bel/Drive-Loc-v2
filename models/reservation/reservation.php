@@ -39,6 +39,20 @@ class reservation {
         }
 
     }
+
+    public function cancelRes ($res_id) {
+        try {
+            $id = htmlspecialchars(intval($res_id));
+            $query = "DELETE FROM reservation WHERE res_id = :id";
+            $stmt = $this->conn->prepare($query);
+
+            $param = [":id" => $id];
+
+            $stmt->execute($param);
+        } catch (Exception $e) {
+            throw new Error("cannot cancel reservation:" . $e->getMessage());
+        }
+    }
 }
 
 $rsv = new reservation();

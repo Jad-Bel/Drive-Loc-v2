@@ -43,10 +43,14 @@ CREATE TABLE avis (
 );
 
 CREATE TABLE reservation (
-	rsv_id int not null AUTO_INCREMENT PRIMARY key,
-  	user_id int not null,
-    vehicule_id int not null,
-    date_rsv date,
-    FOREIGN key (user_id) REFERENCES users(user_id),
-    FOREIGN key (vehicule_id) REFERENCES vehicule(vehicule_id)
+    rsv_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    user_id INT NOT NULL,                           
+    vehicule_id INT NOT NULL,                       
+    date_rsv DATE NOT NULL,                         
+    date_pickup DATE NOT NULL,                      
+    date_return DATE NOT NULL,                      
+    lieu_pickup VARCHAR(255) NOT NULL,              
+    lieu_return VARCHAR(255) NOT NULL,              
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (vehicule_id) REFERENCES vehicule(vehicule_id)
 );
