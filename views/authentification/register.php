@@ -5,7 +5,7 @@
 session_start();
 
 $errors = [];
-$user = new client();
+$user = new user();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
@@ -14,15 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             htmlspecialchars($_POST['lastName']),
             htmlspecialchars($_POST['email']),
             password_hash($_POST['password'], PASSWORD_BCRYPT),
-            1 // Role ID    
+            2 // Role ID    
             );
 
         if ($result) {
             $_SESSION['success'] = "Registration successful! Please login.";
             header('Location: login.php');
-            exit();
+            echo 3;
+            die;
+            // exit();
         } else {
             $errors[] = "Registration failed. Please try again.";
+            echo 2;
         }
     } catch (Exception $e) {
         $errors[] = $e->getMessage();
@@ -85,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <form class="mt-8 space-y-6" id="registerForm" method="POST" novalidate>
                 <div class="rounded-md shadow-sm space-y-4">
                     <div class="grid grid-cols-2 gap-4">
+                        <input type="text" name="role" value="2" hidden>
                         <div>
                             <label for="firstName" class="block text-sm font-medium text-gray-700">
                                 First name

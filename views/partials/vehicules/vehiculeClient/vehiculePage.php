@@ -1,5 +1,5 @@
-<?php session_start();
-require_once "../../../../models/user.php";
+<?php 
+// session_start();
 require_once "../../../../models/vehicule.php"; 
 
 ?>

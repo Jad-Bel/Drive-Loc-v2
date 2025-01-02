@@ -1,7 +1,29 @@
-<?php 
-    require_once "../../models/user.php";
-?>
+<?php
+// require_once __DIR__ . "../../config/database.php";
+require_once "../../models/User.php";
 
+session_start();
+
+$db = new Database();
+$conn = $db->getdatabase();
+$user = new User($conn);
+
+$loginError = '';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    $password = $_POST['password'];
+
+    $result = $user->login($email, $password);
+
+    if ($result['success']) {
+        header("Location: " . $result['redirect']);
+        exit();
+    } else {
+        $loginError = $result['message'];
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +31,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - DRIVE-LOC</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -36,7 +59,23 @@
                     </a>
                 </p>
             </div>
-            <form class="mt-8 space-y-6" id="loginForm" novalidate>
+            <?php if ($loginError): ?>
+                <div class="bg-red-50 border-l-4 border-red-400 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">
+                                <?php echo htmlspecialchars($loginError); ?>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <form class="mt-8 space-y-6" id="loginForm" method="POST" novalidate>
                 <div class="rounded-md shadow-sm space-y-4">
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">
@@ -58,22 +97,6 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="remember-me" name="remember-me" type="checkbox"
-                            class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-                        <label for="remember-me" class="ml-2 block text-sm text-gray-900">
-                            Remember me
-                        </label>
-                    </div>
-
-                    <div class="text-sm">
-                        <a href="#" class="font-medium text-primary hover:text-primary/80">
-                            Forgot your password?
-                        </a>
-                    </div>
-                </div>
-
                 <div>
                     <button type="submit"
                         class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
@@ -86,7 +109,7 @@
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            let isValid = true;
             
             // Reset errors
             document.querySelectorAll('.text-red-600').forEach(el => el.classList.add('hidden'));
@@ -94,9 +117,6 @@
             // Get form values
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
-            // Validation flags
-            let isValid = true;
             
             // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -113,12 +133,20 @@
                 isValid = false;
             }
             
-            // If valid, submit form
-            if (isValid) {
-                // Here you would typically submit the form to your server
-                console.log('Form is valid, submitting...');
+            // If not valid, prevent form submission
+            if (!isValid) {
+                e.preventDefault();
             }
         });
+
+        <?php if (isset($_SESSION['success'])): ?>
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: <?php echo json_encode($_SESSION['success']); ?>,
+            confirmButtonColor: '#FF6B00'
+        });
+        <?php unset($_SESSION['success']); endif; ?>
     </script>
 </body>
 </html>
