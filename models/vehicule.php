@@ -13,10 +13,12 @@ class vehicule {
         $db = new Database();
         $this->conn = $db->getdatabase();
 
+        
+        
         $query = "SELECT * FROM vehicule";
         $stmt = $this->conn->prepare($query);
-
         $stmt->execute();
+
 
         $vehicule = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $vehicule;
@@ -97,8 +99,43 @@ class vehicule {
     }
 }
 
-// $data = new vehicule();
-// $result = $data->affichierVeh(3);
+class vehiculeList {
+    private $conn;
+
+    public function __construct() {
+        $db = new Database();
+        $this->conn = $db->getdatabase();
+    }
+
+    public function countVehicules () {
+        try {
+            $query = "SELECT COUNT(*) AS total FROM vehicule";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+
+            $count = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $count['total'];
+        } catch (Exception $e) {
+            throw new Error ("Erreur de conter les vehicules: " . $e->getMessage());
+        }
+    }
+
+    public function getVehiclesByPage ($limit = 5, $startIndex = 0) {
+        try {
+            $stmt = $this->conn->prepare("SELECT * FROM vehicule LIMIT :limit OFFSET :startIndex");
+            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindParam(':startIndex', $startIndex, PDO::PARAM_INT);
+            $stmt->execute();
+            $vehicule = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+            return $vehicule;
+        } catch (Exception $e) {
+            throw new Error("query failed: " . $e->getMessage());
+        }
+    }
+}
+// $data = new vehiculeList();
+// $result = $data->getVehiclesByPage();
 // var_dump($result);
 
 // if (!$result) {

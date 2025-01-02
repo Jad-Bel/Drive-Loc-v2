@@ -1,7 +1,23 @@
-<?php 
+<?php
 // session_start();
-require_once "../../../../models/vehicule.php"; 
+require_once "../../../../models/vehicule.php";
 
+
+$vehicules = new vehiculeList();
+$totalVehicules = $vehicules->countVehicules(); // Replace with your method to count all vehicles
+$vehiclesPerPage = 6; // Number of vehicles per page
+$totalPages = ceil($totalVehicules / $vehiclesPerPage);
+$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+// Ensure current page is valid
+if ($currentPage < 1) {
+    $currentPage = 1;
+} elseif ($currentPage > $totalPages) {
+    $currentPage = $totalPages;
+}
+
+$offset = ($currentPage - 1) * $vehiclesPerPage;
+$MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +34,7 @@ require_once "../../../../models/vehicule.php";
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
@@ -168,46 +184,65 @@ require_once "../../../../models/vehicule.php";
 
 
     <!-- Rent A Car Start -->
-    <?php
-                // Assuming $vehicules is already instantiated and the method is called
-                $vehicules = new vehicule();
-                $allVehicules = $vehicules->affAllVehicule();
-                ?>
-
-                <div class="container-fluid py-5">
-                    <div class="container pt-5 pb-3">
-                        <h1 class="display-4 text-uppercase text-center mb-5">Find Your Car</h1>
-                        <div class="row">
-                            <?php foreach ($allVehicules as $vehicule): ?>
-                                <div class="col-lg-4 col-md-6 mb-2">
-                                    <div class="rent-item mb-4">
-                                        <img class="img-fluid mb-4" src="<?= htmlspecialchars($vehicule["vhc_image"]) ?>.png" alt="<?= htmlspecialchars($vehicule["marque"]) ?>">
-                                        <h4 class="text-uppercase mb-4"><?= "(" . htmlspecialchars($vehicule["marque"]) . ")" . " " . htmlspecialchars($vehicule["vhc_name"]) ?></h4>
-                                        <div class="d-flex justify-content-center mb-4">
-                                            <div class="px-2">
-                                                <i class="fa fa-car text-primary mr-1" aria-hidden="true"></i>
-                                                <span><?= htmlspecialchars($vehicule["model"]) ?></span>
-                                            </div>
-                                            <div class="px-2 border-left border-right">
-                                                <i class="fa fa-cogs text-primary mr-1" aria-hidden="true"></i>
-                                                <span><?= htmlspecialchars($vehicule["transmition"]) ?></span>
-                                            </div>
-                                            <div class="px-2">
-                                                <i class="fa fa-road text-primary mr-1" aria-hidden="true"></i>
-                                                <span><?= htmlspecialchars($vehicule["mileage"]) ?>K</span>
-                                            </div>
-                                        </div>
-                                        <a class="btn btn-primary px-3" href="vehicle-details.php?id=<?= htmlspecialchars($vehicule["vehicule_id"]) ?>">
-                                            $<?= number_format($vehicule["prix"]) ?>/Day
-                                        </a>
-                                    </div>
+    <div class="container-fluid py-5">
+        <div class="container pt-5 pb-3">
+            <h1 class="display-4 text-uppercase text-center mb-5">Find Your Car</h1>
+            <div class="page-info">
+                Showing page <?= $currentPage ?> of <?= $totalPages ?> results
+            </div>
+            <div class="row">
+                <?php foreach ($MulVehicules as $vehicule): ?>
+                    <div class="col-lg-4 col-md-6 mb-2">
+                        <div class="rent-item mb-4">
+                            <img class="img-fluid mb-4" src="<?= $vehicule["vhc_image"] ?>.png" alt="<?= $vehicule["marque"] ?>">
+                            <h4 class="text-uppercase mb-4"><?= "(" . $vehicule["marque"] . ")" . " " . $vehicule["vhc_name"] ?></h4>
+                            <div class="d-flex justify-content-center mb-4">
+                                <div class="px-2">
+                                    <i class="fa fa-car text-primary mr-1" aria-hidden="true"></i>
+                                    <span><?= $vehicule["model"] ?></span>
                                 </div>
-                            <?php endforeach; ?>
+                                <div class="px-2 border-left border-right">
+                                    <i class="fa fa-cogs text-primary mr-1" aria-hidden="true"></i>
+                                    <span><?= $vehicule["transmition"] ?></span>
+                                </div>
+                                <div class="px-2">
+                                    <i class="fa fa-road text-primary mr-1" aria-hidden="true"></i>
+                                    <span><?= $vehicule["mileage"] ?>K</span>
+                                </div>
+                            </div>
+                            <a class="btn btn-primary px-3" href="vehicle-details.php?id=<?= $vehicule["vehicule_id"] ?>">
+                                $<?= number_format($vehicule["prix"]) ?>/Day
+                            </a>
                         </div>
                     </div>
-                </div>
+                <?php endforeach; ?>
+                <nav aria-label="Page navigation" class="w-100 text-center">
+                    <ul class="pagination justify-content-center">
+                        <!-- First and Previous -->
+                        <?php if ($currentPage > 1): ?>
+                            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                            <li class="page-item"><a class="page-link" href="?page=<?= $currentPage - 1 ?>">Previous</a></li>
+                        <?php endif; ?>
+
+                        <!-- Page Numbers -->
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
+                                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <!-- Next and Last -->
+                        <?php if ($currentPage < $totalPages): ?>
+                            <li class="page-item"><a class="page-link" href="?page=<?= $currentPage + 1 ?>">Next</a></li>
+                            <li class="page-item"><a class="page-link" href="?page=<?= $totalPages ?>">Last</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
             </div>
         </div>
+    </div>
+    </div>
+    </div>
     </div>
     <!-- Rent A Car End -->
 
@@ -279,8 +314,8 @@ require_once "../../../../models/vehicule.php";
     </div>
     <div class="container-fluid bg-dark py-4 px-sm-3 px-md-5">
         <p class="mb-2 text-center text-body">&copy; <a href="#">DriveLoc</a>. All Rights Reserved.</p>
-		
-		<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->					
+
+        <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
         <p class="m-0 text-center text-body">Designed by <a href="https://htmlcodex.com">HTML Codex</a></p>
     </div>
     <!-- Footer End -->
