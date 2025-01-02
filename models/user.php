@@ -1,6 +1,6 @@
 <?php
 
-include "../config/connect.php";
+include "../../../../config/connect.php";
 
 class user {
     protected $conn;

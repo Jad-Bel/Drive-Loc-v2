@@ -1,3 +1,8 @@
+<?php 
+    require_once '../../models/vehicule.php';
+    require_once '../../config/connect.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,10 +28,10 @@
     <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="../../css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -69,7 +74,7 @@
         <div class="position-relative px-lg-5" style="z-index: 9;">
             <nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
                 <a href="" class="navbar-brand">
-                    <h1 class="text-uppercase text-primary mb-1">Royal Cars</h1>
+                    <h1 class="text-uppercase text-primary mb-1">DriveLoc</h1>
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
@@ -82,8 +87,8 @@
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Cars</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="car.html" class="dropdown-item">Car Listing</a>
-                                <a href="detail.html" class="dropdown-item">Car Detail</a>
+                                <a href="#" class="dropdown-item">Car Listing</a>
+                                <a href="#" class="dropdown-item">Car Detail</a>
                                 <a href="views/partials/reservation/create.php" class="dropdown-item">Car Booking</a>
                             </div>
                         </div>
@@ -155,7 +160,7 @@
         <div id="header-carousel" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img class="w-100" src="img/carousel-1.jpg" alt="Image">
+                    <img class="w-100" src="../../img/carousel-1.jpg" alt="Image">
                     <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                         <div class="p-3" style="max-width: 900px;">
                             <h4 class="text-white text-uppercase mb-md-3">Rent A Car</h4>
@@ -165,7 +170,7 @@
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <img class="w-100" src="img/carousel-2.jpg" alt="Image">
+                    <img class="w-100" src="../../img/carousel-2.jpg" alt="Image">
                     <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                         <div class="p-3" style="max-width: 900px;">
                             <h4 class="text-white text-uppercase mb-md-3">Rent A Car</h4>
@@ -313,53 +318,48 @@
             </div>
         </div>
     </div>
-    <!-- Services End -->
-
-
-    <!-- Banner Start -->
-    <div class="container-fluid py-5">
-        <div class="container py-5">
-            <div class="bg-banner py-5 px-4 text-center">
-                <div class="py-5">
-                    <h1 class="display-1 text-uppercase text-primary mb-4">50% OFF</h1>
-                    <h1 class="text-uppercase text-light mb-4">Special Offer For New Members</h1>
-                    <p class="mb-4">Only for Sunday from 1st Jan to 30th Jan 2045</p>
-                    <a class="btn btn-primary mt-2 py-3 px-5" href="">Register Now</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Banner End -->
-
+    <!-- Services End -->    
 
     <!-- Rent A Car Start -->
     <div class="container-fluid py-5">
-        <div class="container pt-5 pb-3">
-            <h1 class="display-1 text-primary text-center">03</h1>
-            <h1 class="display-4 text-uppercase text-center mb-5">Find Your Car</h1>
-            <div class="row">
-                <div class="col-lg-4 col-md-6 mb-2">
-                    <div class="rent-item mb-4">
-                        <img class="img-fluid mb-4" src="img/car-rent-1.png" alt="">
-                        <h4 class="text-uppercase mb-4">Mercedes Benz R3</h4>
-                        <div class="d-flex justify-content-center mb-4">
-                            <div class="px-2">
-                                <i class="fa fa-car text-primary mr-1"></i>
-                                <span>2015</span>
-                            </div>
-                            <div class="px-2 border-left border-right">
-                                <i class="fa fa-cogs text-primary mr-1"></i>
-                                <span>AUTO</span>
-                            </div>
-                            <div class="px-2">
-                                <i class="fa fa-road text-primary mr-1"></i>
-                                <span>25K</span>
-                            </div>
-                        </div>
-                        <a class="btn btn-primary px-3" href="">$99.00/Day</a>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-2">
+                <?php
+                $vehicules = new vehicule();
+                $allVehicules = $vehicules->affAllVehicule();
+                ?>
+
+                <div class="container-fluid py-5">
+                    <div class="container pt-5 pb-3">
+                    <h1 class="display-1 text-primary text-center">03</h1>
+                        <h1 class="display-4 text-uppercase text-center mb-5">Find Your Car</h1>
+                        <div class="row">
+                            <?php 
+                            $limitedVehicules = array_slice($allVehicules, 0, 6);
+                            foreach ($limitedVehicules as $vehicule): ?>
+                                <div class="col-lg-4 col-md-6 mb-2">
+                                    <div class="rent-item mb-4">
+                                        <img class="img-fluid mb-4" src="<?= htmlspecialchars($vehicule["vhc_image"]) ?>.png" alt="<?= htmlspecialchars($vehicule["marque"]) ?>">
+                                        <h4 class="text-uppercase mb-4"><?= "(" . htmlspecialchars($vehicule["marque"]) . ")" . " " . htmlspecialchars($vehicule["vhc_name"]) ?></h4>
+                                        <div class="d-flex justify-content-center mb-4">
+                                            <div class="px-2">
+                                                <i class="fa fa-car text-primary mr-1" aria-hidden="true"></i>
+                                                <span><?= htmlspecialchars($vehicule["model"]) ?></span>
+                                            </div>
+                                            <div class="px-2 border-left border-right">
+                                                <i class="fa fa-cogs text-primary mr-1" aria-hidden="true"></i>
+                                                <span><?= htmlspecialchars($vehicule["transmition"]) ?></span>
+                                            </div>
+                                            <div class="px-2">
+                                                <i class="fa fa-road text-primary mr-1" aria-hidden="true"></i>
+                                                <span><?= htmlspecialchars($vehicule["mileage"]) ?>K</span>
+                                            </div>
+                                        </div>
+                                        <a class="btn btn-primary px-3" href="vehicle-details.php?id=<?= htmlspecialchars($vehicule["vehicule_id"]) ?>">
+                                            $<?= number_format($vehicule["prix"]) ?>/Day
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                <!-- <div class="col-lg-4 col-md-6 mb-2">
                     <div class="rent-item active mb-4">
                         <img class="img-fluid mb-4" src="img/car-rent-2.png" alt="">
                         <h4 class="text-uppercase mb-4">Mercedes Benz R3</h4>
@@ -463,7 +463,7 @@
                         </div>
                         <a class="btn btn-primary px-3" href="">$99.00/Day</a>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
