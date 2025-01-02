@@ -84,7 +84,7 @@
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="car.html" class="dropdown-item">Car Listing</a>
                                 <a href="detail.html" class="dropdown-item">Car Detail</a>
-                                <a href="booking.html" class="dropdown-item">Car Booking</a>
+                                <a href="views/partials/reservation/create.php" class="dropdown-item">Car Booking</a>
                             </div>
                         </div>
                         <div class="nav-item dropdown">
