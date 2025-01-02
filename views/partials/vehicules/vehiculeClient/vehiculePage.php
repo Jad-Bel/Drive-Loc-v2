@@ -87,9 +87,9 @@ require_once "../../../../models/vehicule.php";
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cars</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="car.html" class="dropdown-item active">Car Listing</a>
-                                <a href="detail.html" class="dropdown-item">Car Detail</a>
-                                <a href="booking.html" class="dropdown-item">Car Booking</a>
+                                <a href="../vehiculeClient/vehiculePage.php" class="dropdown-item active">Car Listing</a>
+                                <!-- <a href="detail.html" class="dropdown-item">Car Detail</a> -->
+                                <a href="../../reservation/create.php" class="dropdown-item">Car Booking</a>
                             </div>
                         </div>
                         <div class="nav-item dropdown">
@@ -212,40 +212,6 @@ require_once "../../../../models/vehicule.php";
     <!-- Rent A Car End -->
 
 
-    <!-- Vendor Start -->
-    <div class="container-fluid py-5">
-        <div class="container py-5">
-            <div class="owl-carousel vendor-carousel">
-                <div class="bg-light p-4">
-                    <img src="img/vendor-1.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="img/vendor-2.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="img/vendor-3.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="img/vendor-4.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="img/vendor-5.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="img/vendor-6.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="img/vendor-7.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="img/vendor-8.png" alt="">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Vendor End -->
-
-
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary py-5 px-sm-3 px-md-5" style="margin-top: 90px;">
         <div class="row pt-5">
@@ -277,22 +243,22 @@ require_once "../../../../models/vehicule.php";
                 <h4 class="text-uppercase text-light mb-4">Car Gallery</h4>
                 <div class="row mx-n1">
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="img/gallery-1.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../../img/gallery-1.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="img/gallery-2.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../../img/gallery-2.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="img/gallery-3.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../../img/gallery-3.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="img/gallery-4.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../../img/gallery-4.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="img/gallery-5.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../../img/gallery-5.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="img/gallery-6.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../../img/gallery-6.jpg" alt=""></a>
                     </div>
                 </div>
             </div>

@@ -41,24 +41,24 @@
         <div class="row">
             <div class="col-md-6 text-center text-lg-left mb-2 mb-lg-0">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-body pr-3" href=""><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</a>
+                    <a class="text-body pr-3" href=""><i class="fa fa-phone-alt mr-2"></i>+212-693-305050</a>
                     <span class="text-body">|</span>
-                    <a class="text-body px-3" href=""><i class="fa fa-envelope mr-2"></i>info@example.com</a>
+                    <a class="text-body px-3" href=""><i class="fa fa-envelope mr-2"></i>jadthegamer06@gmail.com</a>
                 </div>
             </div>
             <div class="col-md-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
+                    <a class="text-body px-3" href="https://www.linkedin.com/in/jad-belassiria-16390321b/">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                    <a class="text-body px-3" href="https://github.com/Jad-Bel?tab=overview&from=2025-01-01&to=2025-01-01">
+                        <i class="fab fa-github"></i>
+                    </a>
                     <a class="text-body px-3" href="">
                         <i class="fab fa-facebook-f"></i>
                     </a>
                     <a class="text-body px-3" href="">
                         <i class="fab fa-twitter"></i>
-                    </a>
-                    <a class="text-body px-3" href="">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a class="text-body px-3" href="">
-                        <i class="fab fa-instagram"></i>
                     </a>
                     <a class="text-body pl-3" href="">
                         <i class="fab fa-youtube"></i>
@@ -88,9 +88,9 @@
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Cars</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="#" class="dropdown-item">Car Listing</a>
-                                <a href="#" class="dropdown-item">Car Detail</a>
-                                <a href="views/partials/reservation/create.php" class="dropdown-item">Car Booking</a>
+                                <!-- <a href="#" class="dropdown-item">Car Listing</a> -->
+                                <a href="../partials/vehicules/vehiculeClient/vehiculePage.php" class="dropdown-item">Car Listing</a>
+                                <a href="../partials/reservation/create.php" class="dropdown-item">Car Booking</a>
                             </div>
                         </div>
                         <div class="nav-item dropdown">
