@@ -1,12 +1,10 @@
 <?php
 
+
 include "../../config/connect.php";
 
-class user {
+class User {
     protected $conn;
-    protected $email;
-    protected $password;
-
 
     public function __construct() {
         $db = new Database();
@@ -14,43 +12,32 @@ class user {
     }
 
     public function login($email, $password) {
-        $query = "SELECT * FROM users WHERE user_email = :email AND user_pw = :password";
+        $query = "SELECT * FROM users WHERE user_email = :email";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute([":email", $email, ":password", $password]);
+        $stmt->execute([":email" => $email]);
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($user) {
-            if (password_verify($password,$user['user_pw'])) {
-                session_start();
-                $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['user_name'] = $user['user_name'];
-                $_SESSION['user_role'] = $user['user_role'];
+        if ($user && password_verify($password, $user['user_pw'])) {
+            session_start();
+            $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['user_name'] = $user['user_name'];
+            $_SESSION['user_role'] = $user['role_id'];
 
-                if ($user['user_role'] == 1) {
-                    header("Location: ../views/admin.php");
-                } elseif ($user['user_role'] == 2) {
-                    header("Location: ../views/user.php");
-                }
-                exit;
+            if ($user['role_id'] == 1) {
+                header("Location: ../views/admin/dashboard.php");
+            } elseif ($user['role_id'] == 2) {
+                header("Location: ../views/client/dashboard.php");
             }
+            exit;
         } 
-    } 
-}
-
-
-class client extends user {
-    protected $conn;
-
-    public function __construct() {
-        $db = new Database();
-        $this->conn = $db->getdatabase();
+        return false;
     }
-    
-    public function register($firstName, $lastName, $email, $password, $role = 1) {
+
+    public function register($firstName, $lastName, $email, $password, $role = 2) {
         $firstName = htmlspecialchars($firstName);
         $lastName = htmlspecialchars($lastName);
         $email = htmlspecialchars($email);
-        
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         
         $query = "INSERT INTO users (user_name, user_last, user_email, user_pw, role_id)
                     VALUES (:firstName, :lastName, :email, :password, :role)";
@@ -60,7 +47,7 @@ class client extends user {
             ":firstName" => $firstName,
             ":lastName" => $lastName,
             ":email" => $email,
-            ":password" => $password,
+            ":password" => $hashedPassword,
             ":role" => $role
         ];
         
@@ -68,14 +55,9 @@ class client extends user {
     }
 }
 
-class admin extends user {
 
-    public function __construct() {
-        parent::__construct();
-    }
-}
 
-// $data = new client();
+// $data = new user();
 
 // $result = $data->register("John", "Doe", "john@gmail.com", "jadjadjad");
 
