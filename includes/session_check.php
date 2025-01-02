@@ -1,7 +1,7 @@
 <?php 
     session_start();
     if (!isset($_SESSION['email'])) {
-        header("location: ../public/authentification.php");
+        header("location: ../authentification/login.php");
         exit;
     }
 ?>

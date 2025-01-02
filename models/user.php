@@ -1,6 +1,6 @@
 <?php
 
-include "../../../../config/connect.php";
+include "../../config/connect.php";
 
 class user {
     protected $conn;
@@ -39,28 +39,32 @@ class user {
 
 
 class client extends user {
+    protected $conn;
 
     public function __construct() {
-        parent::__construct();
+        $db = new Database();
+        $this->conn = $db->getdatabase();
     }
     
-    public function register($name, $last, $email, $password, $role = 1) {
-        $name = htmlspecialchars($name);
-        $last = htmlspecialchars($last);
+    public function register($firstName, $lastName, $email, $password, $role = 1) {
+        $firstName = htmlspecialchars($firstName);
+        $lastName = htmlspecialchars($lastName);
         $email = htmlspecialchars($email);
         
-        $password = password_hash($password, PASSWORD_BCRYPT);
-
+        
         $query = "INSERT INTO users (user_name, user_last, user_email, user_pw, role_id)
-                    VALUE (:name, :last, :email, :password, :role)";
+                    VALUES (:firstName, :lastName, :email, :password, :role)";
         $stmt = $this->conn->prepare($query);
 
-        $param = [":name" => $name,
-                  ":last" => $last,
-                  ":email" => $email,
-                  ":password" => $password,
-                  ":role" => $role];
-        $stmt->execute($param);
+        $params = [
+            ":firstName" => $firstName,
+            ":lastName" => $lastName,
+            ":email" => $email,
+            ":password" => $password,
+            ":role" => $role
+        ];
+        
+        return $stmt->execute($params);
     }
 }
 
