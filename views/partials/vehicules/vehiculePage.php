@@ -211,7 +211,7 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
                                     <span><?= $vehicule["mileage"] ?>K</span>
                                 </div>
                             </div>
-                            <a class="btn btn-primary px-3" href="vehicle-details.php?id=<?= $vehicule["vehicule_id"] ?>">
+                            <a class="btn btn-primary px-3" href="../reservation/create.php?vehicule=<?= urlencode($vehicule["vehicule_id"]) ?>">
                                 $<?= number_format($vehicule["prix"]) ?>/Day
                             </a>
                         </div>
