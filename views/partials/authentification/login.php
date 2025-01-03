@@ -6,7 +6,7 @@ session_start();
 
 $db = new Database();
 $conn = $db->getdatabase();
-$user = new User($conn);
+$user = new user($conn);
 
 $loginError = '';
 

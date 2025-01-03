@@ -13,8 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             htmlspecialchars($_POST['firstName']),
             htmlspecialchars($_POST['lastName']),
             htmlspecialchars($_POST['email']),
-            password_hash($_POST['password'], PASSWORD_BCRYPT),
-            2 // Role ID    
+            $_POST['password'],
+            1 // Role ID    
             );
 
         if ($result) {
