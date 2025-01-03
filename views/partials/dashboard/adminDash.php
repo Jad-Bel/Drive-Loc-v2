@@ -1,3 +1,12 @@
+<?php 
+session_start();
+require_once "../../../includes/session_check.php";
+require_once "../../../models/user.php";
+require_once "../../../models/user.php";
+
+
+ ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,7 +60,7 @@
                         <a class="nav-link" href="#"><i class="bi bi-person-circle"></i> Admin</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                        <a class="nav-link" href="../../../includes/logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a>
                     </li>
                 </ul>
             </div>

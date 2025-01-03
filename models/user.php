@@ -59,7 +59,7 @@ class User {
                     $_SESSION['user_role'] = $user['role_id'];
 
                     if ($user['role_id'] == 1) {
-                        header("Location: ../views/admin/dashboard.php");
+                        header("Location: ../../partials/dashboard/adminDash.php");
                     } elseif ($user['role_id'] == 2) {
                         header("Location: ../../layouts/main.php");
                     }
