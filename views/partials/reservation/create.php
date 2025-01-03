@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $date_rsv = date('Y-m-d');
 
-        $user_id = $_SESSION['user_id'];
+        // $user_id = $_SESSION['user_id'];
+        $user_id = 9;
         $vehicule_id = $_POST['vehicule_id'];
         $date_pickup = $_POST['date_pickup'];
         $date_return = $_POST['date_return'];
@@ -223,13 +224,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Detail Start -->
     <div class="container-fluid pt-5">
         <div class="container pt-5 pb-3">
-            <h1 class="display-4 text-uppercase mb-5">Mercedes Benz R3</h1>
+        <?php if ($vehiculeDetails): ?>
+            <h1 class="display-4 text-uppercase mb-5">
+                <?php echo htmlspecialchars($vehiculeDetails['marque'] . ' ' . $vehiculeDetails['vhc_name']); ?>
+            </h1>
             <div class="row align-items-center pb-2">
                 <div class="col-lg-6 mb-4">
-                    <img class="img-fluid" src="img/bg-banner.jpg" alt="">
+                    <img class="img-fluid" src="<?php echo htmlspecialchars($vehiculeDetails['vhc_image']); ?>.png" alt="<?php echo htmlspecialchars($vehiculeDetails['marque']); ?>">
                 </div>
                 <div class="col-lg-6 mb-4">
-                    <h4 class="mb-2">$99.00/Day</h4>
+                    <h4 class="mb-2">$<?php echo number_format($vehiculeDetails['prix']); ?>/Day</h4>
+                    <!-- Keep rating section -->
                     <div class="d-flex mb-3">
                         <h6 class="mr-2">Rating:</h6>
                         <div class="d-flex align-items-center justify-content-center mb-1">
@@ -241,33 +246,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <small>(250)</small>
                         </div>
                     </div>
-                    <p>Tempor erat elitr at rebum at at clita aliquyam consetetur. Diam dolor diam ipsum et, tempor voluptua sit consetetur sit. Aliquyam diam amet diam et eos sadipscing labore. Clita erat ipsum et lorem et sit, sed stet no labore lorem sit. Sanctus clita duo justo et tempor consetetur takimata eirmod, dolores takimata consetetur invidunt</p>
-                    <div class="d-flex pt-1">
-                        <h6>Share on:</h6>
-                        <div class="d-inline-flex">
-                            <a class="px-2" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="px-2" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="px-2" href=""><i class="fab fa-linkedin-in"></i></a>
-                            <a class="px-2" href=""><i class="fab fa-pinterest"></i></a>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="row mt-n3 mt-lg-0 pb-4">
-
                 <div class="col-md-3 col-6 mb-2">
                     <i class="fa fa-car text-primary mr-2"></i>
-                    <span>Model: 2015</span>
+                    <span>Model: <?php echo htmlspecialchars($vehiculeDetails['model']); ?></span>
                 </div>
                 <div class="col-md-3 col-6 mb-2">
                     <i class="fa fa-cogs text-primary mr-2"></i>
-                    <span>Automatic</span>
+                    <span><?php echo htmlspecialchars($vehiculeDetails['transmition']); ?></span>
                 </div>
                 <div class="col-md-3 col-6 mb-2">
                     <i class="fa fa-road text-primary mr-2"></i>
-                    <span>20km/liter</span>
+                    <span><?php echo htmlspecialchars($vehiculeDetails['mileage']); ?>K</span>
                 </div>
             </div>
+        <?php else: ?>
+            <div class="alert alert-danger">Vehicle not found or invalid vehicle ID.</div>
+        <?php endif; ?>
         </div>
     </div>
     <!-- Detail End -->
