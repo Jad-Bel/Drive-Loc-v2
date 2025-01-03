@@ -1,5 +1,8 @@
-<?php 
-    require_once "../../../models/reservation.php";
+<?php
+require_once "../../../models/reservation.php";
+require_once "../../../models/user.php";
+require_once "../../../models/vehicule.php";
+
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +20,7 @@
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Rubik&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
@@ -200,38 +203,7 @@
                 </div>
             </div>
             <div class="row mt-n3 mt-lg-0 pb-4">
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-car text-primary mr-2"></i>
-                    <span>Model: 2015</span>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-cogs text-primary mr-2"></i>
-                    <span>Automatic</span>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-road text-primary mr-2"></i>
-                    <span>20km/liter</span>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-eye text-primary mr-2"></i>
-                    <span>GPS Navigation</span>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-car text-primary mr-2"></i>
-                    <span>Model: 2015</span>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-cogs text-primary mr-2"></i>
-                    <span>Automatic</span>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-road text-primary mr-2"></i>
-                    <span>20km/liter</span>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-eye text-primary mr-2"></i>
-                    <span>GPS Navigation</span>
-                </div>
+
                 <div class="col-md-3 col-6 mb-2">
                     <i class="fa fa-car text-primary mr-2"></i>
                     <span>Model: 2015</span>
@@ -259,27 +231,15 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
-                    <h2 class="mb-4">Personal Detail</h2>
-                    <div class="mb-5">
-                        <div class="row">
-                            <div class="col-6 form-group">
-                                <input type="text" class="form-control p-4" placeholder="First Name" required="required">
-                            </div>
-                            <div class="col-6 form-group">
-                                <input type="text" class="form-control p-4" placeholder="Last Name" required="required">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6 form-group">
-                                <input type="email" class="form-control p-4" placeholder="Your Email" required="required">
-                            </div>
-                            <div class="col-6 form-group">
-                                <input type="text" class="form-control p-4" placeholder="Mobile Number" required="required">
-                            </div>
-                        </div>
-                    </div>
                     <h2 class="mb-4">Booking Detail</h2>
                     <div class="mb-5">
+                        <?php if (isset($success_message)): ?>
+                            <div class="alert alert-success"><?php echo $success_message; ?></div>
+                        <?php endif; ?>
+
+                        <?php if (isset($error_message)): ?>
+                            <div class="alert alert-danger"><?php echo $error_message; ?></div>
+                        <?php endif; ?>
                         <div class="row">
                             <div class="col-6 form-group">
                                 <select class="custom-select px-4" style="height: 50px;">
@@ -366,37 +326,7 @@
 
 
     <!-- Vendor Start -->
-    <div class="container-fluid py-5">
-        <div class="container py-5">
-            <div class="owl-carousel vendor-carousel">
-                <div class="bg-light p-4">
-                    <img src="../../../img/vendor-1.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="../../../img/vendor-2.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="../../../img/vendor-3.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="../../../img/vendor-4.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="../../../img/vendor-5.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="../../../img/vendor-6.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="../../../img/vendor-7.png" alt="">
-                </div>
-                <div class="bg-light p-4">
-                    <img src="../../../img/vendor-8.png" alt="">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Vendor End -->
+
 
 
     <!-- Footer Start -->
@@ -466,8 +396,8 @@
     </div>
     <div class="container-fluid bg-dark py-4 px-sm-3 px-md-5">
         <p class="mb-2 text-center text-body">&copy; <a href="#">Your Site Name</a>. All Rights Reserved.</p>
-		
-		<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->					
+
+        <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
         <p class="m-0 text-center text-body">Designed by <a href="https://htmlcodex.com">HTML Codex</a></p>
     </div>
     <!-- Footer End -->
