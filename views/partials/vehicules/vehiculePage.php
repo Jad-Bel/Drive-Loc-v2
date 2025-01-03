@@ -2,11 +2,21 @@
 // session_start();
 require_once "../../../config/connect.php";
 require_once "../../../models/vehicule.php";
-
+require_once "../../../models/categorie.php";
 
 $vehicules = new vehiculeList();
+$categorieObj = new categorie();
+
+
+try {
+    $categories = $categorieObj->getAllCategories();
+} catch (Exception $e) {
+    $error_message = $e->getMessage();
+    $categories = [];
+}
+
 $totalVehicules = $vehicules->countVehicules();
-$vehiclesPerPage = 6; 
+$vehiclesPerPage = 6;
 $totalPages = ceil($totalVehicules / $vehiclesPerPage);
 $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
@@ -187,6 +197,29 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
     <div class="container-fluid py-5">
         <div class="container pt-5 pb-3">
             <h1 class="display-4 text-uppercase text-center mb-5">Find Your Car</h1>
+            <form class="d-flex justify-content-center align-items-center mb-4" method="GET" action="">
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control me-2"
+                    placeholder="Search for cars..."
+                    value="<?php  ?>"
+                    style="width: 40%; margin-right: 10px;">
+                <select
+                    name="category"
+                    class="form-select me-2"
+                    style="width: 20%; margin-right: 10px;">
+                    <option value="">All Categories</option>
+                    <?php foreach ($categories as $category): ?>
+                        <option value="<?php echo $category['categorie_id']; ?>"
+                            <?php echo $selectedCategory == $category['categorie_id'] ? 'selected' : ''; ?>>
+                            <?php echo $category['ctg_name']; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
             <div class="page-info">
                 Showing page <?= $currentPage ?> of <?= $totalPages ?> results
             </div>

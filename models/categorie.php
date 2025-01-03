@@ -1,5 +1,5 @@
 <?php 
-include "../config/connect.php";
+// include "../../../config/connect.php";
 
 class categorie {
     private $conn;
@@ -9,9 +9,9 @@ class categorie {
         $this->conn = $db->getdatabase();
     }
 
-    public function affAllCategorie() {
+    public function getAllCategories() {
         try {
-            $query = "SELECT * FROM categorie";
+            $query = "SELECT * FROM categorie ORDER BY ctg_name";
             $stmt = $this->conn->prepare($query);
 
             $stmt->execute();

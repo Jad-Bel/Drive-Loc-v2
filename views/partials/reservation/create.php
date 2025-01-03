@@ -7,8 +7,8 @@ require_once "../../../models/vehicule.php";
 $reservation = new reservation();
 $vehiculObj = new vehicule();
 
-$vehicule_id = isset($_GET['vehicule_id']) ? $_GET['vehicule_id'] : null;
 
+$vehicule_id = isset($_GET['vehicule_id']) ? $_GET['vehicule_id'] : null;
 $vehiculeDetails = null;
 try {
     $vehiculeDetails = $vehiculObj->getVehiculeById($vehicule_id);
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="index.html" class="nav-item nav-link">Home</a>
+                        <a href="../../layouts/main.php" class="nav-item nav-link">Home</a>
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="service.html" class="nav-item nav-link">Service</a>
                         <div class="nav-item dropdown">

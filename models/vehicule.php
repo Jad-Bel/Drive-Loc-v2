@@ -15,7 +15,7 @@ class vehicule {
 
         
         
-        $query = "SELECT * FROM vehicule";
+        $query = "SELECT * FROM vehicules";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
 
@@ -26,7 +26,7 @@ class vehicule {
 
     public function getVehiculeById($id) {
         try {
-            $query = "SELECT * FROM vehicule WHERE vehicule_id = :id";
+            $query = "SELECT * FROM vehicules WHERE vehicule_id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->execute([':id' => $id]);
             
@@ -108,7 +108,7 @@ class vehiculeList {
 
     public function countVehicules () {
         try {
-            $query = "SELECT COUNT(*) AS total FROM vehicule";
+            $query = "SELECT COUNT(*) AS total FROM vehicules";
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
 
@@ -121,7 +121,7 @@ class vehiculeList {
 
     public function getVehiclesByPage ($limit = 5, $startIndex = 0) {
         try {
-            $stmt = $this->conn->prepare("SELECT * FROM vehicule LIMIT :limit OFFSET :startIndex");
+            $stmt = $this->conn->prepare("SELECT * FROM vehicules LIMIT :limit OFFSET :startIndex");
             $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindParam(':startIndex', $startIndex, PDO::PARAM_INT);
             $stmt->execute();
