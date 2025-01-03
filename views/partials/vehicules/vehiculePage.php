@@ -5,9 +5,12 @@ require_once "../../../models/vehicule.php";
 require_once "../../../models/categorie.php";
 
 $vehicules = new vehiculeList();
+$allVeh = new vehicule();
 $categorieObj = new categorie();
+// check if category is set or not the get it's value
+$categorie_id = isset($_GET['category']) ? (int)$_GET['category'] : '';
 
-
+// getting all ctgs and checking if there is an error
 try {
     $categories = $categorieObj->getAllCategories();
 } catch (Exception $e) {
@@ -15,17 +18,31 @@ try {
     $categories = [];
 }
 
+// getting all vehicules by their ctgs
+try {
+    if (!empty($categorie_id)) {
+        $MulVehicules = $vehicules->getVehiculesByCategorie($categorie_id);
+    } else {
+        $MulVehicules = $allVeh->affAllVehicule();
+    }
+} catch (Exception $e) {
+    $error_message = $e->getMessage();
+    $MulVehicules = [];
+}
+
+// count the total of vehicules posted
 $totalVehicules = $vehicules->countVehicules();
 $vehiclesPerPage = 6;
+// calculation of the total pages possible
 $totalPages = ceil($totalVehicules / $vehiclesPerPage);
-$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
 
 if ($currentPage < 1) {
     $currentPage = 1;
 } elseif ($currentPage > $totalPages) {
     $currentPage = $totalPages;
 }
-
+// calculation of the offset of vehicules
 $offset = ($currentPage - 1) * $vehiclesPerPage;
 $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
 ?>
@@ -212,8 +229,8 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
                     <option value="">All Categories</option>
                     <?php foreach ($categories as $category): ?>
                         <option value="<?php echo $category['categorie_id']; ?>"
-                            <?php echo $selectedCategory == $category['categorie_id'] ? 'selected' : ''; ?>>
-                            <?php echo $category['ctg_name']; ?>
+                            <?php echo (isset($categorie_id) && $categorie_id == $category['categorie_id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($category['ctg_name']); ?> 
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -243,7 +260,7 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
                                     <span><?= $vehicule["mileage"] ?>K</span>
                                 </div>
                             </div>
-                            <a class="btn btn-primary px-3" href="../reservation/create.php?vehicule_id=<?= urlencode($vehicule["vehicule_id"]) ?>">
+                            <a class="btn btn-primary px-3" href="../reservation/create.php?vehicule_id=<?= $vehicule["vehicule_id"] ?>">
                                 $<?= number_format($vehicule["prix"]) ?>/Day
                             </a>
                         </div>

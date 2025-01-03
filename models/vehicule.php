@@ -43,7 +43,7 @@ class vehicule {
         $prix = htmlspecialchars($prix);
         $desc = htmlspecialchars($desc);
 
-        $query = "INSERT INTO vehicule (marque, disponibilite, prix, description) VALUES (:marque, :disp, :prix, :desc)";
+        $query = "INSERT INTO vehicules (marque, disponibilite, prix, description) VALUES (:marque, :disp, :prix, :desc)";
         $stmt = $this->conn->prepare($query);
 
         $param = [":marque" => $marque,
@@ -62,7 +62,7 @@ class vehicule {
         $prix = htmlspecialchars($prix);
         $desc = htmlspecialchars($desc);
 
-        $query = "UPDATE vehicule SET marque = :marque, disponibilite = :disp, prix = :prix, description = :desc WHERE vehicule_id = :id";
+        $query = "UPDATE vehicules SET marque = :marque, disponibilite = :disp, prix = :prix, description = :desc WHERE vehicule_id = :id";
         $stmt = $this->conn->prepare($query);
 
         $param = [":id" => $vehicule_id,
@@ -82,7 +82,7 @@ class vehicule {
     public function supprimerVeh ($vehicule_id) {
         $id = htmlspecialchars(intval($vehicule_id));
 
-        $query = "DELETE FROM vehicule WHERE vehicule_id = :id";
+        $query = "DELETE FROM vehicules WHERE vehicule_id = :id";
         $stmt = $this->conn->prepare($query);
 
         $param = [":id" => $vehicule_id];
@@ -130,6 +130,25 @@ class vehiculeList {
             return $vehicule;
         } catch (Exception $e) {
             throw new Error("query failed: " . $e->getMessage());
+        }
+    }
+
+    public function getVehiculesByCategorie($categorie_id) {
+        try {
+            if (empty($categorie_id)) {
+                $query = "SELECT * FROM vehicules";
+                $stmt = $this->conn->prepare($query);
+                $stmt->execute();
+            } 
+            else {
+                $query = "SELECT * FROM vehicules WHERE categorie_id = :categorie_id";
+                $stmt = $this->conn->prepare($query);
+                $stmt->execute([':categorie_id' => $categorie_id]);
+            }
+    
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            throw new Error("Cannot get vehicles: " . $e->getMessage());
         }
     }
 }
