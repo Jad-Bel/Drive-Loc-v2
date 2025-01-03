@@ -5,12 +5,11 @@ require_once "../../../models/vehicule.php";
 
 
 $vehicules = new vehiculeList();
-$totalVehicules = $vehicules->countVehicules(); // Replace with your method to count all vehicles
-$vehiclesPerPage = 6; // Number of vehicles per page
+$totalVehicules = $vehicules->countVehicules();
+$vehiclesPerPage = 6; 
 $totalPages = ceil($totalVehicules / $vehiclesPerPage);
 $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 
-// Ensure current page is valid
 if ($currentPage < 1) {
     $currentPage = 1;
 } elseif ($currentPage > $totalPages) {
@@ -211,7 +210,7 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
                                     <span><?= $vehicule["mileage"] ?>K</span>
                                 </div>
                             </div>
-                            <a class="btn btn-primary px-3" href="../reservation/create.php?vehicule=<?= urlencode($vehicule["vehicule_id"]) ?>">
+                            <a class="btn btn-primary px-3" href="../reservation/create.php?vehicule_id=<?= urlencode($vehicule["vehicule_id"]) ?>">
                                 $<?= number_format($vehicule["prix"]) ?>/Day
                             </a>
                         </div>

@@ -24,17 +24,16 @@ class vehicule {
         return $vehicule;
     } 
 
-    public function affichierVeh ($vehicule_id) {
-        $id = htmlspecialchars(intval($vehicule_id));
-
-        $query = "SELECT * FROM vehicule WHERE vehicule_id = :id";
-        $stmt = $this->conn->prepare($query);
-
-        $param = [":id" => $vehicule_id];
-        $stmt->execute($param);
-
-        $vehicule = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $vehicule;
+    public function getVehiculeById($id) {
+        try {
+            $query = "SELECT * FROM vehicule WHERE vehicule_id = :id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([':id' => $id]);
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            throw new Error("Cannot get vehicle: " . $e->getMessage());
+        }
     }
 
     public function ajouterVeh ($marque, $categorie, $disponibilite, $prix, $desc) {

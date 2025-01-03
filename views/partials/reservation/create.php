@@ -5,13 +5,25 @@ require_once "../../../models/vehicule.php";
 
 
 $reservation = new reservation();
+$vehiculObj = new vehicule();
+
+$vehicule_id = isset($_GET['vehicule_id']) ? $_GET['vehicule_id'] : null;
+
+$vehiculeDetails = null;
+try {
+    $vehiculeDetails = $vehiculObj->getVehiculeById($vehicule_id);
+    if (!$vehiculeDetails) {
+        throw new Error("vehicule not found");
+    }
+} catch (Exception $e) {
+    throw new Exception($e->getMessage());
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $date_rsv = date('Y-m-d');
 
-        // $user_id = $_SESSION['user_id'];
-        $user_id = 7;
+        $user_id = $_SESSION['user_id'];
         $vehicule_id = $_POST['vehicule_id'];
         $date_pickup = $_POST['date_pickup'];
         $date_return = $_POST['date_return'];
@@ -254,10 +266,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="col-md-3 col-6 mb-2">
                     <i class="fa fa-road text-primary mr-2"></i>
                     <span>20km/liter</span>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                    <i class="fa fa-eye text-primary mr-2"></i>
-                    <span>GPS Navigation</span>
                 </div>
             </div>
         </div>
