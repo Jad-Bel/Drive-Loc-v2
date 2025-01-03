@@ -1,6 +1,7 @@
 <?php
 // session_start();
-require_once "../../../../models/vehicule.php";
+require_once "../../../config/connect.php";
+require_once "../../../models/vehicule.php";
 
 
 $vehicules = new vehiculeList();
@@ -44,10 +45,10 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
     <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="../../../../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
-    <link href="../../../../css/style.css" rel="stylesheet">
+    <link href="../../../css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -278,22 +279,22 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
                 <h4 class="text-uppercase text-light mb-4">Car Gallery</h4>
                 <div class="row mx-n1">
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../../../img/gallery-1.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../img/gallery-1.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../../../img/gallery-2.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../img/gallery-2.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../../../img/gallery-3.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../img/gallery-3.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../../../img/gallery-4.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../img/gallery-4.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../../../img/gallery-5.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../img/gallery-5.jpg" alt=""></a>
                     </div>
                     <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../../../img/gallery-6.jpg" alt=""></a>
+                        <a href=""><img class="w-100" src="../../../img/gallery-6.jpg" alt=""></a>
                     </div>
                 </div>
             </div>

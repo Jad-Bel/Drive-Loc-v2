@@ -1,6 +1,6 @@
 <?php
 // require_once __DIR__ . "../../config/database.php";
-require_once "../../models/User.php";
+require_once "../../../models/user.php";
 
 session_start();
 
