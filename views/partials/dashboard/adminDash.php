@@ -340,70 +340,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Add Vehicle Modal -->
     <div class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addVehicleModalLabel">Add New Vehicle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addVehicleForm" method="POST" action="">
-                        <input type="hidden" name="action" value="add_vehicle">
-                        <div class="mb-3">
-                            <label for="vehicleMarque" class="form-label">Marque</label>
-                            <input type="text" class="form-control" id="vehicleMake" name="marque" required>
-                            <div class="error-message" id="vehicleMakeError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehicleMake" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="editVehicleName" name="vhc_name" required>
-                            <div class="error-message" id="editVehicleMakeError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="vehicleModel" class="form-label">Model</label>
-                            <input type="number" class="form-control" id="vehicleModelInput" name="model" required>
-                            <div class="error-message" id="vehicleYearError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="vehicleImg" class="form-label">Vehicle Image</label>
-                            <input type="url" class="form-control" id="vehicleImage" name="vhc_image" placeholder="https://www.example.com">
-                            <div class="error-message" id="vehicleImageError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="vehicleDisponibilite" class="form-label">Disponibilite</label>
-                            <input type="number" min="0" max="1" class="form-control" id="vehicleDisponibilite" name="disponibilite" required>
-                            <div class="error-message" id="vehicleDispError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="vehicleMileage" class="form-label">Mileage</label>
-                            <input type="number" class="form-control" id="vehicleMileage" name="mileage" required>
-                            <div class="error-message" id="vehicleMileageError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="vehicleTransmission" class="form-label">Transmission</label>
-                            <input type="text" class="form-control" id="vehicleTransmission" name="transmition" required>
-                            <div class="error-message" id="vehicleTransError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="vehiclePrice" class="form-label">Price per Day</label>
-                            <input type="number" class="form-control" id="vehiclePrice" name="prix" required>
-                            <div class="error-message" id="vehiclePriceError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="vehicleDescription" class="form-label">Description</label>
-                            <input type="text" class="form-control" id="vehicleDescription" name="description" required>
-                            <div class="error-message" id="vehicleDesError"></div>
-                        </div>
-                        <!-- Submit button inside the form -->
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Add Vehicle</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addVehicleModalLabel">Add New Vehicle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addVehicleForm" method="POST" action="">
+                    <input type="hidden" name="action" value="add_vehicle">
+                    <div class="mb-3">
+                        <label for="vehicleMarque" class="form-label">Marque</label>
+                        <input type="text" class="form-control" id="vehicleMake" name="marque">
+                        <div class="error-message" id="vehicleMakeError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleMake" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editVehicleName" name="vhc_name">
+                        <div class="error-message" id="editVehicleMakeError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleModel" class="form-label">Model</label>
+                        <input type="number" class="form-control" id="vehicleModelInput" name="model">
+                        <div class="error-message" id="vehicleYearError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleImg" class="form-label">Vehicle Image</label>
+                        <input type="url" class="form-control" id="vehicleImage" name="vhc_image" placeholder="https://www.example.com">
+                        <div class="error-message" id="vehicleImageError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleDisponibilite" class="form-label">Disponibilite</label>
+                        <input type="number" min="0" max="1" class="form-control" id="vehicleDisponibilite" name="disponibilite">
+                        <div class="error-message" id="vehicleDispError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleMileage" class="form-label">Mileage</label>
+                        <input type="number" class="form-control" id="vehicleMileage" name="mileage">
+                        <div class="error-message" id="vehicleMileageError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleTransmission" class="form-label">Transmission</label>
+                        <input type="text" class="form-control" id="vehicleTransmission" name="transmition">
+                        <div class="error-message" id="vehicleTransError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehiclePrice" class="form-label">Price per Day</label>
+                        <input type="number" class="form-control" id="vehiclePrice" name="prix">
+                        <div class="error-message" id="vehiclePriceError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleDescription" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="vehicleDescription" name="description">
+                        <div class="error-message" id="vehicleDesError"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Vehicle</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
+
 
     <!-- Edit Vehicle Modal -->
     <div class="modal fade" id="editVehicleModal" tabindex="-1" aria-labelledby="editVehicleModalLabel" aria-hidden="true">
@@ -417,17 +418,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <form id="editVehicleForm" method="POST">
                         <div class="mb-3">
                             <label for="editVehicleMake" class="form-label">Marque</label>
-                            <input type="text" class="form-control" id="editVehicleMake" name="marque" required>
+                            <input type="text" class="form-control" id="editVehicleMake" name="marque" >
                             <div class="error-message" id="editVehicleMakeError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="editVehicleMake" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="editVehicleName" name="vhc_name" required>
+                            <input type="text" class="form-control" id="editVehicleName" name="vhc_name" >
                             <div class="error-message" id="editVehicleMakeError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="editVehicleModel" class="form-label">Model</label>
-                            <input type="number" class="form-control" id="editVehicleModel" name="model" required>
+                            <input type="number" class="form-control" id="editVehicleModel" name="model" >
                             <div class="error-message" id="editVehicleModelError"></div>
                         </div>
                         <div class="mb-3">
@@ -437,27 +438,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                         <div class="mb-3">
                             <label for="editVehicleDisponibilite" class="form-label">Disponibilité</label>
-                            <input type="number" min="0" max="1" class="form-control" id="editVehicleDisponibilite" name="disponibilite" required>
+                            <input type="number" min="0" max="1" class="form-control" id="editVehicleDisponibilite" name="disponibilite" >
                             <div class="error-message" id="editVehicleDisponibiliteError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="editVehicleMileage" class="form-label">Mileage</label>
-                            <input type="number" class="form-control" id="editVehicleMileage" name="mileage" required>
+                            <input type="number" class="form-control" id="editVehicleMileage" name="mileage" >
                             <div class="error-message" id="editVehicleMileageError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="editVehicleTransmission" class="form-label">Transmission</label>
-                            <input type="text" class="form-control" id="editVehicleTransmission" name="transmission" required>
+                            <input type="text" class="form-control" id="editVehicleTransmission" name="transmission" >
                             <div class="error-message" id="editVehicleTransmissionError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="editVehiclePrice" class="form-label">Price per Day</label>
-                            <input type="number" class="form-control" id="editVehiclePrice" name="prix" required>
+                            <input type="number" class="form-control" id="editVehiclePrice" name="prix" >
                             <div class="error-message" id="editVehiclePriceError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="editVehicleDescription" class="form-label">Description</label>
-                            <input type="text" class="form-control" id="editVehicleDescription" name="description" required>
+                            <input type="text" class="form-control" id="editVehicleDescription" name="description" >
                             <div class="error-message" id="editVehicleDescriptionError"></div>
                         </div>
                     </form>
