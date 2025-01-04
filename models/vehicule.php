@@ -36,57 +36,94 @@ class vehicule {
         }
     }
 
-    public function ajouterVeh ($marque, $categorie, $disponibilite, $prix, $desc) {
+    public function ajouterVeh($marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name) {
+        // Sanitize inputs
+        // $categorie_id = htmlspecialchars($categorie_id);
         $marque = htmlspecialchars($marque);
-        $categorie = htmlspecialchars($categorie);
         $disponibilite = htmlspecialchars($disponibilite);
         $prix = htmlspecialchars($prix);
-        $desc = htmlspecialchars($desc);
-
-        $query = "INSERT INTO vehicules (marque, disponibilite, prix, description) VALUES (:marque, :disp, :prix, :desc)";
+        $description = htmlspecialchars($description);
+        $vhc_image = $vhc_image;
+        $mileage = htmlspecialchars($mileage);
+        $model = htmlspecialchars($model);
+        $transmition = htmlspecialchars($transmition);
+        $vhc_name = htmlspecialchars($vhc_name);
+    
+        // Insert query
+        $query = "INSERT INTO vehicules (marque, disponibilite, prix, description, vhc_image, mileage, model, transmition, vhc_name) 
+                  VALUES (:marque, :disponibilite, :prix, :description, :vhc_image, :mileage, :model, :transmition, :vhc_name)";
         $stmt = $this->conn->prepare($query);
-
-        $param = [":marque" => $marque,
-                    ":disp" => $disponibilite,
-                    ":prix" => $prix,
-                    ":desc" => $desc];
-
+    
+        // Bind parameters
+        $param = [
+            // ":categorie_id" => $categorie_id,
+            ":marque" => $marque,
+            ":disponibilite" => $disponibilite,
+            ":prix" => $prix,
+            ":description" => $description,
+            ":vhc_image" => $vhc_image,
+            ":mileage" => $mileage,
+            ":model" => $model,
+            ":transmition" => $transmition,
+            ":vhc_name" => $vhc_name
+        ];
+    
+        // Execute query
         $stmt->execute($param);
     }
-
-    public function modifierVeh ($vehicule_id, $marque, $categorie, $disponibilite, $prix, $desc) {
-        $id = htmlspecialchars(intval($vehicule_id));
+    
+    public function modifierVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name) {
+        // Sanitize inputs
+        // $vehicule_id = htmlspecialchars(intval($vehicule_id));
+        // $categorie_id = htmlspecialchars($categorie_id);
         $marque = htmlspecialchars($marque);
-        $categorie = htmlspecialchars($categorie);
         $disponibilite = htmlspecialchars($disponibilite);
         $prix = htmlspecialchars($prix);
-        $desc = htmlspecialchars($desc);
-
-        $query = "UPDATE vehicules SET marque = :marque, disponibilite = :disp, prix = :prix, description = :desc WHERE vehicule_id = :id";
+        $description = htmlspecialchars($description);
+        $vhc_image = htmlspecialchars($vhc_image);
+        $mileage = htmlspecialchars($mileage);
+        $model = htmlspecialchars($model);
+        $transmition = htmlspecialchars($transmition);
+        $vhc_name = htmlspecialchars($vhc_name);
+    
+        // Update query
+        $query = "UPDATE vehicules SET 
+                  marque = :marque, disponibilite = :disponibilite, 
+                  prix = :prix, description = :description, vhc_image = :vhc_image, 
+                  mileage = :mileage, model = :model, transmition = :transmition, vhc_name = :vhc_name 
+                  WHERE vehicule_id = :vehicule_id";
         $stmt = $this->conn->prepare($query);
-
-        $param = [":id" => $vehicule_id,
-                ":marque" => $marque,
-                ":disp" => $disponibilite,
-                ":prix" => $prix,
-                ":desc" => $desc];
-
-        $result = $stmt->execute($param);
-        if (!$result) {
-            echo "Record updated successfully";
-        } else {
-            echo "Error updating record";
-        }
+    
+        // Bind parameters
+        $param = [
+            // ":vehicule_id" => $vehicule_id,
+            // ":categorie_id" => $categorie_id,
+            ":marque" => $marque,
+            ":disponibilite" => $disponibilite,
+            ":prix" => $prix,
+            ":description" => $description,
+            ":vhc_image" => $vhc_image,
+            ":mileage" => $mileage,
+            ":model" => $model,
+            ":transmition" => $transmition,
+            ":vhc_name" => $vhc_name
+        ];
+    
+        // Execute query
+        $stmt->execute($param);
     }
 
     public function supprimerVeh ($vehicule_id) {
         $id = htmlspecialchars(intval($vehicule_id));
 
-        $query = "DELETE FROM vehicules WHERE vehicule_id = :id";
-        $stmt = $this->conn->prepare($query);
+        $stmt = $this->conn->prepare("DELETE FROM avis WHERE vehicule_id = :vehicule_id");
+        $stmt->execute(['vehicule_id' => $vehicule_id]);
 
-        $param = [":id" => $vehicule_id];
-        $result = $stmt->execute($param);
+        // Step 2: Delete the vehicle
+        $stmt = $this->conn->prepare("DELETE FROM vehicules WHERE vehicule_id = :vehicule_id");
+        $stmt->execute(['vehicule_id' => $vehicule_id]);
+
+        return true;
 
         if (!$result) {
             echo "Record deleted successfully";

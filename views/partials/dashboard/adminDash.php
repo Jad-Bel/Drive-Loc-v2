@@ -1,4 +1,4 @@
-<?php 
+<?php
 // session_start();
 require_once "../../../includes/session_check.php";
 require_once "../../../models/reservation.php";
@@ -11,15 +11,65 @@ $user = new User();
 
 $affvehicules = $vehicules->affAllVehicule();
 $users = $user->affUsers();
-$count = $user->countUsers(); 
+$count = $user->countUsers();
 $countVeh = $vehicules->countVeh();
 $activeReservations = $reservation->activeRsv();
 $reservations = $reservation->affAllReservation();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
+
+        if ($action === 'add_vehicle') {
+            // Add Vehicle Logic
+            $marque = $_POST['marque'];
+            $vhc_name = $_POST['vhc_name'];
+            $disponibilite = $_POST['disponibilite'];
+            $description = $_POST['description'];
+            $vhc_image = $_POST['vhc_image'];
+            $model = $_POST['model'];
+            $transmition = $_POST['transmition'];
+            $mileage = $_POST['mileage'];
+            $prix = $_POST['prix'];
+
+            $vehicules->ajouterVeh($marque, $disponibilite, $prix, $description, $vhc_image,  $mileage, $model, $transmition, $vhc_name);
+        } elseif ($action === 'edit_vehicle') {
+            // Edit Vehicle Logic
+            $vehicule_id = $_POST['vehicule_id'];
+            $marque = $_POST['marque'];
+            $description = $_POST['description'];
+            $vhc_image = $_POST['vhc_image'];
+            $vhc_name = $_POST['vhc_name'];
+            $disponibilite = $_POST['disponibilite'];
+            $model = $_POST['model'];
+            $transmition = $_POST['transmition'];
+            $mileage = $_POST['mileage'];
+            $prix = $_POST['prix'];
+
+            $vehicules->modifierVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name);
+        } elseif ($action === 'delete_vehicle') {
+            // Delete Vehicle Logic
+            $vehicule_id = $_POST['vehicule_id'];
+            $vehicules->supprimerVeh($vehicule_id);
+        } elseif ($action === 'accept_reservation') {
+            // Accept Reservation Logic
+            $rsv_id = $_POST['rsv_id'];
+            $reservation->accRes($rsv_id);
+        } elseif ($action === 'decline_reservation') {
+            // Decline Reservation Logic
+            $rsv_id = $_POST['rsv_id'];
+            $reservation->decRes($rsv_id);
+        } elseif ($action === 'delete_user') {
+            $user_id = $_POST['user_id'];
+            $user->supprimerUser($user_id);
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,20 +86,24 @@ $reservations = $reservation->affAllReservation();
             background-color: #f8f9fa;
             z-index: 100;
         }
+
         .main-content {
             margin-left: 200px;
             padding-top: 56px;
         }
+
         @media (max-width: 768px) {
             .sidebar {
                 position: static;
                 height: auto;
                 padding-top: 0;
             }
+
             .main-content {
                 margin-left: 0;
             }
         }
+
         .error-message {
             color: red;
             font-size: 0.875em;
@@ -57,6 +111,7 @@ $reservations = $reservation->affAllReservation();
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -170,14 +225,26 @@ $reservations = $reservation->affAllReservation();
                             <td><?= $rsv['rsv_id'] ?></td>
                             <td><?= $rsv['user_id'] ?></td>
                             <td><?= $rsv['vehicule_id'] ?></td>
-                            <td><?= $rsv['date_return'] ?></td>
                             <td><?= $rsv['date_pickup'] ?></td>
+                            <td><?= $rsv['date_return'] ?></td>
                             <td><?= $rsv['lieu_pickup'] ?></td>
                             <td><?= $rsv['lieu_return'] ?></td>
-                            
+
                             <td>
-                                <button class="btn btn-sm btn-success">Accept</button>
-                                <button class="btn btn-sm btn-danger">Decline</button>
+                                <!-- <button class="btn btn-sm btn-success">Accept</button>
+                                <button class="btn btn-sm btn-danger">Decline</button> -->
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="accept_reservation">
+                                    <input type="hidden" name="rsv_id" value="<?= $rsv['rsv_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                </form>
+
+                                <!-- Decline Reservation Form -->
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="decline_reservation">
+                                    <input type="hidden" name="rsv_id" value="<?= $rsv['rsv_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">Decline</button>
+                                </form>
                             </td>
                         </tr>
                     <?php } ?>
@@ -195,6 +262,7 @@ $reservations = $reservation->affAllReservation();
                         <th>ID</th>
                         <th>Marque</th>
                         <th>Name</th>
+                        <th>Disponibilite</th>
                         <th>Year</th>
                         <th>Transmission</th>
                         <th>Mileage</th>
@@ -204,19 +272,35 @@ $reservations = $reservation->affAllReservation();
                 </thead>
                 <tbody>
                     <?php foreach ($affvehicules as $vhc): ?>
-                    <tr>
-                        <td><?= $vhc['vehicule_id'] ?></td>
-                        <td><?= $vhc['marque'] ?></td>
-                        <td><?= $vhc['vhc_name'] ?></td>
-                        <td><?= $vhc['model'] ?></td>
-                        <td><?= $vhc['transmition'] ?></td>
-                        <td><?= $vhc['mileage'] ?></td>
-                        <td><?= $vhc['prix'] ?></td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editVehicleModal">Edit</button>
-                            <button class="btn btn-sm btn-danger">Delete</button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><?= $vhc['vehicule_id'] ?></td>
+                            <td><?= $vhc['marque'] ?></td>
+                            <td><?= $vhc['vhc_name'] ?></td>
+                            <td><?php
+                                if ($vhc['disponibilite'] == 1) {
+                                    echo "Available";
+                                } else {
+                                    echo "Not Available";
+                                } ?></td>
+                            <td><?= $vhc['model'] ?></td>
+                            <td><?= $vhc['transmition'] ?></td>
+                            <td><?= $vhc['mileage'] ?>Km</td>
+                            <td>$<?= $vhc['prix'] ?></td>
+                            <td class="d-flex gap-2">
+                                <!-- <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editVehicleModal">Edit</button>
+                            <button class="btn btn-sm btn-danger">Delete</button> -->
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="edit_vehicle">
+                                    <input type="hidden" name="vehicule_id" value="<?= $vhc['vehicule_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                                </form>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="delete_vehicle">
+                                    <input type="hidden" name="vehicule_id" value="<?= $vhc['vehicule_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -235,15 +319,19 @@ $reservations = $reservation->affAllReservation();
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($users as $user) { ?>
-                    <tr>
-                        <td><?= $user['user_id'] ?></td>
-                        <td><?= $user['user_name'] . " " . $user['user_last']?></td>
-                        <td><?= $user['user_email'] ?></td>
-                        <td>
-                            <a href="" class="btn btn-sm btn-danger">Delete</a>
-                        </td>
-                    </tr>
+                    <?php foreach ($users as $user) { ?>
+                        <tr>
+                            <td><?= $user['user_id'] ?></td>
+                            <td><?= $user['user_name'] . " " . $user['user_last'] ?></td>
+                            <td><?= $user['user_email'] ?></td>
+                            <td>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="delete_user">
+                                    <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
                     <?php } ?>
                 </tbody>
             </table>
@@ -259,32 +347,59 @@ $reservations = $reservation->affAllReservation();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addVehicleForm">
+                    <form id="addVehicleForm" method="POST" action="">
+                        <input type="hidden" name="action" value="add_vehicle">
                         <div class="mb-3">
-                            <label for="vehicleMake" class="form-label">Make</label>
-                            <input type="text" class="form-control" id="vehicleMake" required>
+                            <label for="vehicleMarque" class="form-label">Marque</label>
+                            <input type="text" class="form-control" id="vehicleMake" name="marque" required>
                             <div class="error-message" id="vehicleMakeError"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="vehicleModel" class="form-label">Model</label>
-                            <input type="text" class="form-control" id="vehicleModel" required>
-                            <div class="error-message" id="vehicleModelError"></div>
+                            <label for="editVehicleMake" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editVehicleName" name="vhc_name" required>
+                            <div class="error-message" id="editVehicleMakeError"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="vehicleYear" class="form-label">Year</label>
-                            <input type="number" class="form-control" id="vehicleYear" required>
+                            <label for="vehicleModel" class="form-label">Model</label>
+                            <input type="number" class="form-control" id="vehicleModelInput" name="model" required>
                             <div class="error-message" id="vehicleYearError"></div>
                         </div>
                         <div class="mb-3">
+                            <label for="vehicleImg" class="form-label">Vehicle Image</label>
+                            <input type="url" class="form-control" id="vehicleImage" name="vhc_image" placeholder="https://www.example.com">
+                            <div class="error-message" id="vehicleImageError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicleDisponibilite" class="form-label">Disponibilite</label>
+                            <input type="number" min="0" max="1" class="form-control" id="vehicleDisponibilite" name="disponibilite" required>
+                            <div class="error-message" id="vehicleDispError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicleMileage" class="form-label">Mileage</label>
+                            <input type="number" class="form-control" id="vehicleMileage" name="mileage" required>
+                            <div class="error-message" id="vehicleMileageError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicleTransmission" class="form-label">Transmission</label>
+                            <input type="text" class="form-control" id="vehicleTransmission" name="transmition" required>
+                            <div class="error-message" id="vehicleTransError"></div>
+                        </div>
+                        <div class="mb-3">
                             <label for="vehiclePrice" class="form-label">Price per Day</label>
-                            <input type="number" class="form-control" id="vehiclePrice" required>
+                            <input type="number" class="form-control" id="vehiclePrice" name="prix" required>
                             <div class="error-message" id="vehiclePriceError"></div>
                         </div>
+                        <div class="mb-3">
+                            <label for="vehicleDescription" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="vehicleDescription" name="description" required>
+                            <div class="error-message" id="vehicleDesError"></div>
+                        </div>
+                        <!-- Submit button inside the form -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Vehicle</button>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="addVehicleButton">Add Vehicle</button>
                 </div>
             </div>
         </div>
@@ -299,26 +414,51 @@ $reservations = $reservation->affAllReservation();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editVehicleForm">
+                    <form id="editVehicleForm" method="POST">
                         <div class="mb-3">
-                            <label for="editVehicleMake" class="form-label">Make</label>
-                            <input type="text" class="form-control" id="editVehicleMake" value="Toyota" required>
+                            <label for="editVehicleMake" class="form-label">Marque</label>
+                            <input type="text" class="form-control" id="editVehicleMake" name="marque" required>
+                            <div class="error-message" id="editVehicleMakeError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editVehicleMake" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editVehicleName" name="vhc_name" required>
                             <div class="error-message" id="editVehicleMakeError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="editVehicleModel" class="form-label">Model</label>
-                            <input type="text" class="form-control" id="editVehicleModel" value="Camry" required>
+                            <input type="number" class="form-control" id="editVehicleModel" name="model" required>
                             <div class="error-message" id="editVehicleModelError"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="editVehicleYear" class="form-label">Year</label>
-                            <input type="number" class="form-control" id="editVehicleYear" value="2022" required>
-                            <div class="error-message" id="editVehicleYearError"></div>
+                            <label for="editVehicleImg" class="form-label">Vehicule image</label>
+                            <input type="url" class="form-control" id="editVehicleImg" name="vhc_image" placeholder="https://www.example.com">
+                            <div class="error-message" id="editVehicleImgError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editVehicleDisponibilite" class="form-label">Disponibilité</label>
+                            <input type="number" min="0" max="1" class="form-control" id="editVehicleDisponibilite" name="disponibilite" required>
+                            <div class="error-message" id="editVehicleDisponibiliteError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editVehicleMileage" class="form-label">Mileage</label>
+                            <input type="number" class="form-control" id="editVehicleMileage" name="mileage" required>
+                            <div class="error-message" id="editVehicleMileageError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editVehicleTransmission" class="form-label">Transmission</label>
+                            <input type="text" class="form-control" id="editVehicleTransmission" name="transmission" required>
+                            <div class="error-message" id="editVehicleTransmissionError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="editVehiclePrice" class="form-label">Price per Day</label>
-                            <input type="number" class="form-control" id="editVehiclePrice" value="50" required>
+                            <input type="number" class="form-control" id="editVehiclePrice" name="prix" required>
                             <div class="error-message" id="editVehiclePriceError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editVehicleDescription" class="form-label">Description</label>
+                            <input type="text" class="form-control" id="editVehicleDescription" name="description" required>
+                            <div class="error-message" id="editVehicleDescriptionError"></div>
                         </div>
                     </form>
                 </div>
@@ -330,8 +470,9 @@ $reservations = $reservation->affAllReservation();
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../js/validation.js"></script>
-</body>
-</html>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../../js/validation.js"></script>
+</body>
+
+</html>

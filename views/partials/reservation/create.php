@@ -21,13 +21,13 @@ try {
     throw new Exception($e->getMessage());
 }
 var_dump($vehicule_id);
-var_dump($user_id);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $date_rsv = date('Y-m-d');
-
+        
         $user_id = $_SESSION['user_id'];
+        var_dump($user_id);
         // $user_id = 9;
         $vehicule_id = $_POST['vehicule_id'];
         $date_pickup = $_POST['date_pickup'];
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error_message = $e->getMessage();
     }
 }
-var_dump($_GET['prix']); // Check if price is passed correctly
+// var_dump($_GET['prix']); // Check if price is passed correctly
 
 ?>
 

@@ -93,6 +93,24 @@ class User {
         $count = $stmt->fetchColumn();
         return $count;
     }
+
+    public function supprimerUser($user_id) {
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM avis WHERE user_id = :user_id");
+            $stmt->execute(['user_id' => $user_id]);
+            
+            $stmt = $this->conn->prepare("DELETE FROM reservation WHERE user_id = :user_id");
+            $stmt->execute(['user_id' => $user_id]);
+    
+            $stmt = $this->conn->prepare("DELETE FROM users WHERE user_id = :user_id");
+            $stmt->execute(['user_id' => $user_id]);
+    
+            return true;
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+            return false;
+        }
+    }
 }
 
 // Example usage

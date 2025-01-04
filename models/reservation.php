@@ -46,7 +46,7 @@ class reservation {
 
     }
 
-    public function cancelRes ($rsv_id) {
+    public function deleteRes ($rsv_id) {
         try {
             $id = htmlspecialchars(intval($rsv_id));
             $query = "DELETE FROM reservation WHERE rsv_id = :id";
@@ -95,7 +95,35 @@ class reservation {
             throw new Error("cannot get active reservation:" . $e->getMessage());
         }
     }
+
+    public function accRes ($rsv_id) {
+        try {
+            $query = "UPDATE reservation SET status = 1 WHERE rsv_id = :rsv_id";
+            $stmt = $this->conn->prepare($query);
+
+            $param = [":rsv_id" => $rsv_id];
+
+            $stmt->execute($param);
+        } catch (Exception $e) {
+            throw new Error("cannot accept reservation:" . $e->getMessage());
+        }
+    }
+
+    public function decRes ($rsv_id) {
+        try {
+            $query = "UPDATE reservation SET status = 0 WHERE rsv_id = :rsv_id";
+            $stmt = $this->conn->prepare($query);
+
+            $param = [":rsv_id" => $rsv_id];
+
+            $stmt->execute($param);
+        } catch (Exception $e) {
+            throw new Error("cannot decline reservation:" . $e->getMessage());
+        }
+    }
 }
+
+
 
 // $rsv = new reservation();
 // $res = $rsv->modifierRes(2, 8, 3, "2021-06-01", "2021-06-02", "2021-06-03", "Paris", "Lyon");
