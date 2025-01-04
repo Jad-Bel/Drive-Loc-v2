@@ -96,6 +96,15 @@ class vehicule {
 
 
     }
+
+    public function countVeh () {
+        $query = "SELECT COUNT(*) AS total FROM vehicules";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        $count = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $count['total'];
+    }
 }
 
 class vehiculeList {

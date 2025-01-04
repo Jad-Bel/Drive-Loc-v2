@@ -9,9 +9,10 @@ $reservation = new Reservation();
 $vehicules = new vehicule();
 $user = new User();
 
-$vehicules = $vehicules->affAllVehicule();
+$affvehicules = $vehicules->affAllVehicule();
 $users = $user->affUsers();
 $count = $user->countUsers(); 
+$countVeh = $vehicules->countVeh();
 $reservations = $reservation->affAllReservation();
 
 ?>
@@ -122,7 +123,7 @@ $reservations = $reservation->affAllReservation();
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Total Vehicles</h5>
-                            <p class="card-text display-4">50</p>
+                            <p class="card-text display-4"><?= $countVeh ?></p>
                         </div>
                     </div>
                 </div>
