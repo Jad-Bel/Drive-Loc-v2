@@ -2,6 +2,7 @@
 require_once "../../../models/reservation.php";
 require_once "../../../models/user.php";
 require_once "../../../models/vehicule.php";
+require_once "../../../includes/session_check.php";
 
 
 $reservation = new reservation();
@@ -9,6 +10,7 @@ $vehiculObj = new vehicule();
 
 
 $vehicule_id = isset($_GET['vehicule_id']) ? $_GET['vehicule_id'] : null;
+// $vehicule_price = isset($_GET['prix']) ? $_GET['prix'] : null;
 $vehiculeDetails = null;
 try {
     $vehiculeDetails = $vehiculObj->getVehiculeById($vehicule_id);
@@ -18,21 +20,24 @@ try {
 } catch (Exception $e) {
     throw new Exception($e->getMessage());
 }
+var_dump($vehicule_id);
+var_dump($user_id);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $date_rsv = date('Y-m-d');
 
-        // $user_id = $_SESSION['user_id'];
-        $user_id = 9;
+        $user_id = $_SESSION['user_id'];
+        // $user_id = 9;
         $vehicule_id = $_POST['vehicule_id'];
         $date_pickup = $_POST['date_pickup'];
         $date_return = $_POST['date_return'];
         $lieu_pickup = $_POST['lieu_pickup'];
         $lieu_return = $_POST['lieu_return'];
+        $vehicule_price = $_POST['prix'];
 
 
-        if (strtotime($date_pickup) < strtotime($date_return)) {
+        if (strtotime($date_pickup) > strtotime($date_return)) {
             throw new Exception("Return date must be after pickup date");
         }
 
@@ -47,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $date_pickup,
             $date_return,
             $lieu_pickup,
-            $lieu_return
+            $lieu_return,
+            $vehicule_price
         );
 
         $success_message = "Reservation booked successfully";
@@ -55,6 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error_message = $e->getMessage();
     }
 }
+var_dump($_GET['prix']); // Check if price is passed correctly
+
 ?>
 
 <!DOCTYPE html>
@@ -286,11 +294,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <?php endif; ?>
                     
                     <form method="post" action="">
+                    <input type="hidden" name="price" value="<?php echo isset($_GET['prix']) ? htmlspecialchars($_GET['prix']) : ''; ?>" />
                         <!-- Hidden input for vehicule_id from URL parameter -->
                         <input type="hidden" name="vehicule_id" value="<?php echo isset($_GET['vehicule_id']) ? htmlspecialchars($_GET['vehicule_id']) : ''; ?>">
                         
                         <div class="row">
                             <div class="col-6 form-group">
+                            <label for="pickup location">Pickup location</label>
                                 <select class="custom-select px-4" style="height: 50px;" name="lieu_pickup" required>
                                     <option value="">Select Pickup Location</option>
                                     <option value="Casablanca">Casablanca</option>
@@ -300,6 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </select>
                             </div>
                             <div class="col-6 form-group">
+                            <label for="return location">Return location</label>
                                 <select class="custom-select px-4" style="height: 50px;" name="lieu_return" required>
                                     <option value="">Select Return Location</option>
                                     <option value="Casablanca">Casablanca</option>
@@ -312,6 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="row">
                             <div class="col-6 form-group">
                                 <div class="date" id="date2" data-target-input="nearest">
+                                    <label for="pickup date">Pickup Date</label>
                                     <input type="date" class="form-control p-4" 
                                            name="date_pickup" required
                                            min="<?php echo date('Y-m-d'); ?>"
@@ -320,6 +332,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="col-6 form-group">
                                 <div class="date" id="date3" data-target-input="nearest">
+                                    <label for="return date">Return Date</label>
                                     <input type="date" class="form-control p-4" 
                                            name="date_return" required
                                            min="<?php echo date('Y-m-d'); ?>"

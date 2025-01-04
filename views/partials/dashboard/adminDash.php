@@ -13,6 +13,7 @@ $affvehicules = $vehicules->affAllVehicule();
 $users = $user->affUsers();
 $count = $user->countUsers(); 
 $countVeh = $vehicules->countVeh();
+$activeReservations = $reservation->activeRsv();
 $reservations = $reservation->affAllReservation();
 
 ?>
@@ -131,7 +132,7 @@ $reservations = $reservation->affAllReservation();
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Active Reservations</h5>
-                            <p class="card-text display-4">25</p>
+                            <p class="card-text display-4"><?= $activeReservations ?></p>
                         </div>
                     </div>
                 </div>
@@ -164,13 +165,13 @@ $reservations = $reservation->affAllReservation();
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($reservation as $rsv) { ?>
+                    <?php foreach ($reservations as $rsv) { ?>
                         <tr>
                             <td><?= $rsv['rsv_id'] ?></td>
                             <td><?= $rsv['user_id'] ?></td>
                             <td><?= $rsv['vehicule_id'] ?></td>
-                            <td><?= $rsv['date_pickup'] ?></td>
                             <td><?= $rsv['date_return'] ?></td>
+                            <td><?= $rsv['date_pickup'] ?></td>
                             <td><?= $rsv['lieu_pickup'] ?></td>
                             <td><?= $rsv['lieu_return'] ?></td>
                             
@@ -202,7 +203,7 @@ $reservations = $reservation->affAllReservation();
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($vehicules as $vhc): ?>
+                    <?php foreach ($affvehicules as $vhc): ?>
                     <tr>
                         <td><?= $vhc['vehicule_id'] ?></td>
                         <td><?= $vhc['marque'] ?></td>
@@ -240,7 +241,7 @@ $reservations = $reservation->affAllReservation();
                         <td><?= $user['user_name'] . " " . $user['user_last']?></td>
                         <td><?= $user['user_email'] ?></td>
                         <td>
-                            <button class="btn btn-sm btn-danger">Delete</button>
+                            <a href="" class="btn btn-sm btn-danger">Delete</a>
                         </td>
                     </tr>
                     <?php } ?>

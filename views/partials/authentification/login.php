@@ -1,12 +1,12 @@
 <?php
 // require_once __DIR__ . "../../config/database.php";
 require_once "../../../models/user.php";
-
+require_once "../../../config/connect.php";
 session_start();
 
-$db = new Database();
-$conn = $db->getdatabase();
-$user = new user($conn);
+// $db = new Database();
+// $conn = $db->getdatabase();
+$user = new user();
 
 $loginError = '';
 

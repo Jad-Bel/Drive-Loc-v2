@@ -23,9 +23,9 @@ class reservation {
         }
     }
 
-    public function bookRes ($user_id, $vehicule_id, $date_rsv, $date_pickup, $date_return, $lieu_pickup, $lieu_return) {
+    public function bookRes ($user_id, $vehicule_id, $date_rsv, $date_pickup, $date_return, $lieu_pickup, $lieu_return, $prix) {
         try {
-            $query = "INSERT INTO reservation (user_id, vehicule_id, date_rsv, date_pickup, date_return, lieu_pickup, lieu_return) VALUE (:user_id, :vehicule_id, :date_rsv, :date_pickup, :date_return, :lieu_pickup, :lieu_return)";
+            $query = "INSERT INTO reservation (user_id, vehicule_id, date_rsv, date_pickup, date_return, lieu_pickup, lieu_return, prix) VALUE (:user_id, :vehicule_id, :date_rsv, :date_pickup, :date_return, :lieu_pickup, :lieu_return, :price)";
             $stmt = $this->conn->prepare($query);
 
             $param = [
@@ -35,7 +35,8 @@ class reservation {
                         ":date_pickup" => $date_pickup,
                         ":date_return" => $date_return, 
                         ":lieu_pickup" => $lieu_pickup, 
-                        ":lieu_return" => $lieu_return
+                        ":lieu_return" => $lieu_return,
+                        ":price" => $prix
                         ];
             
             $stmt->execute($param);
@@ -78,6 +79,20 @@ class reservation {
             $stmt->execute($param);
         } catch (Exception $e) {
             throw new Error("cannot update reservation:" . $e->getMessage());
+        }
+    }
+
+    public function activeRsv () {
+        try {
+            $query = "SELECT * FROM reservation WHERE date_rsv > NOW()";
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute();
+
+            $reservation = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return (int)$reservation;
+        } catch (Exception $e) {
+            throw new Error("cannot get active reservation:" . $e->getMessage());
         }
     }
 }
