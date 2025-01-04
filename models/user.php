@@ -1,6 +1,6 @@
 <?php
 
-include "../../../config/connect.php";
+// include "../../../config/connect.php";
 
 class User {
     protected $conn;
@@ -74,6 +74,24 @@ class User {
             error_log("Database error: " . $e->getMessage());
             throw new Exception("An error occurred, please try again later.");
         }
+    }
+
+    public function affUsers () {
+        $query = "SELECT * FROM users";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $users;
+    }
+
+    public function countUsers () {
+        $query = "SELECT COUNT(*) FROM users";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        $count = $stmt->fetchColumn();
+        return $count;
     }
 }
 

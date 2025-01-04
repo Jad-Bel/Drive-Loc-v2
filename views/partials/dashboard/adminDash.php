@@ -1,11 +1,20 @@
 <?php 
-session_start();
+// session_start();
 require_once "../../../includes/session_check.php";
-require_once "../../../models/user.php";
+require_once "../../../models/reservation.php";
+require_once "../../../models/vehicule.php";
 require_once "../../../models/user.php";
 
+$reservation = new Reservation();
+$vehicules = new vehicule();
+$user = new User();
 
- ?>
+$vehicules = $vehicules->affAllVehicule();
+$users = $user->affUsers();
+$count = $user->countUsers(); 
+$reservations = $reservation->affAllReservation();
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -105,7 +114,7 @@ require_once "../../../models/user.php";
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">Total Users</h5>
-                            <p class="card-text display-4">150</p>
+                            <p class="card-text display-4"><?= $count ?></p>
                         </div>
                     </div>
                 </div>
@@ -147,35 +156,29 @@ require_once "../../../models/user.php";
                         <th>Vehicle</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <th>Status</th>
+                        <th>pick up place</th>
+                        <th>return place</th>
                         <th>Actions</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>John Doe</td>
-                        <td>Toyota Camry</td>
-                        <td>2023-05-01</td>
-                        <td>2023-05-05</td>
-                        <td>Pending</td>
-                        <td>
-                            <button class="btn btn-sm btn-success">Accept</button>
-                            <button class="btn btn-sm btn-danger">Decline</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jane Smith</td>
-                        <td>Honda Civic</td>
-                        <td>2023-05-03</td>
-                        <td>2023-05-07</td>
-                        <td>Accepted</td>
-                        <td>
-                            <button class="btn btn-sm btn-secondary" disabled>Accept</button>
-                            <button class="btn btn-sm btn-danger">Cancel</button>
-                        </td>
-                    </tr>
+                    <?php foreach ($reservation as $rsv) { ?>
+                        <tr>
+                            <td><?= $rsv['rsv_id'] ?></td>
+                            <td><?= $rsv['user_id'] ?></td>
+                            <td><?= $rsv['vehicule_id'] ?></td>
+                            <td><?= $rsv['date_pickup'] ?></td>
+                            <td><?= $rsv['date_return'] ?></td>
+                            <td><?= $rsv['lieu_pickup'] ?></td>
+                            <td><?= $rsv['lieu_return'] ?></td>
+                            
+                            <td>
+                                <button class="btn btn-sm btn-success">Accept</button>
+                                <button class="btn btn-sm btn-danger">Decline</button>
+                            </td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </section>
@@ -188,36 +191,31 @@ require_once "../../../models/user.php";
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Make</th>
-                        <th>Model</th>
+                        <th>Marque</th>
+                        <th>Name</th>
                         <th>Year</th>
+                        <th>Transmission</th>
+                        <th>Mileage</th>
                         <th>Price per Day</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php foreach ($vehicules as $vhc): ?>
                     <tr>
-                        <td>1</td>
-                        <td>Toyota</td>
-                        <td>Camry</td>
-                        <td>2022</td>
-                        <td>$50</td>
+                        <td><?= $vhc['vehicule_id'] ?></td>
+                        <td><?= $vhc['marque'] ?></td>
+                        <td><?= $vhc['vhc_name'] ?></td>
+                        <td><?= $vhc['model'] ?></td>
+                        <td><?= $vhc['transmition'] ?></td>
+                        <td><?= $vhc['mileage'] ?></td>
+                        <td><?= $vhc['prix'] ?></td>
                         <td>
                             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editVehicleModal">Edit</button>
                             <button class="btn btn-sm btn-danger">Delete</button>
                         </td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Honda</td>
-                        <td>Civic</td>
-                        <td>2021</td>
-                        <td>$45</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editVehicleModal">Edit</button>
-                            <button class="btn btn-sm btn-danger">Delete</button>
-                        </td>
-                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </section>
@@ -231,29 +229,20 @@ require_once "../../../models/user.php";
                         <th>ID</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Registration Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                <?php foreach ($users as $user) { ?>
                     <tr>
-                        <td>1</td>
-                        <td>John Doe</td>
-                        <td>john@example.com</td>
-                        <td>2023-01-15</td>
+                        <td><?= $user['user_id'] ?></td>
+                        <td><?= $user['user_name'] . " " . $user['user_last']?></td>
+                        <td><?= $user['user_email'] ?></td>
                         <td>
                             <button class="btn btn-sm btn-danger">Delete</button>
                         </td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Jane Smith</td>
-                        <td>jane@example.com</td>
-                        <td>2023-02-20</td>
-                        <td>
-                            <button class="btn btn-sm btn-danger">Delete</button>
-                        </td>
-                    </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </section>
