@@ -96,7 +96,7 @@ class vehicule {
     
         // Bind parameters
         $param = [
-            // ":vehicule_id" => $vehicule_id,
+            ":vehicule_id" => $vehicule_id,
             // ":categorie_id" => $categorie_id,
             ":marque" => $marque,
             ":disponibilite" => $disponibilite,
