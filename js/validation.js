@@ -46,3 +46,53 @@ document.getElementById('addVehicleForm').addEventListener('submit', function(ev
         });
     }
 });
+
+document.getElementById('editVehicleButton').addEventListener('click', function(event) {
+    let isValid = true;
+    
+    const regexPatterns = {
+        marque: /^[A-Za-z\s]{3,}$/, 
+        vhc_name: /^[A-Za-z0-9\s]{3,}$/, 
+        model: /^[0-9]{4}$/, 
+        vhc_image: /^(https?:\/\/)?([a-zA-Z0-9]+[\-\.])*([a-zA-Z0-9]+)\.([a-zA-Z]{2,})$/,
+        disponibilite: /^[0-1]$/, 
+        mileage: /^[0-9]+$/, 
+        transmission: /^[A-Za-z\s]+$/, 
+        prix: /^[0-9]+(\.[0-9]{1,2})?$/, 
+        description: /^[A-Za-z0-9\s]{5,}$/ 
+    };
+
+    function validateField(input, regex, errorMessageElement) {
+        const value = input.value.trim();
+        if (!value.match(regex)) {
+            isValid = false;
+            errorMessageElement.innerText = `Invalid ${input.name}. Please follow the correct format.`;
+            errorMessageElement.style.display = 'block';
+            input.classList.add('is-invalid');
+        } else {
+            errorMessageElement.style.display = 'none';
+            input.classList.remove('is-invalid');
+        }
+    }
+
+    validateField(document.getElementById('editVehicleMakeInput'), regexPatterns.marque, document.getElementById('editVehicleMakeError'));
+    validateField(document.getElementById('editVehicleNameInput'), regexPatterns.vhc_name, document.getElementById('editVehicleNameError'));
+    validateField(document.getElementById('editVehicleModelInput'), regexPatterns.model, document.getElementById('editVehicleModelError'));
+    validateField(document.getElementById('editVehicleImgInput'), regexPatterns.vhc_image, document.getElementById('editVehicleImgError'));
+    validateField(document.getElementById('editVehicleDisponibiliteInput'), regexPatterns.disponibilite, document.getElementById('editVehicleDisponibiliteError'));
+    validateField(document.getElementById('editVehicleMileageInput'), regexPatterns.mileage, document.getElementById('editVehicleMileageError'));
+    validateField(document.getElementById('editVehicleTransmissionInput'), regexPatterns.transmission, document.getElementById('editVehicleTransmissionError'));
+    validateField(document.getElementById('editVehiclePriceInput'), regexPatterns.prix, document.getElementById('editVehiclePriceError'));
+    validateField(document.getElementById('editVehicleDescriptionInput'), regexPatterns.description, document.getElementById('editVehicleDescriptionError'));
+
+    if (!isValid) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Error!',
+            text: 'Please correct the errors in the form.',
+            icon: 'error',
+            confirmButtonText: 'Close'
+        });
+    }
+});
+

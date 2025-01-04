@@ -408,68 +408,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Edit Vehicle Modal -->
     <div class="modal fade" id="editVehicleModal" tabindex="-1" aria-labelledby="editVehicleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editVehicleModalLabel">Edit Vehicle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editVehicleForm" method="POST">
-                        <div class="mb-3">
-                            <label for="editVehicleMake" class="form-label">Marque</label>
-                            <input type="text" class="form-control" id="editVehicleMake" name="marque" >
-                            <div class="error-message" id="editVehicleMakeError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehicleMake" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="editVehicleName" name="vhc_name" >
-                            <div class="error-message" id="editVehicleMakeError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehicleModel" class="form-label">Model</label>
-                            <input type="number" class="form-control" id="editVehicleModel" name="model" >
-                            <div class="error-message" id="editVehicleModelError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehicleImg" class="form-label">Vehicule image</label>
-                            <input type="url" class="form-control" id="editVehicleImg" name="vhc_image" placeholder="https://www.example.com">
-                            <div class="error-message" id="editVehicleImgError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehicleDisponibilite" class="form-label">Disponibilité</label>
-                            <input type="number" min="0" max="1" class="form-control" id="editVehicleDisponibilite" name="disponibilite" >
-                            <div class="error-message" id="editVehicleDisponibiliteError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehicleMileage" class="form-label">Mileage</label>
-                            <input type="number" class="form-control" id="editVehicleMileage" name="mileage" >
-                            <div class="error-message" id="editVehicleMileageError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehicleTransmission" class="form-label">Transmission</label>
-                            <input type="text" class="form-control" id="editVehicleTransmission" name="transmission" >
-                            <div class="error-message" id="editVehicleTransmissionError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehiclePrice" class="form-label">Price per Day</label>
-                            <input type="number" class="form-control" id="editVehiclePrice" name="prix" >
-                            <div class="error-message" id="editVehiclePriceError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editVehicleDescription" class="form-label">Description</label>
-                            <input type="text" class="form-control" id="editVehicleDescription" name="description" >
-                            <div class="error-message" id="editVehicleDescriptionError"></div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="editVehicleButton">Save Changes</button>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editVehicleModalLabel">Edit Vehicle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editVehicleForm" method="POST">
+                    <div class="mb-3">
+                        <label for="editVehicleMakeInput" class="form-label">Marque</label>
+                        <input type="text" class="form-control" id="editVehicleMakeInput" name="marque">
+                        <div class="error-message" id="editVehicleMakeError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleNameInput" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editVehicleNameInput" name="vhc_name">
+                        <div class="error-message" id="editVehicleNameError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleModelInput" class="form-label">Model</label>
+                        <input type="number" class="form-control" id="editVehicleModelInput" name="model">
+                        <div class="error-message" id="editVehicleModelError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleImgInput" class="form-label">Vehicle Image</label>
+                        <input type="url" class="form-control" id="editVehicleImgInput" name="vhc_image" placeholder="https://www.example.com">
+                        <div class="error-message" id="editVehicleImgError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleDisponibiliteInput" class="form-label">Disponibilité</label>
+                        <input type="number" min="0" max="1" class="form-control" id="editVehicleDisponibiliteInput" name="disponibilite">
+                        <div class="error-message" id="editVehicleDisponibiliteError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleMileageInput" class="form-label">Mileage</label>
+                        <input type="number" class="form-control" id="editVehicleMileageInput" name="mileage">
+                        <div class="error-message" id="editVehicleMileageError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleTransmissionInput" class="form-label">Transmission</label>
+                        <input type="text" class="form-control" id="editVehicleTransmissionInput" name="transmission">
+                        <div class="error-message" id="editVehicleTransmissionError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehiclePriceInput" class="form-label">Price per Day</label>
+                        <input type="number" class="form-control" id="editVehiclePriceInput" name="prix">
+                        <div class="error-message" id="editVehiclePriceError"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editVehicleDescriptionInput" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="editVehicleDescriptionInput" name="description">
+                        <div class="error-message" id="editVehicleDescriptionError"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="editVehicleButton">Save Changes</button>
             </div>
         </div>
     </div>
+</div>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
