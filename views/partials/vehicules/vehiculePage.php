@@ -6,7 +6,7 @@ require_once "../../../models/categorie.php";
 $vehicules = new vehiculeList();
 $allVeh = new vehicule();
 
-$MulVehicules = $allVeh->affAllVehicule();
+$search = isset($_GET['search']) ? $_GET['search'] : '';
 
 // count the total of vehicules posted
 $totalVehicules = $vehicules->countVehicules();
@@ -23,14 +23,13 @@ if ($currentPage < 1) {
 // calculation of the offset of vehicules
 $offset = ($currentPage - 1) * $vehiclesPerPage;
 try {
-    $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
+    $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset, $search);
 } catch (Exception $e) {
     $error_message = $e->getMessage();
     $MulVehicules = [];
 }
 
 // search logic code
-$search = isset($_GET['search']) ? $_GET['search'] : '';
 
 $vehiculeClass = new vehiculeList();
 $SearchedVeh = $vehiculeClass->getVehBySearch($search);
@@ -359,30 +358,36 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
     <!-- Template Javascript -->
     <script src="../../../../js/main.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $('#live_search').keyup(function() {
-                var input = $(this).val();
-                // alert(input);
+        $(document).ready(function () {
+            $('#live_search').on('keyup', function () {
+                let searchQuery = $(this).val();
+                let currentPage = 1;
 
-                if (input != '') {
-                    $.ajax({
-                        url: '../../../models/vehicule.php',
-                        method: 'GET',
-                        data: {
-                            search: input
-                        },
-                        success: function(data) {
-                            $('.row').html(data);
-                        },
-                        error: function() {
-                            $('.row').html('<p style="color: red;">An error occurred while fetching data.</p>');
-                        }
-                    });
-                } else {
-                    // $('.row').html('');
-                }
+                $.ajax({
+                    url: 'vehiculePage.php',
+                    type: 'GET',
+                    data: {search: searchQuery, page: currentPage},
+                    succes: function (data) {
+                        $('.row').html($(data).finc('.row').html());
+                    }
+                });
             });
         });
+
+        $(document).on('click', '.pagination-link', function (e) {
+            e.preventDefault();
+            let page = $(this).data('page');
+            let searchQuery = $("#live_search").val();
+
+            $.ajax ({
+                url: 'vehiculePage.php',
+                type: 'GET',
+                data: {search: searchQuery, page: page},
+                succes: function (data) {
+                    $('.row').html($(data).find('.row').html());
+                }
+            });
+        })
     </script>
 
 </body>

@@ -152,32 +152,36 @@ class vehiculeList {
         $this->conn = $db->getdatabase();
     }
 
-    public function countVehicules () {
+    public function countVehicules ($search = '') {
         try {
-            $query = "SELECT COUNT(*) AS total FROM vehicules";
+            $query = "SELECT COUNT(*) as total FROM vehicules WHERE vhc_name LIKE :search";
             $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
             $stmt->execute();
-
-            $count = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $count['total'];
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int) $result['total'];
         } catch (Exception $e) {
             throw new Error ("Erreur de conter les vehicules: " . $e->getMessage());
         }
     }
 
-    public function getVehiclesByPage ($limit = 5, $startIndex = 0) {
+    public function getVehiclesByPage ($limit, $offset, $search = '') {
         try {
-            $stmt = $this->conn->prepare("SELECT * FROM vehicules LIMIT :limit OFFSET :startIndex");
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stmt->bindParam(':startIndex', $startIndex, PDO::PARAM_INT);
+            $query = "SELECT * FROM vehicules WHERE vhc_name LIKE :search LIMIT :limit OFFSET :offset";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
-            $vehicule = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-            return $vehicule;
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $result;
         } catch (Exception $e) {
-            throw new Error("query failed: " . $e->getMessage());
+            throw new Error("Cannot get vehicles: " . $e->getMessage());
         }
+        
     }
+
+    
 
     public function getVehiculesByCategorie($categorie_id) {
         try {
