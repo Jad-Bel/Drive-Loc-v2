@@ -1,12 +1,12 @@
 <?php
 require_once "../../../config/connect.php";
 require_once "../../../models/vehicule.php";
-require_once "../../../models/categorie.php";
 
 $vehicules = new vehiculeList();
 $allVeh = new vehicule();
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
+$MulVehicules = $allVeh->affAllVehicule();
 
 // count the total of vehicules posted
 $totalVehicules = $vehicules->countVehicules();
@@ -245,17 +245,21 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
                         <?php endif; ?>
 
                         <!-- Page Numbers -->
-                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                            <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                                <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                            </li>
-                        <?php endfor; ?>
+                            <ul class="pagination justify-content-center">
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                    <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
+                                        <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
+                                    </li>
+                                <?php endfor; ?>
+                            </ul>
 
-                        <!-- Next and Last -->
-                        <?php if ($currentPage < $totalPages): ?>
-                            <li class="page-item"><a class="page-link" href="?page=<?= $currentPage + 1 ?>">Next</a></li>
-                            <li class="page-item"><a class="page-link" href="?page=<?= $totalPages ?>">Last</a></li>
-                        <?php endif; ?>
+
+
+                            <!-- Next and Last -->
+                            <?php if ($currentPage < $totalPages): ?>
+                                <li class="page-item"><a class="page-link" href="?page=<?= $currentPage + 1 ?>">Next</a></li>
+                                <li class="page-item"><a class="page-link" href="?page=<?= $totalPages ?>">Last</a></li>
+                            <?php endif; ?>
                     </ul>
                 </nav>
             </div>
@@ -358,32 +362,45 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
     <!-- Template Javascript -->
     <script src="../../../../js/main.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#live_search').on('keyup', function () {
+        $(document).ready(function() {
+            $('#live_search').on('keyup', function(event) {
+                event.preventDefault();
                 let searchQuery = $(this).val();
                 let currentPage = 1;
 
                 $.ajax({
                     url: 'vehiculePage.php',
                     type: 'GET',
-                    data: {search: searchQuery, page: currentPage},
-                    succes: function (data) {
-                        $('.row').html($(data).finc('.row').html());
+                    data: {
+                        search: searchQuery,
+                        page: currentPage
+                    },
+                    success: function(data) {
+                        // alert(searchQuery);
+                        alert(data);
+                        $('.row').html($(data).find('.row').html());
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error: ", status, error);
                     }
+                    // error: '<p class="text-danger text-center mt-3">No vehicule found</p>';
                 });
             });
         });
 
-        $(document).on('click', '.pagination-link', function (e) {
-            e.preventDefault();
+        $(document).on('click', '.pagination-link', function(event) {
+            event.preventDefault();
             let page = $(this).data('page');
             let searchQuery = $("#live_search").val();
 
-            $.ajax ({
+            $.ajax({
                 url: 'vehiculePage.php',
                 type: 'GET',
-                data: {search: searchQuery, page: page},
-                succes: function (data) {
+                data: {
+                    search: searchQuery,
+                    page: page
+                },
+                success: function(data) {
                     $('.row').html($(data).find('.row').html());
                 }
             });
