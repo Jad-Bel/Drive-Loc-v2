@@ -13,8 +13,8 @@ class vehicule {
         $db = new Database();
         $this->conn = $db->getdatabase();
 
-        
-        
+
+
         $query = "SELECT * FROM vehicules";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
@@ -29,7 +29,7 @@ class vehicule {
             $query = "SELECT * FROM vehicules WHERE vehicule_id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->execute([':id' => $id]);
-            
+
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
             throw new Error("Cannot get vehicle: " . $e->getMessage());
@@ -37,7 +37,6 @@ class vehicule {
     }
 
     public function ajouterVeh($marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name) {
-        // Sanitize inputs
         // $categorie_id = htmlspecialchars($categorie_id);
         $marque = htmlspecialchars($marque);
         $disponibilite = htmlspecialchars($disponibilite);
@@ -48,13 +47,11 @@ class vehicule {
         $model = htmlspecialchars($model);
         $transmition = htmlspecialchars($transmition);
         $vhc_name = htmlspecialchars($vhc_name);
-    
-        // Insert query
+
         $query = "INSERT INTO vehicules (marque, disponibilite, prix, description, vhc_image, mileage, model, transmition, vhc_name) 
                   VALUES (:marque, :disponibilite, :prix, :description, :vhc_image, :mileage, :model, :transmition, :vhc_name)";
         $stmt = $this->conn->prepare($query);
-    
-        // Bind parameters
+
         $param = [
             // ":categorie_id" => $categorie_id,
             ":marque" => $marque,
@@ -67,12 +64,13 @@ class vehicule {
             ":transmition" => $transmition,
             ":vhc_name" => $vhc_name
         ];
-    
-        // Execute query
+
         $stmt->execute($param);
     }
-    
+
+
     public function modifierVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name) {
+        $vehicule_id = htmlspecialchars(intval($vehicule_id));
         $vehicule_id = htmlspecialchars(intval($vehicule_id));
         // $categorie_id = htmlspecialchars($categorie_id);
         $marque = htmlspecialchars($marque);
@@ -84,14 +82,14 @@ class vehicule {
         $model = htmlspecialchars($model);
         $transmition = htmlspecialchars($transmition);
         $vhc_name = htmlspecialchars($vhc_name);
-    
+
         $query = "UPDATE vehicules SET 
                   marque = :marque, disponibilite = :disponibilite, 
                   prix = :prix, description = :description, vhc_image = :vhc_image, 
                   mileage = :mileage, model = :model, transmition = :transmition, vhc_name = :vhc_name 
                   WHERE vehicule_id = :vehicule_id";
         $stmt = $this->conn->prepare($query);
-    
+
         $param = [
             ":vehicule_id" => $vehicule_id,
             // ":categorie_id" => $categorie_id,
@@ -105,8 +103,10 @@ class vehicule {
             ":transmition" => $transmition,
             ":vhc_name" => $vhc_name
         ];
+    
         $stmt->execute($param);
     }
+
 
     public function supprimerVeh ($vehicule_id) {
         $id = htmlspecialchars(intval($vehicule_id));
@@ -126,6 +126,15 @@ class vehicule {
         }
 
 
+    }
+
+
+    public function countVeh () {
+        $query = "SELECT COUNT(*) AS total FROM vehicules";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $count = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $count['total'];
     }
 }
 
@@ -163,29 +172,27 @@ class vehiculeList {
         } catch (Exception $e) {
             throw new Error("Cannot get vehicles: " . $e->getMessage());
         }
-        
+
     }
 
-    
 
-    // public function getVehiculesByCategorie($categorie_id) {
-    //     try {
-    //         if (empty($categorie_id)) {
-    //             $query = "SELECT * FROM vehicules";
-    //             $stmt = $this->conn->prepare($query);
-    //             $stmt->execute();
-    //         } 
-    //         else {
-    //             $query = "SELECT * FROM vehicules WHERE categorie_id = :categorie_id";
-    //             $stmt = $this->conn->prepare($query);
-    //             $stmt->execute([':categorie_id' => $categorie_id]);
-    //         }
-    
-    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    //     } catch (Exception $e) {
-    //         throw new Error("Cannot get vehicles: " . $e->getMessage());
-    //     }
-    // }
+
+    public function getVehiculesByCategorie($categorie_id) {
+        try {
+            if (empty($categorie_id)) {
+                $query = "SELECT * FROM vehicules";
+                $stmt = $this->conn->prepare($query);
+                $stmt->execute();
+            } 
+            else {
+                $query = "SELECT * FROM vehicules WHERE categorie_id = :categorie_id";
+                $stmt = $this->conn->prepare($query);
+                $stmt->execute([':categorie_id' => $categorie_id]);
+            }
+        } catch (Exception $e) {
+            throw new Error("Cannot get vehicles: " . $e->getMessage());
+        }
+    }
 
     public function getVehBySearch ($search) {
         try {
@@ -205,5 +212,3 @@ class vehiculeList {
         }
     }
 }
-
-

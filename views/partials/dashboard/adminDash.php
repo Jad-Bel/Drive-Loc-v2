@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $_POST['action'];
 
         if ($action === 'add_vehicle') {
-            // Add Vehicle Logic
             $marque = $_POST['marque'];
             $vhc_name = $_POST['vhc_name'];
             $disponibilite = $_POST['disponibilite'];
@@ -34,7 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $vehicules->ajouterVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image,  $mileage, $model, $transmition, $vhc_name);
         } elseif ($action === 'edit_vehicle') {
-            // Edit Vehicle Logic
             $vehicule_id = $_POST['vehicule_id'];
             $marque = $_POST['marque'];
             $description = $_POST['description'];
@@ -48,15 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $vehicules->modifierVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name);
         } elseif ($action === 'delete_vehicle') {
-            // Delete Vehicle Logic
             $vehicule_id = $_POST['vehicule_id'];
             $vehicules->supprimerVeh($vehicule_id);
         } elseif ($action === 'accept_reservation') {
-            // Accept Reservation Logic
             $rsv_id = $_POST['rsv_id'];
             $reservation->accRes($rsv_id);
         } elseif ($action === 'decline_reservation') {
-            // Decline Reservation Logic
             $rsv_id = $_POST['rsv_id'];
             $reservation->decRes($rsv_id);
         } elseif ($action === 'delete_user') {
