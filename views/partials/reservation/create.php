@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error_message = $e->getMessage();
     }
 }
-// var_dump($_GET['prix']); // Check if price is passed correctly
+// var_dump($_GET['prix']); 
 
 ?>
 

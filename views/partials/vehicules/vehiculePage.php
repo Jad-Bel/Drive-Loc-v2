@@ -1,34 +1,12 @@
 <?php
-// session_start();
 require_once "../../../config/connect.php";
 require_once "../../../models/vehicule.php";
 require_once "../../../models/categorie.php";
 
 $vehicules = new vehiculeList();
 $allVeh = new vehicule();
-$categorieObj = new categorie();
-// check if category is set or not the get it's value
-$categorie_id = isset($_GET['category']) ? (int)$_GET['category'] : '';
 
-// getting all ctgs and checking if there is an error
-try {
-    $categories = $categorieObj->getAllCategories();
-} catch (Exception $e) {
-    $error_message = $e->getMessage();
-    $categories = [];
-}
-
-// getting all vehicules by their ctgs
-try {
-    if (!empty($categorie_id)) {
-        $MulVehicules = $vehicules->getVehiculesByCategorie($categorie_id);
-    } else {
-        $MulVehicules = $allVeh->affAllVehicule();
-    }
-} catch (Exception $e) {
-    $error_message = $e->getMessage();
-    $MulVehicules = [];
-}
+$MulVehicules = $allVeh->affAllVehicule();
 
 // count the total of vehicules posted
 $totalVehicules = $vehicules->countVehicules();
@@ -44,7 +22,18 @@ if ($currentPage < 1) {
 }
 // calculation of the offset of vehicules
 $offset = ($currentPage - 1) * $vehiclesPerPage;
-$MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
+try {
+    $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
+} catch (Exception $e) {
+    $error_message = $e->getMessage();
+    $MulVehicules = [];
+}
+
+// search logic code
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+$vehiculeClass = new vehiculeList();
+$SearchedVeh = $vehiculeClass->getVehBySearch($search);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -215,25 +204,7 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
         <div class="container pt-5 pb-3">
             <h1 class="display-4 text-uppercase text-center mb-5">Find Your Car</h1>
             <form class="d-flex justify-content-center align-items-center mb-4" method="GET" action="">
-                <input
-                    type="text"
-                    name="search"
-                    class="form-control me-2"
-                    placeholder="Search for cars..."
-                    value="<?php  ?>"
-                    style="width: 40%; margin-right: 10px;">
-                <select
-                    name="category"
-                    class="form-select me-2"
-                    style="width: 20%; margin-right: 10px;">
-                    <option value="">All Categories</option>
-                    <?php foreach ($categories as $category): ?>
-                        <option value="<?php echo $category['categorie_id']; ?>"
-                            <?php echo (isset($categorie_id) && $categorie_id == $category['categorie_id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($category['ctg_name']); ?> 
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <input type="text" name="search" id="live_search" class="form-control me-2" placeholder="Search for cars..." value="<?= isset($search) ? htmlspecialchars($search) : '' ?>" style="width: 40%; margin-right: 10px;">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
 
@@ -387,6 +358,33 @@ $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset);
 
     <!-- Template Javascript -->
     <script src="../../../../js/main.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#live_search').keyup(function() {
+                var input = $(this).val();
+                // alert(input);
+
+                if (input != '') {
+                    $.ajax({
+                        url: '../../../models/vehicule.php',
+                        method: 'GET',
+                        data: {
+                            search: input
+                        },
+                        success: function(data) {
+                            $('.row').html(data);
+                        },
+                        error: function() {
+                            $('.row').html('<p style="color: red;">An error occurred while fetching data.</p>');
+                        }
+                    });
+                } else {
+                    // $('.row').html('');
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>

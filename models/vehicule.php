@@ -197,6 +197,24 @@ class vehiculeList {
             throw new Error("Cannot get vehicles: " . $e->getMessage());
         }
     }
+
+    public function getVehBySearch ($search) {
+        try {
+            $query = "SELECT * FROM vehicules WHERE marque LIKE :search OR vhc_name LIKE :search";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([':search' => '%' . $search . '%']);
+            $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if ($row > 0) {
+                return $row;
+            } else {
+                echo "<h6 class='text-danger text-center mt-3'>No vehicule found</h6>";
+            }
+        } catch (Exception $e) {
+            throw new Error("Cannot get vehicles: " . $e->getMessage());
+        } catch (Exception $e) {
+
+        }
+    }
 }
 // $data = new vehiculeList();
 // $result = $data->getVehiclesByPage();
@@ -209,5 +227,7 @@ class vehiculeList {
 // }
 
 ?>
+
+<!-- traversy -->
 
 <img src="" alt="">
