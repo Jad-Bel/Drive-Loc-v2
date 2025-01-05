@@ -73,8 +73,7 @@ class vehicule {
     }
     
     public function modifierVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name) {
-        // Sanitize inputs
-        // $vehicule_id = htmlspecialchars(intval($vehicule_id));
+        $vehicule_id = htmlspecialchars(intval($vehicule_id));
         // $categorie_id = htmlspecialchars($categorie_id);
         $marque = htmlspecialchars($marque);
         $disponibilite = htmlspecialchars($disponibilite);
@@ -86,7 +85,6 @@ class vehicule {
         $transmition = htmlspecialchars($transmition);
         $vhc_name = htmlspecialchars($vhc_name);
     
-        // Update query
         $query = "UPDATE vehicules SET 
                   marque = :marque, disponibilite = :disponibilite, 
                   prix = :prix, description = :description, vhc_image = :vhc_image, 
@@ -94,7 +92,6 @@ class vehicule {
                   WHERE vehicule_id = :vehicule_id";
         $stmt = $this->conn->prepare($query);
     
-        // Bind parameters
         $param = [
             ":vehicule_id" => $vehicule_id,
             // ":categorie_id" => $categorie_id,
@@ -108,8 +105,6 @@ class vehicule {
             ":transmition" => $transmition,
             ":vhc_name" => $vhc_name
         ];
-    
-        // Execute query
         $stmt->execute($param);
     }
 
@@ -119,7 +114,6 @@ class vehicule {
         $stmt = $this->conn->prepare("DELETE FROM avis WHERE vehicule_id = :vehicule_id");
         $stmt->execute(['vehicule_id' => $vehicule_id]);
 
-        // Step 2: Delete the vehicle
         $stmt = $this->conn->prepare("DELETE FROM vehicules WHERE vehicule_id = :vehicule_id");
         $stmt->execute(['vehicule_id' => $vehicule_id]);
 
@@ -132,15 +126,6 @@ class vehicule {
         }
 
 
-    }
-
-    public function countVeh () {
-        $query = "SELECT COUNT(*) AS total FROM vehicules";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-
-        $count = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $count['total'];
     }
 }
 
@@ -183,24 +168,24 @@ class vehiculeList {
 
     
 
-    public function getVehiculesByCategorie($categorie_id) {
-        try {
-            if (empty($categorie_id)) {
-                $query = "SELECT * FROM vehicules";
-                $stmt = $this->conn->prepare($query);
-                $stmt->execute();
-            } 
-            else {
-                $query = "SELECT * FROM vehicules WHERE categorie_id = :categorie_id";
-                $stmt = $this->conn->prepare($query);
-                $stmt->execute([':categorie_id' => $categorie_id]);
-            }
+    // public function getVehiculesByCategorie($categorie_id) {
+    //     try {
+    //         if (empty($categorie_id)) {
+    //             $query = "SELECT * FROM vehicules";
+    //             $stmt = $this->conn->prepare($query);
+    //             $stmt->execute();
+    //         } 
+    //         else {
+    //             $query = "SELECT * FROM vehicules WHERE categorie_id = :categorie_id";
+    //             $stmt = $this->conn->prepare($query);
+    //             $stmt->execute([':categorie_id' => $categorie_id]);
+    //         }
     
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            throw new Error("Cannot get vehicles: " . $e->getMessage());
-        }
-    }
+    //         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    //     } catch (Exception $e) {
+    //         throw new Error("Cannot get vehicles: " . $e->getMessage());
+    //     }
+    // }
 
     public function getVehBySearch ($search) {
         try {
@@ -220,15 +205,5 @@ class vehiculeList {
         }
     }
 }
-// $data = new vehiculeList();
-// $result = $data->getVehiclesByPage();
-// var_dump($result);
 
-// if (!$result) {
-//     echo "Record inserted successfully";
-// } else {
-//     echo "Error inserting record";
-// }
-
-?>
 
