@@ -206,7 +206,7 @@ class vehiculeList {
         try {
             $query = "SELECT * FROM vehicules WHERE marque LIKE :search OR vhc_name LIKE :search";
             $stmt = $this->conn->prepare($query);
-            $stmt->execute([':search' => '%' . $search . '%']);
+            $stmt->execute([':search' => '%' . $search]);
             $row = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if ($row > 0) {
                 return $row;
@@ -232,6 +232,3 @@ class vehiculeList {
 
 ?>
 
-<!-- traversy -->
-
-<img src="" alt="">

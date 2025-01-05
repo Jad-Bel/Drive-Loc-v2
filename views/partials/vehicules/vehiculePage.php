@@ -6,37 +6,72 @@ $vehicules = new vehiculeList();
 $allVeh = new vehicule();
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
-$MulVehicules = $allVeh->affAllVehicule();
-
-// count the total of vehicules posted
-$totalVehicules = $vehicules->countVehicules();
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $vehiclesPerPage = 6;
-// calculation of the total pages possible
-$totalPages = ceil($totalVehicules / $vehiclesPerPage);
-$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
 
-if ($currentPage < 1) {
-    $currentPage = 1;
-} elseif ($currentPage > $totalPages) {
-    $currentPage = $totalPages;
+// AJAX request handling
+if (isset($_GET['ajax'])) {
+    $offset = ($page - 1) * $vehiclesPerPage;
+    $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset, $search);
+    $totalVehicules = $vehicules->countVehicules($search);
+    $totalPages = ceil($totalVehicules / $vehiclesPerPage);
+
+    $response = [
+        'html' => '',
+        'totalPages' => $totalPages,
+        'currentPage' => $page
+    ];
+
+    ob_start();
+    foreach ($MulVehicules as $vehicule) {
+        ?>
+        <div class="col-lg-4 col-md-6 mb-2">
+            <div class="rent-item mb-4">
+                <img class="img-fluid mb-4" src="<?= $vehicule["vhc_image"] ?>.png" alt="<?= $vehicule["marque"] ?>">
+                <h4 class="text-uppercase mb-4"><?= "(" . $vehicule["marque"] . ")" . " " . $vehicule["vhc_name"] ?></h4>
+                <div class="d-flex justify-content-center mb-4">
+                    <div class="px-2">
+                        <i class="fa fa-car text-primary mr-1" aria-hidden="true"></i>
+                        <span><?= $vehicule["model"] ?></span>
+                    </div>
+                    <div class="px-2 border-left border-right">
+                        <i class="fa fa-cogs text-primary mr-1" aria-hidden="true"></i>
+                        <span><?= $vehicule["transmition"] ?></span>
+                    </div>
+                    <div class="px-2">
+                        <i class="fa fa-road text-primary mr-1" aria-hidden="true"></i>
+                        <span><?= $vehicule["mileage"] ?>K</span>
+                    </div>
+                </div>
+                <a class="btn btn-primary px-3" href="../reservation/create.php?vehicule_id=<?= $vehicule["vehicule_id"] ?>">
+                    $<?= number_format($vehicule["prix"]) ?>/Day
+                </a>
+            </div>
+        </div>
+        <?php
+    }
+    $response['html'] = ob_get_clean();
+
+    echo json_encode($response);
+    exit;
 }
-// calculation of the offset of vehicules
+
+// Regular page load
+$totalVehicules = $vehicules->countVehicules($search);
+$totalPages = ceil($totalVehicules / $vehiclesPerPage);
+$currentPage = max(1, min($page, $totalPages));
 $offset = ($currentPage - 1) * $vehiclesPerPage;
+
 try {
     $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset, $search);
 } catch (Exception $e) {
     $error_message = $e->getMessage();
     $MulVehicules = [];
 }
-
-// search logic code
-
-$vehiculeClass = new vehiculeList();
-$SearchedVeh = $vehiculeClass->getVehBySearch($search);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <title>DriveLoc</title>
@@ -67,21 +102,6 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-    <style>
-        #loading {
-            padding: 20px;
-            font-size: 1.2em;
-            color: #666;
-        }
-    </style>
 </head>
 
 <body>
@@ -118,28 +138,26 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
     </div>
     <!-- Topbar End -->
 
-
     <!-- Navbar Start -->
     <div class="container-fluid position-relative nav-bar p-0">
         <div class="position-relative px-lg-5" style="z-index: 9;">
             <nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
                 <a href="" class="navbar-brand">
-                    <h1 class="text-uppercase text-primary mb-1">Drive Location</h1>
+                    <h1 class="text-uppercase text-primary mb-1">Royal Cars</h1>
                 </a>
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
                     <div class="navbar-nav ml-auto py-0">
-                        <a href="../../../layouts/main.php" class="nav-item nav-link">Home</a>
+                        <a href="../../layouts/main.php" class="nav-item nav-link">Home</a>
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="service.html" class="nav-item nav-link">Service</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cars</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="../vehiculeClient/vehiculePage.php" class="dropdown-item active">Car Listing</a>
-                                <!-- <a href="detail.html" class="dropdown-item">Car Detail</a> -->
-                                <a href="../../reservation/create.php" class="dropdown-item">Car Booking</a>
+                                <a href="car.html" class="dropdown-item">Car Listing</a>
+                                <a href="#" class="dropdown-item">Car Detail</a>
                             </div>
                         </div>
                         <div class="nav-item dropdown">
@@ -157,54 +175,6 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
     </div>
     <!-- Navbar End -->
 
-
-    <!-- Search Start -->
-    <div class="container-fluid bg-white pt-3 px-lg-5">
-        <div class="row mx-n2">
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <select class="custom-select px-4 mb-3" style="height: 50px;">
-                    <option selected>Pickup Location</option>
-                    <option value="1">Location 1</option>
-                    <option value="2">Location 2</option>
-                    <option value="3">Location 3</option>
-                </select>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <select class="custom-select px-4 mb-3" style="height: 50px;">
-                    <option selected>Drop Location</option>
-                    <option value="1">Location 1</option>
-                    <option value="2">Location 2</option>
-                    <option value="3">Location 3</option>
-                </select>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <div class="date mb-3" id="date" data-target-input="nearest">
-                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Pickup Date"
-                        data-target="#date" data-toggle="datetimepicker" />
-                </div>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <div class="time mb-3" id="time" data-target-input="nearest">
-                    <input type="text" class="form-control p-4 datetimepicker-input" placeholder="Pickup Time"
-                        data-target="#time" data-toggle="datetimepicker" />
-                </div>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <select class="custom-select px-4 mb-3" style="height: 50px;">
-                    <option selected>Select A Car</option>
-                    <option value="1">Car 1</option>
-                    <option value="2">Car 1</option>
-                    <option value="3">Car 1</option>
-                </select>
-            </div>
-            <div class="col-xl-2 col-lg-4 col-md-6 px-2">
-                <button class="btn btn-primary btn-block mb-3" type="submit" style="height: 50px;">Search</button>
-            </div>
-        </div>
-    </div>
-    <!-- Search End -->
-
-
     <!-- Page Header Start -->
     <div class="container-fluid page-header">
         <h1 class="display-3 text-uppercase text-white mb-3">Car Listing</h1>
@@ -214,22 +184,20 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
             <h6 class="text-uppercase text-body m-0">Car Listing</h6>
         </div>
     </div>
-    <!-- Page Header Start -->
-
+    <!-- Page Header End -->
 
     <!-- Rent A Car Start -->
     <div class="container-fluid py-5">
         <div class="container pt-5 pb-3">
             <h1 class="display-4 text-uppercase text-center mb-5">Find Your Car</h1>
-            <form class="d-flex justify-content-center align-items-center mb-4" method="GET" action="">
-                <input type="text" name="search" id="live_search" class="form-control me-2" placeholder="Search for cars..." value="<?= isset($search) ? htmlspecialchars($search) : '' ?>" style="width: 40%; margin-right: 10px;">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </form>
+            <div class="d-flex justify-content-center align-items-center mb-4">
+                <input type="text" id="live_search" class="form-control me-2" placeholder="Search for cars..." value="<?= isset($search) ? htmlspecialchars($search) : '' ?>" style="width: 40%; margin-right: 10px;">
+            </div>
 
-            <div class="page-info">
+            <div id="page-info" class="text-center mb-3">
                 Showing page <?= $currentPage ?> of <?= $totalPages ?> results
             </div>
-            <div class="row">
+            <div id="vehicle-listings" class="row">
                 <?php foreach ($MulVehicules as $vehicule): ?>
                     <div class="col-lg-4 col-md-6 mb-2">
                         <div class="rent-item mb-4">
@@ -255,40 +223,29 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
                         </div>
                     </div>
                 <?php endforeach; ?>
-                <nav aria-label="Page navigation" class="w-100 text-center">
-                    <ul class="pagination justify-content-center">
-                        <!-- First and Previous -->
-                        <?php if ($currentPage > 1): ?>
-                            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
-                            <li class="page-item"><a class="page-link" href="?page=<?= $currentPage - 1 ?>">Previous</a></li>
-                        <?php endif; ?>
-
-                        <!-- Page Numbers -->
-                            <ul class="pagination justify-content-center">
-                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                    <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                                        <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
-                                    </li>
-                                <?php endfor; ?>
-                            </ul>
-
-
-
-                            <!-- Next and Last -->
-                            <?php if ($currentPage < $totalPages): ?>
-                                <li class="page-item"><a class="page-link" href="?page=<?= $currentPage + 1 ?>">Next</a></li>
-                                <li class="page-item"><a class="page-link" href="?page=<?= $totalPages ?>">Last</a></li>
-                            <?php endif; ?>
-                    </ul>
-                </nav>
             </div>
+            <nav id="pagination" aria-label="Page navigation" class="w-100 text-center mt-4">
+                <ul class="pagination justify-content-center">
+                    <?php if ($currentPage > 1): ?>
+                        <li class="page-item"><a class="page-link" href="#" data-page="1">First</a></li>
+                        <li class="page-item"><a class="page-link" href="#" data-page="<?= $currentPage - 1 ?>">Previous</a></li>
+                    <?php endif; ?>
+
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
+                            <a class="page-link" href="#" data-page="<?= $i ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+
+                    <?php if ($currentPage < $totalPages): ?>
+                        <li class="page-item"><a class="page-link" href="#" data-page="<?= $currentPage + 1 ?>">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="#" data-page="<?= $totalPages ?>">Last</a></li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
         </div>
     </div>
-    </div>
-    </div>
-    </div>
     <!-- Rent A Car End -->
-
 
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary py-5 px-sm-3 px-md-5" style="margin-top: 90px;">
@@ -356,119 +313,106 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
         </div>
     </div>
     <div class="container-fluid bg-dark py-4 px-sm-3 px-md-5">
-        <p class="mb-2 text-center text-body">&copy; <a href="#">DriveLoc</a>. All Rights Reserved.</p>
+        <p class="mb-2 text-center text-body">&copy; <a href="#">Your Site Name</a>. All Rights Reserved.</p>
 
         <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
         <p class="m-0 text-center text-body">Designed by <a href="https://htmlcodex.com">HTML Codex</a></p>
     </div>
     <!-- Footer End -->
 
-
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
 
-
     <!-- JavaScript Libraries -->
-    <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
-    
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
-    <!-- Template Javascript -->
     <script src="../../../../js/main.js"></script>
+
     <script type="text/javascript">
-        // $(document).ready(function() {
-        //     $('#live_search').on('keyup', function(event) {
-        //         event.preventDefault();
-        //         let searchQuery = $(this).val();
-        //         let currentPage = 1;
-
-        //         $.ajax({
-        //             url: 'vehiculePage.php',
-        //             type: 'GET',
-        //             data: {
-        //                 search: searchQuery,
-        //                 page: currentPage
-        //             },
-        //             success: function(data) {
-        //                 // alert(searchQuery);
-        //                 alert(data);
-        //                 $('.row').html($(data).find('.row').html());
-        //             },
-        //             error: function(xhr, status, error) {
-        //                 console.error("AJAX Error: ", status, error);
-        //             }
-        //             // error: '<p class="text-danger text-center mt-3">No vehicule found</p>';
-        //         });
-        //     });
-        // });
-
-        // $(document).on('click', '.pagination-link', function(event) {
-        //     event.preventDefault();
-        //     let page = $(this).data('page');
-        //     let searchQuery = $("#live_search").val();
-
-        //     $.ajax({
-        //         url: 'vehiculePage.php',
-        //         type: 'GET',
-        //         data: {
-        //             search: searchQuery,
-        //             page: page
-        //         },
-        //         success: function(data) {
-        //             $('.row').html($(data).find('.row').html());
-        //         }
-        //     });
-        // })
     $(document).ready(function() {
-    let searchTimeout;
-    
-    $('#live_search').on('keyup', function(event) {
-        clearTimeout(searchTimeout);
-        const searchQuery = $(this).val();
-        
-        if (!$('#loading').length) {
-            $('.row').append('<div id="loading" class="col-12 text-center">Searching...</div>');
-        }
-        
-        searchTimeout = setTimeout(function() {
+        let searchTimeout;
+        let currentPage = 1;
+
+        function loadVehicles(page = 1) {
+            const searchQuery = $('#live_search').val();
+
+            if (!$('#loading').length) {
+                $('#vehicle-listings').append('<div id="loading" class="col-12 text-center">Searching...</div>');
+            }
+
             $.ajax({
-                url: '../../../models/vehicule.php',
+                url: 'vehiculePage.php',
                 type: 'GET',
                 data: {
                     search: searchQuery,
-                    page: 1
+                    page: page,
+                    ajax: true
                 },
+                dataType: 'json',
                 success: function(response) {
                     $('#loading').remove();
-                    
-                    try {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(response, 'text/html');
-                        
-                        const newContent = $(doc).find('.row').html();
-                        if (newContent) {
-                            $('.row').html(newContent);
-                            // Update pagination and page info
-                            $('.pagination').html($(doc).find('.pagination').html());
-                            $('.page-info').html($(doc).find('.page-info').html());
-                        } else {
-                            $('.row').html('<div class="col-12 text-center"><h4>No vehicles found matching your search.</h4></div>');
-                        }
-                    } catch (e) {
-                        console.error('Error parsing response:', e);
-                        $('.row').html('<div class="col-12 text-center text-danger"><h4>Error processing results. Please try again.</h4></div>');
+
+                    if (response.error) {
+                        $('#vehicle-listings').html('<div class="col-12 text-center text-danger"><h4>Error: ' + response.error + '</h4></div>');
+                        return;
                     }
+
+                    $('#vehicle-listings').html(response.html);
+                    updatePagination(response.currentPage, response.totalPages);
+                    $('#page-info').text('Showing page ' + response.currentPage + ' of ' + response.totalPages + ' results');
                 },
                 error: function(xhr, status, error) {
                     $('#loading').remove();
                     console.error("Search error:", error);
-                    $('.row').html('<div class="col-12 text-center text-danger"><h4>An error occurred while searching. Please try again.</h4></div>');
+                    $('#vehicle-listings').html('<div class="col-12 text-center text-danger"><h4>An error occurred while searching. Please try again.</h4></div>');
                 }
             });
-        }, 300);
+        }
+
+        function updatePagination(currentPage, totalPages) {
+            let paginationHtml = '<ul class="pagination justify-content-center">';
+
+            if (currentPage > 1) {
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="1">First</a></li>';
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (currentPage - 1) + '">Previous</a></li>';
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHtml += '<li class="page-item ' + (i === currentPage ? 'active' : '') + '">';
+                paginationHtml += '<a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+            }
+
+            if (currentPage < totalPages) {
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + (currentPage + 1) + '">Next</a></li>';
+                paginationHtml += '<li class="page-item"><a class="page-link" href="#" data-page="' + totalPages + '">Last</a></li>';
+            }
+
+            paginationHtml += '</ul>';
+            $('#pagination').html(paginationHtml);
+        }
+
+        $('#live_search').on('keyup', function(event) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(function() {
+                currentPage = 1;
+                loadVehicles(currentPage);
+            }, 300);
+        });
+
+        $(document).on('click', '#pagination .page-link', function(e) {
+            e.preventDefault();
+            currentPage = parseInt($(this).data('page'));
+            loadVehicles(currentPage);
+        });
+
+        loadVehicles(currentPage);
     });
-});
     </script>
-
 </body>
-
 </html>
+
