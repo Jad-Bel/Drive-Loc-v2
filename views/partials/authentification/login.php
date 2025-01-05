@@ -1,11 +1,8 @@
 <?php
-// require_once __DIR__ . "../../config/database.php";
 require_once "../../../models/user.php";
 require_once "../../../config/connect.php";
 session_start();
 
-// $db = new Database();
-// $conn = $db->getdatabase();
 $user = new user();
 
 $loginError = '';
@@ -111,14 +108,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             let isValid = true;
             
-            // Reset errors
             document.querySelectorAll('.text-red-600').forEach(el => el.classList.add('hidden'));
             
-            // Get form values
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
-            // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 document.getElementById('emailError').textContent = 'Please enter a valid email address';
@@ -126,14 +120,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 isValid = false;
             }
             
-            // Password validation
             if (password.length < 6) {
                 document.getElementById('passwordError').textContent = 'Password must be at least 6 characters long';
                 document.getElementById('passwordError').classList.remove('hidden');
                 isValid = false;
             }
             
-            // If not valid, prevent form submission
             if (!isValid) {
                 e.preventDefault();
             }

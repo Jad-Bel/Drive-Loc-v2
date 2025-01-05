@@ -1,6 +1,7 @@
 <?php
 require_once "../../../config/connect.php";
 require_once "../../../models/vehicule.php";
+require_once "../../../includes/session_check.php";
 
 $vehicules = new vehiculeList();
 $allVeh = new vehicule();

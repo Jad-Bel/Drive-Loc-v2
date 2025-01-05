@@ -317,12 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </div>
-
-
-
-    <!-- Vendor Start -->
-
-
+    <!-- Car Booking End -->
 
     <!-- Footer Start -->
     <div class="container-fluid bg-secondary py-5 px-sm-3 px-md-5" style="margin-top: 90px;">
