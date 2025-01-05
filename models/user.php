@@ -16,7 +16,7 @@ class User {
             $lastName = htmlspecialchars($lastName);
             $email = htmlspecialchars($email);
             $hashedPassword = md5($password); 
-            // $password = htmlspecialchars($password);
+            $password = htmlspecialchars($password);
             
             $query = "INSERT INTO users (user_name, user_last, user_email, user_pw, role_id)
                       VALUES (:firstName, :lastName, :email, :password, :role)";
@@ -27,7 +27,7 @@ class User {
                 ":lastName" => $lastName,
                 ":email" => $email,
                 ":password" => $hashedPassword,
-                // ":password" => $password,
+                ":password" => $password,
                 ":role" => $role
             ];
 
@@ -112,8 +112,3 @@ class User {
         }
     }
 }
-
-// Example usage
-// $user = new User();
-// $user->register("John", "Doe", "john.doe@example.com", "password123", 2);
-// $user->login("john.doe@example.com", "password123");
