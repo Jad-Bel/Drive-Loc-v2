@@ -63,6 +63,25 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
 
     <!-- Template Stylesheet -->
     <link href="../../../css/style.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <style>
+        #loading {
+            padding: 20px;
+            font-size: 1.2em;
+            color: #666;
+        }
+    </style>
 </head>
 
 <body>
@@ -350,61 +369,104 @@ $SearchedVeh = $vehiculeClass->getVehBySearch($search);
 
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
+    
 
     <!-- Template Javascript -->
     <script src="../../../../js/main.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-            $('#live_search').on('keyup', function(event) {
-                event.preventDefault();
-                let searchQuery = $(this).val();
-                let currentPage = 1;
+        // $(document).ready(function() {
+        //     $('#live_search').on('keyup', function(event) {
+        //         event.preventDefault();
+        //         let searchQuery = $(this).val();
+        //         let currentPage = 1;
 
-                $.ajax({
-                    url: 'vehiculePage.php',
-                    type: 'GET',
-                    data: {
-                        search: searchQuery,
-                        page: currentPage
-                    },
-                    success: function(data) {
-                        // alert(searchQuery);
-                        alert(data);
-                        $('.row').html($(data).find('.row').html());
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX Error: ", status, error);
-                    }
-                    // error: '<p class="text-danger text-center mt-3">No vehicule found</p>';
-                });
-            });
-        });
+        //         $.ajax({
+        //             url: 'vehiculePage.php',
+        //             type: 'GET',
+        //             data: {
+        //                 search: searchQuery,
+        //                 page: currentPage
+        //             },
+        //             success: function(data) {
+        //                 // alert(searchQuery);
+        //                 alert(data);
+        //                 $('.row').html($(data).find('.row').html());
+        //             },
+        //             error: function(xhr, status, error) {
+        //                 console.error("AJAX Error: ", status, error);
+        //             }
+        //             // error: '<p class="text-danger text-center mt-3">No vehicule found</p>';
+        //         });
+        //     });
+        // });
 
-        $(document).on('click', '.pagination-link', function(event) {
-            event.preventDefault();
-            let page = $(this).data('page');
-            let searchQuery = $("#live_search").val();
+        // $(document).on('click', '.pagination-link', function(event) {
+        //     event.preventDefault();
+        //     let page = $(this).data('page');
+        //     let searchQuery = $("#live_search").val();
 
+        //     $.ajax({
+        //         url: 'vehiculePage.php',
+        //         type: 'GET',
+        //         data: {
+        //             search: searchQuery,
+        //             page: page
+        //         },
+        //         success: function(data) {
+        //             $('.row').html($(data).find('.row').html());
+        //         }
+        //     });
+        // })
+    $(document).ready(function() {
+    let searchTimeout;
+    
+    $('#live_search').on('keyup', function(event) {
+        clearTimeout(searchTimeout);
+        const searchQuery = $(this).val();
+        
+        if (!$('#loading').length) {
+            $('.row').append('<div id="loading" class="col-12 text-center">Searching...</div>');
+        }
+        
+        searchTimeout = setTimeout(function() {
             $.ajax({
-                url: 'vehiculePage.php',
+                url: '../../../models/vehicule.php',
                 type: 'GET',
                 data: {
                     search: searchQuery,
-                    page: page
+                    page: 1
                 },
-                success: function(data) {
-                    $('.row').html($(data).find('.row').html());
+                success: function(response) {
+                    $('#loading').remove();
+                    
+                    try {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(response, 'text/html');
+                        
+                        const newContent = $(doc).find('.row').html();
+                        if (newContent) {
+                            $('.row').html(newContent);
+                            // Update pagination and page info
+                            $('.pagination').html($(doc).find('.pagination').html());
+                            $('.page-info').html($(doc).find('.page-info').html());
+                        } else {
+                            $('.row').html('<div class="col-12 text-center"><h4>No vehicles found matching your search.</h4></div>');
+                        }
+                    } catch (e) {
+                        console.error('Error parsing response:', e);
+                        $('.row').html('<div class="col-12 text-center text-danger"><h4>Error processing results. Please try again.</h4></div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#loading').remove();
+                    console.error("Search error:", error);
+                    $('.row').html('<div class="col-12 text-center text-danger"><h4>An error occurred while searching. Please try again.</h4></div>');
                 }
             });
-        })
+        }, 300);
+    });
+});
     </script>
 
 </body>
