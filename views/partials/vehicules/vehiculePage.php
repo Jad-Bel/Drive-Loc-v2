@@ -110,27 +110,24 @@ try {
         <div class="row">
             <div class="col-md-6 text-center text-lg-left mb-2 mb-lg-0">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-body pr-3" href=""><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</a>
+                    <a class="text-body pr-3" href=""><i class="fa fa-phone-alt mr-2"></i>+212 6933 05050</a>
                     <span class="text-body">|</span>
-                    <a class="text-body px-3" href=""><i class="fa fa-envelope mr-2"></i>info@example.com</a>
+                    <a class="text-body px-3" href=""><i class="fa fa-envelope mr-2"></i>jadthegamer06@gmail.com</a>
                 </div>
             </div>
             <div class="col-md-6 text-center text-lg-right">
                 <div class="d-inline-flex align-items-center">
-                    <a class="text-body px-3" href="">
-                        <i class="fab fa-facebook-f"></i>
+                    <a class="text-body px-3" href="https://github.com/Jad-Bel">
+                        <i class="fab fa-github"></i>
                     </a>
-                    <a class="text-body px-3" href="">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a class="text-body px-3" href="">
+                    <a class="text-body px-3" href="https://www.linkedin.com/in/jad-belassiria-16390321b/">
                         <i class="fab fa-linkedin-in"></i>
                     </a>
-                    <a class="text-body px-3" href="">
-                        <i class="fab fa-instagram"></i>
+                    <a class="text-body px-3" href="https://www.facebook.com/profile.php?id=100070651475648">
+                        <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a class="text-body pl-3" href="">
-                        <i class="fab fa-youtube"></i>
+                    <a class="text-body px-3" href="https://www.instagram.com/_69eei/">
+                        <i class="fab fa-instagram"></i>
                     </a>
                 </div>
             </div>
@@ -154,10 +151,10 @@ try {
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="service.html" class="nav-item nav-link">Service</a>
                         <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cars</a>
+                            <!-- <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cars</a> -->
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="car.html" class="dropdown-item">Car Listing</a>
-                                <a href="#" class="dropdown-item">Car Detail</a>
+                                <a href="../vehicules/vehiculePage.php" class="dropdown-item">Car Listing</a>
+                                <!-- <a href="#" class="dropdown-item">Car Detail</a> -->
                             </div>
                         </div>
                         <div class="nav-item dropdown">
@@ -179,7 +176,7 @@ try {
     <div class="container-fluid page-header">
         <h1 class="display-3 text-uppercase text-white mb-3">Car Listing</h1>
         <div class="d-inline-flex text-white">
-            <h6 class="text-uppercase m-0"><a class="text-white" href="">Home</a></h6>
+            <h6 class="text-uppercase m-0"><a class="text-white" href="../../layouts/main.php">Home</a></h6>
             <h6 class="text-body m-0 px-3">/</h6>
             <h6 class="text-uppercase text-body m-0">Car Listing</h6>
         </div>
