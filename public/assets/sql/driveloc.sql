@@ -54,3 +54,77 @@ CREATE TABLE reservation (
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (vehicule_id) REFERENCES vehicule(vehicule_id)
 );
+
+CREATE TABLE themes (
+    thm_id INT PRIMARY KEY AUTO_INCREMENT,
+    thm_nom VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE articles (
+    art_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(100) NOT NULL,
+    content VARCHAR(1000) NOT NULL,
+    user_id INT NOT NULL,
+    creation_date DATE NOT NULL,
+    thm_id INT,
+    status TINYINT DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (thm_id) REFERENCES themes(thm_id)
+);
+
+CREATE TABLE tags (
+    tag_id INT PRIMARY KEY AUTO_INCREMENT,
+    nom VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE commentaires (
+    comm_id INT PRIMARY KEY AUTO_INCREMENT,
+    content TEXT NOT NULL,
+    creation_date DATETIME NOT NULL,
+    art_id INT,
+    FOREIGN KEY (art_id) REFERENCES articles(art_id)
+);
+
+CREATE TABLE favoris (
+    user_id INT,
+    article_id INT,
+    PRIMARY KEY (user_id, article_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (article_id) REFERENCES articles(art_id)
+);
+
+CREATE TABLE article_tags (
+    art_id INT,
+    tag_id INT,
+    PRIMARY KEY (art_id, tag_id),
+    FOREIGN KEY (art_id) REFERENCES articles(art_id),
+    FOREIGN KEY (tag_id) REFERENCES tags(tag_id)
+);
+
+
+-- get all articles with their authors
+SELECT a.art_id, a.title, CONCAT(u.user_name, ' ', u.user_last) AS author
+FROM articles a
+JOIN users u ON a.user_id = u.user_id;
+
+-- get all articles with their themes
+SELECT a.title, t.thm_nom
+FROM articles a
+JOIN themes t ON a.thm_id = t.thm_id;
+
+-- get all comment for an article
+SELECT a.title, c.content, c.creation_date
+FROM articles a
+JOIN commentaires c ON a.art_id = c.art_id;
+
+-- get all articles with their tags
+SELECT a.title, t.nom AS tag_name
+FROM articles a
+JOIN article_tags `at` ON a.art_id = at.art_id
+JOIN tags t ON at.tag_id = t.tag_id;
+
+-- get all favorite articles for a user
+SELECT u.user_name, a.title
+FROM users u
+JOIN favoris f ON u.user_id = f.user_id
+JOIN articles a ON f.article_id = a.art_id;

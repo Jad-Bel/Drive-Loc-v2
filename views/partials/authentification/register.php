@@ -20,12 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($result) {
             $_SESSION['success'] = "Registration successful! Please login.";
             header('Location: login.php');
-            echo 3;
-            die;
+            // echo 3;
+            // die;
             // exit();
         } else {
             $errors[] = "Registration failed. Please try again.";
-            echo 2;
+            // echo 2;
         }
     } catch (Exception $e) {
         $errors[] = $e->getMessage();

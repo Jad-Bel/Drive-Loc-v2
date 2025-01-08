@@ -1,6 +1,6 @@
 <?php
 
-// include "../../../config/connect.php";
+include "../config/connect.php";
 
 class User {
     protected $conn;
@@ -27,7 +27,6 @@ class User {
                 ":lastName" => $lastName,
                 ":email" => $email,
                 ":password" => $hashedPassword,
-                ":password" => $password,
                 ":role" => $role
             ];
 
@@ -35,6 +34,7 @@ class User {
             if (!$result) {
                 throw new Exception("Failed to register user");
             }
+            return true;
         } catch (Exception $e) {
             throw new Exception("Database error: " . $e->getMessage());
         }
@@ -73,6 +73,7 @@ class User {
         } catch (Exception $e) {
             error_log("Database error: " . $e->getMessage());
             throw new Exception("An error occurred, please try again later.");
+            // echo 1;
         }
     }
 
@@ -111,4 +112,20 @@ class User {
             return false;
         }
     }
+}
+// echo 1;
+
+$email = "jadbelassiria@admin.com";
+$password = 'jadbelassiria2';
+// $hashedPassword = md5($password);
+$db = new user();
+// $register = $db->login($email,$password);
+$register = $db->register('jad', 'belasiria', $email, $password, 1);
+
+// $connect = new Database();
+// $result = $connect->getdatabase();
+if ($register) {
+    echo 1;
+} else {
+    echo 0;
 }

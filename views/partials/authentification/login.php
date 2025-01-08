@@ -1,7 +1,6 @@
 <?php
 require_once "../../../models/user.php";
 require_once "../../../config/connect.php";
-session_start();
 
 $user = new user();
 

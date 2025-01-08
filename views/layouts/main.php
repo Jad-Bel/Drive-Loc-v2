@@ -1,5 +1,5 @@
 <?php 
-    // require_once '../../includes/session_check.php';
+    require '../../includes/session_check.php';
     require_once '../../models/vehicule.php';
     require_once '../../config/connect.php';
 ?>
@@ -82,7 +82,7 @@
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="service.html" class="nav-item nav-link">Service</a>
                         <div class="nav-item dropdown">
-                            <!-- <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cars</a> -->
+                            <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cars</a>
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="../vehicules/vehiculePage.php" class="dropdown-item">Car Listing</a>
                                 <!-- <a href="#" class="dropdown-item">Car Detail</a> -->
@@ -96,6 +96,8 @@
                             </div>
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
+
+                        <a href="../../includes/logout.php">Log-out</a>
                     </div>
                 </div>
             </nav>

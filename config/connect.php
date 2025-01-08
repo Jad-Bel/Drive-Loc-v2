@@ -2,10 +2,11 @@
 
 class Database {
     private $host = "localhost";
-    private $db_name = "driveLoc";
+    private $db_name = "driveLocV2";
     private $username = "root";
     private $password = "Hitler20.";
     private $conn;
+
 
     public function getdatabase() {
         $this->conn = null;
@@ -24,5 +25,6 @@ class Database {
 // if ($result) {
 //     echo 1;
 // } else {
-//     echo 0;
-// }
+//     echo 0; }
+
+    // echo 1;
