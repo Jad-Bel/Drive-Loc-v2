@@ -1,91 +1,96 @@
-<?php 
+<?php
+// include "../../../config/connect.php";
 
-require_once "../config/connect.php";
-
-class article {
+class Article {
     private $conn;
 
     public function __construct() {
-        $db = new Database;
-        $this->conn =  $db->getdatabase();
-    }
-    
-    public function affArticle () {
-        $query = "SELECT * FROM articles";
-        $stmt = $this->conn->prepare($query);
-
-        $stmt->execute();
-
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $result;
+        $db = new Database();
+        $this->conn = $db->getdatabase();
     }
 
-    public function ajjArticle ($title, $content, $date, $thm_id, $status, $user_id) {
+    public function getAllArticles() {
         try {
-            $query = "INSERT INTO articles (title, content, creation_date, thm_id, status, user_id) Values (:title, :content, :date, :thm_id, :status, :user_id)";
+            $query = "SELECT * FROM articles";
             $stmt = $this->conn->prepare($query);
-            
-            $param = [':title' => $title,
-                    ':content' => $content,
-                    ':date' => $date,
-                    ':thm_id' => $thm_id,
-                    ':status' => $status,
-                    ':user_id'=> $user_id];
 
-            $result = $stmt->execute($param);
-            
-            return $result;
+            $stmt->execute();
+
+            $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $articles;
         } catch (Exception $e) {
-            throw new Exception("errur d'ajouter un article" . $e);
+            throw new Error("Cannot get articles: " . $e->getMessage());
         }
     }
 
-    public function modArticle ($title, $content, $date, $thm_id, $status, $user_id, $art_id) {
+    public function addArticle($title, $content, $user_id, $thm_id) {
         try {
-            $query = "UPDATE articles SET art_id = :id, title = :title, content = :content, creation_date = :date, thm_id = :thm_id, status = :status, user_id = :user_id WHERE art_id = :id";
+            $query = "INSERT INTO articles (title, content, user_id, creation_date, thm_id, status) 
+                      VALUES (:title, :content, :user_id, NOW(), :thm_id, 0)";
             $stmt = $this->conn->prepare($query);
-    
+
+            $param = [
+                ":title" => $title,
+                ":content" => $content,
+                ":user_id" => $user_id,
+                ":thm_id" => $thm_id
+            ];
+            
+            $stmt->execute($param);
+            return $this->conn->lastInsertId();
+        } catch (Exception $e) {
+            throw new Error("Cannot add article: " . $e->getMessage());
+        }
+    }
+
+    public function deleteArticle($art_id) {
+        try {
+            $id = htmlspecialchars(intval($art_id));
+            $query = "DELETE FROM articles WHERE art_id = :id";
+            $stmt = $this->conn->prepare($query);
+
+            $param = [":id" => $id];
+
+            $stmt->execute($param);
+        } catch (Exception $e) {
+            throw new Error("Cannot delete article: " . $e->getMessage());
+        }
+    }
+
+    public function updateArticle($art_id, $title, $content, $thm_id, $status) {
+        try {
+            $query = "UPDATE articles SET title = :title, content = :content, thm_id = :thm_id, status = :status 
+                      WHERE art_id = :id";
+            $stmt = $this->conn->prepare($query);
+
             $param = [
                 ":id" => $art_id,
                 ":title" => $title,
                 ":content" => $content,
-                ":date" => $date,
                 ":thm_id" => $thm_id,
-                ":status" => $status,
-                ":user_id" => $user_id
+                ":status" => $status
             ];
-    
-            $result = $stmt->execute($param);
-            return $result;
+
+            $stmt->execute($param);
         } catch (Exception $e) {
-            throw new Exception("Erreur de modifier cette article" . $e);
+            throw new Error("Cannot update article: " . $e->getMessage());
         }
     }
 
-    public function suppArticle ($art_id) {
+    public function getArticlesByTheme($thm_id) {
         try {
-            $query = "DELETE FROM articles WHERE art_id = :id";
+            $query = "SELECT * FROM articles WHERE thm_id = :thm_id";
             $stmt = $this->conn->prepare($query);
-            $param = ["id" => $art_id];
-            
-            $result = $stmt->execute($param);
-            return $result;
 
-            if ($result) {
-                echo "Suppresion avec succes";
-            } 
+            $param = [":thm_id" => $thm_id];
+
+            $stmt->execute($param);
+
+            $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $articles;
         } catch (Exception $e) {
-            throw new Exception("Erreur de supprimer cette article" . $e);
+            throw new Error("Cannot get articles by theme: " . $e->getMessage());
         }
     }
 }
 
-// $article = new article();
-
-// $result = $article->modArticle("test1", "test1", "2025-12-12", 2, 1, 7, 1);
-
-// if ($result) {
-//         var_dump($result);
-// }   else {
-//     echo 2;
-// }
