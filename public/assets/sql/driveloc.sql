@@ -128,3 +128,18 @@ SELECT u.user_name, a.title
 FROM users u
 JOIN favoris f ON u.user_id = f.user_id
 JOIN articles a ON f.article_id = a.art_id;
+
+INSERT INTO tags (nom) 
+VALUES 
+('Technology'),
+('Health'),
+('Travel'),
+('Education'),
+('Finance'),
+('Lifestyle'),
+('Sports'),
+('Entertainment'),
+('Food'),
+('Science');
+
+

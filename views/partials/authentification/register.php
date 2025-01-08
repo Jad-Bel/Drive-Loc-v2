@@ -2,7 +2,6 @@
 // require_once __DIR__ . "/../../config/database.php";
     require_once "../../../models/user.php";
 
-session_start();
 
 $errors = [];
 $user = new user();
@@ -14,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             htmlspecialchars($_POST['lastName']),
             htmlspecialchars($_POST['email']),
             $_POST['password'],
-            1 // Role ID    
+            2 // Role ID    
             );
 
         if ($result) {
