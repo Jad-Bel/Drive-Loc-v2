@@ -109,13 +109,13 @@ class vehicule {
 
 
     public function supprimerVeh ($vehicule_id) {
-        $id = htmlspecialchars(intval($vehicule_id));
+        $id = intval($vehicule_id);
 
         $stmt = $this->conn->prepare("DELETE FROM avis WHERE vehicule_id = :vehicule_id");
-        $stmt->execute(['vehicule_id' => $vehicule_id]);
+        $stmt->execute(['vehicule_id' => $id]);
 
         $stmt = $this->conn->prepare("DELETE FROM vehicules WHERE vehicule_id = :vehicule_id");
-        $stmt->execute(['vehicule_id' => $vehicule_id]);
+        $stmt->execute(['vehicule_id' => $id]);
 
         return true;
 
