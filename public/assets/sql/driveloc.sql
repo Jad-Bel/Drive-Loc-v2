@@ -142,4 +142,16 @@ VALUES
 ('Food'),
 ('Science');
 
+INSERT INTO themes (thm_nom) 
+VALUES 
+('Programming'),
+('Wellness'),
+('Adventure'),
+('Learning'),
+('Economics'),
+('Fashion'),
+('Fitness'),
+('Cinema'),
+('Cuisine'),
+('Research');
 
