@@ -80,9 +80,9 @@ class article {
     }
 }
 
-$article = new article();
+// $article = new article();
 
-$result = $article->modArticle("test1", "test1", "2025-12-12", 2, 1, 7, 1);
+// $result = $article->modArticle("test1", "test1", "2025-12-12", 2, 1, 7, 1);
 
 // if ($result) {
 //         var_dump($result);
