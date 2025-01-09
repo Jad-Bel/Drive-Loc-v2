@@ -1,15 +1,18 @@
 <?php
 // include "../../../config/connect.php";
 
-class Article {
+class Article
+{
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
         $db = new Database();
         $this->conn = $db->getdatabase();
     }
 
-    public function getAllArticles() {
+    public function getAllArticles()
+    {
         try {
             $query = "SELECT * FROM articles";
             $stmt = $this->conn->prepare($query);
@@ -23,7 +26,8 @@ class Article {
         }
     }
 
-    public function getArticleById($art_id) {
+    public function getArticleById($art_id)
+    {
         try {
             $query = "SELECT a.art_id, a.title, creation_date, content, CONCAT(u.user_name, ' ', u.user_last) AS author_name
                       FROM articles a
@@ -41,7 +45,8 @@ class Article {
         }
     }
 
-    public function addArticle($title, $content, $user_id, $thm_id) {
+    public function addArticle($title, $content, $user_id, $thm_id)
+    {
         try {
             $query = "INSERT INTO articles (title, content, user_id, creation_date, thm_id, status) 
                       VALUES (:title, :content, :user_id, NOW(), :thm_id, 0)";
@@ -53,7 +58,7 @@ class Article {
                 ":user_id" => $user_id,
                 ":thm_id" => $thm_id
             ];
-            
+
             $stmt->execute($param);
             return $this->conn->lastInsertId();
         } catch (Exception $e) {
@@ -61,7 +66,8 @@ class Article {
         }
     }
 
-    public function deleteArticle($art_id) {
+    public function deleteArticle($art_id)
+    {
         try {
             $id = htmlspecialchars(intval($art_id));
             $query = "DELETE FROM articles WHERE art_id = :id";
@@ -75,7 +81,8 @@ class Article {
         }
     }
 
-    public function updateArticle($art_id, $title, $content, $thm_id, $status) {
+    public function updateArticle($art_id, $title, $content, $thm_id, $status)
+    {
         try {
             $query = "UPDATE articles SET title = :title, content = :content, thm_id = :thm_id, status = :status 
                       WHERE art_id = :id";
@@ -95,10 +102,15 @@ class Article {
         }
     }
 
-    public function getArticlesByTheme($thm_id) {
+    public function getArticlesByTheme($thm_id)
+    {
         try {
-            $query = "SELECT * FROM articles WHERE thm_id = :thm_id";
-            $stmt = $this->conn->prepare($query);
+            $query = "SELECT a.*, CONCAT(u.user_name, ' ', u.user_last) AS author_name
+                      FROM articles a
+                      JOIN  users u
+                      ON a.user_id = u.user_id
+                      WHERE a.thm_id = :thm_id";
+                      $stmt = $this->conn->prepare($query);
 
             $param = [":thm_id" => $thm_id];
 
@@ -111,7 +123,8 @@ class Article {
         }
     }
 
-    public function getLatestArticle ($user_id) {
+    public function getLatestArticle($user_id)
+    {
         try {
             $stmt = $this->conn->prepare("
             SELECT a.art_id, a.title, a.content, a.creation_date
@@ -128,6 +141,4 @@ class Article {
             throw new Exception('Erreur fetching last articles posted ' . $e);
         }
     }
-
 }
-
