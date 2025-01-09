@@ -14,7 +14,7 @@ $vehiclesPerPage = 6;
 if (isset($_GET['ajax'])) {
     $offset = ($page - 1) * $vehiclesPerPage;
     $MulVehicules = $vehicules->getVehiclesByPage($vehiclesPerPage, $offset, $search);
-    $totalVehicules = $vehicules->countVehicules($search);
+    $totalVehicules = $allVeh->countVeh($search);
     $totalPages = ceil($totalVehicules / $vehiclesPerPage);
 
     $response = [
