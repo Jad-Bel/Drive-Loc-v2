@@ -1,3 +1,24 @@
+<?php 
+require_once '../../../models/themes.php';
+require_once '../../../models/Article.php';
+
+
+$articles = new article();
+$theme = new theme();
+
+$thm_id = isset($_GET['thm_id']) ? intval($_GET['thm_id']) : null;
+$affArticlesByCat = $thm_id ? $articles->getArticlesByTheme($thm_id) : [];
+
+
+function truncateText($text, $limit = 20) {
+    $words = str_word_count($text, 1);
+    if (count($words) > $limit) {
+        return implode(' ', array_slice($words, 0, $limit)) . '...';
+    }
+    return $text;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,11 +99,18 @@
         <!-- Left Sidebar -->
         <nav class="sidebar min-vh-100 p-3 d-none d-lg-block">
             <div class="mb-4">
-                <select class="form-select theme-selector">
+                <select class="form-select theme-selector" onchange="window.location.href=this.value">
                     <option selected>Select Theme</option>
-                    <option value="dark">Dark Theme</option>
-                    <option value="light">Light Theme</option>
-                    <option value="custom">Custom Theme</option>
+                    <?php 
+                        $themes = new theme();
+                        $allThemes = $themes->getAllThemes();
+                        foreach($allThemes as $theme): 
+                    ?>
+                    <option value="?thm_id=<?php echo $theme['thm_id'];?>">
+                        <?php ($thm_id == $theme['thm_id']) ? 'selected' : '';?>
+                        <?php echo htmlspecialchars($theme['thm_nom']);?>
+                    </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="nav flex-column">
@@ -118,6 +146,22 @@
         <!-- Main Content -->
         <main class="flex-grow-1 p-3">
             <div class="container-fluid">
+                <h1 class="mb-4">    
+                    <?php 
+                        if ($thm_id) {
+                            $currentTheme = array_filter($allThemes, function($t) use ($thm_id) { return $t['thm_id'] == $thm_id; });
+                            echo htmlspecialchars(current($currentTheme)['thm_nom']);
+                        } else {
+                            echo "All Articles";
+                        }
+                    ?>
+                </h1>
+
+                <?php if (empty($affArticlesByCat)): ?>
+                    <div class="alert alert-info">
+                        <?php echo $thm_id ? "No articles found for this theme." : "Please select a theme to view articles."; ?>
+                    </div>
+                <?php else: ?>
                 <div class="row">
                     <div class="col-lg-8">
                         <!-- Sort Options -->
@@ -131,7 +175,8 @@
                         </div>
 
                         <!-- Posts -->
-                        <article class="post-card p-3" onclick="window.location.href='post-detail.html'">
+                         <?php foreach($affArticlesByCat as $article): ?>
+                        <article class="post-card p-3" onclick="window.location.href='articlePage.php?art_id=<?php intval($article['art_id']) ?>'">
                             <div class="d-flex">
                                 <!-- Vote Buttons -->
                                 <div class="d-flex flex-column align-items-center me-3">
@@ -143,50 +188,27 @@
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center mb-2">
                                         <div class="community-icon"></div>
-                                        <span class="me-2">r/Morocco</span>
-                                        <span class="text-muted">• 4 days ago</span>
+                                        <span class="me-2"><?= htmlspecialchars($article['user_id']) ?></span>
+                                        <span class="text-muted">
+                                        • <?php 
+                                                $date = new DateTime($article['creation_date']);
+                                                echo $date->format('M j, T');
+                                            ?> 
+                                        </span>
                                     </div>
-                                    <h2 class="h5 mb-2">Can I transit through spain without Visa?</h2>
-                                    <p class="mb-2">Hello all, I could really use some advice or clarifications from moroccans who've already transited through Spain...</p>
+                                    <h2 class="h5 mb-2"><?= htmlspecialchars(truncateText($article['title'])); ?></h2>
+                                    <p class="mb-2"><?= htmlspecialchars(truncateText($article['content'])); ?></p>
                                     <div class="d-flex align-items-center">
                                         <button class="btn btn-link text-muted me-3">
                                             <i class="far fa-comment me-1"></i> 13 comments
                                         </button>
-                                        <button class="btn btn-link text-muted">
-                                            <i class="fas fa-share me-1"></i> Share
-                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </article>
-
-                        <article class="post-card p-3" onclick="window.location.href='post-detail.html'">
-                            <div class="d-flex">
-                                <div class="d-flex flex-column align-items-center me-3">
-                                    <button class="vote-button"><i class="fas fa-arrow-up"></i></button>
-                                    <span class="my-1">25</span>
-                                    <button class="vote-button"><i class="fas fa-arrow-down"></i></button>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="community-icon"></div>
-                                        <span class="me-2">r/algeria</span>
-                                        <span class="text-muted">• 20 hr. ago</span>
-                                    </div>
-                                    <h2 class="h5 mb-2">Live in luxury in Algeria or live like any normal person in Europe or abroad</h2>
-                                    <p class="mb-2">Hey ! I just want to ask you Algerian people what would you choose...</p>
-                                    <div class="d-flex align-items-center">
-                                        <button class="btn btn-link text-muted me-3">
-                                            <i class="far fa-comment me-1"></i> 87 comments
-                                        </button>
-                                        <button class="btn btn-link text-muted">
-                                            <i class="fas fa-share me-1"></i> Share
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
+                        <?php endforeach; ?>
                     </div>
+                    <?php endif; ?>
 
                     <!-- Right Sidebar -->
                     <aside class="col-lg-4 d-none d-lg-block">
