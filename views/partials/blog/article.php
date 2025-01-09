@@ -122,7 +122,7 @@
     </div>
 
     <!-- Navbar -->
-    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
         <div class="container">
             <a class="navbar-brand" href="#">BlogIt</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -146,7 +146,7 @@
                 <button class="btn create-post-btn" id="createPostBtn">Create Post</button>
             </div>
         </div>
-    </nav> -->
+    </nav>
 
     <!-- Search Bar -->
     <!-- <div class="bg-light py-3">
@@ -284,7 +284,6 @@
                                 <strong>@author</strong> • 30 mins ago
                             </div>
                             <p>Thank you for the feedback!</p>
-                            <button class="btn btn-link btn-sm">Reply</button>
                         </div>
                     </div>
                 </div>
@@ -417,65 +416,69 @@
     </div>
     <!-- Footer End -->
 
+    
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('.vote-buttons button').click(function() {
-                $(this).toggleClass('text-primary');
-            });
+        // $(document).ready(function() {
+        //     $('.vote-buttons button').click(function() {
+        //         $(this).toggleClass('text-primary');
+        //     });
 
-            // Handle search with debounce
-            let searchTimeout;
-            $('#searchInput').on('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    // Implement search functionality here
-                    console.log('Searching for:', $(this).val());
-                    // You would typically make an AJAX call here to fetch search results
-                }, 500);
-            });
+        //     // Handle search with debounce
+        //     let searchTimeout;
+        //     $('#searchInput').on('input', function() {
+        //         clearTimeout(searchTimeout);
+        //         searchTimeout = setTimeout(() => {
+        //             // Implement search functionality here
+        //             console.log('Searching for:', $(this).val());
+        //             // You would typically make an AJAX call here to fetch search results
+        //         }, 500);
+        //     });
 
-            // Handle create post modal
+        //     // Handle create post modal
             $('#createPostBtn').click(function() {
                 $('#createPostModal').modal('show');
             });
 
-            // Handle form submission
-            $('#submitPost').click(function() {
-                // Implement post creation here
-                console.log('Creating post:', {
-                    title: $('#postTitle').val(),
-                    content: $('#postContent').val(),
-                    tags: $('#postTags').val().split(',').map(tag => tag.trim()),
-                    image: $('#postImage')[0].files[0]
-                });
-                $('#createPostModal').modal('hide');
-            });
+        //     // Handle form submission
+             $('#submitPost').click(function() {
+                 // Implement post creation here
+                 console.log('Creating post:', {
+                     title: $('#postTitle').val(),
+                     content: $('#postContent').val(),
+                     tags: $('#postTags').val().split(',').map(tag => tag.trim()),
+                     image: $('#postImage')[0].files[0]
+                 });
+                 $('#createPostModal').modal('hide');
+             });
 
-            // Handle comment submission
-            $('#commentForm').on('submit', function(e) {
-                e.preventDefault();
-                const commentContent = $('#commentContent').val();
-                if (commentContent.trim()) {
-                    // You would typically make an AJAX call here to submit the comment
-                    console.log('Submitting comment:', commentContent);
-                    // For demonstration, let's add the comment to the DOM
-                    const newComment = `
-                        <div class="comment">
-                            <div class="comment-meta">
-                                <strong>@currentUser</strong> • Just now
-                            </div>
-                            <p>${commentContent}</p>
-                            <button class="btn btn-link btn-sm">Reply</button>
-                        </div>
-                    `;
-                    $('#commentsContainer').prepend(newComment);
-                    $('#commentContent').val('');
-                }
-            });
-        });
+        //     // Handle comment submission
+        //     $('#commentForm').on('submit', function(e) {
+        //         e.preventDefault();
+        //         const commentContent = $('#commentContent').val();
+        //         if (commentContent.trim()) {
+        //             // You would typically make an AJAX call here to submit the comment
+        //             console.log('Submitting comment:', commentContent);
+        //             // For demonstration, let's add the comment to the DOM
+        //             const newComment = `
+        //                 <div class="comment">
+        //                     <div class="comment-meta">
+        //                         <strong>@currentUser</strong> • Just now
+        //                     </div>
+        //                     <p>${commentContent}</p>
+        //                     <button class="btn btn-link btn-sm">Reply</button>
+        //                 </div>
+        //             `;
+        //             $('#commentsContainer').prepend(newComment);
+        //             $('#commentContent').val('');
+        //         }
+        //     });
+        // });
     </script>
 </body>
 </html>
+
+
+
