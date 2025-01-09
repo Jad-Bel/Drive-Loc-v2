@@ -81,6 +81,7 @@
                         <a href="../../layouts/main.php" class="nav-item nav-link">Home</a>
                         <a href="about.html" class="nav-item nav-link">About</a>
                         <a href="service.html" class="nav-item nav-link">Service</a>
+                        <a href="../partials/blog/themePage.php" class="nav-item nav-link">Blogs</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cars</a>
                             <div class="dropdown-menu rounded-0 m-0">

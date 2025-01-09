@@ -27,9 +27,10 @@ class Article {
         try {
             $query = "SELECT a.art_id, a.title, CONCAT(u.user_name, ' ', u.user_last) AS author_name
                       FROM articles a
-                      JOIN users u ON a.user_id = u.user_id;
-                    ";
+                      JOIN users u ON a.user_id = u.user_id
+                      WHERE a.art_id = :art_id";
             $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":art_id", $art_id, PDO::PARAM_INT);
 
             $stmt->execute();
 

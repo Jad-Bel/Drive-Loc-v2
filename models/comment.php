@@ -9,6 +9,7 @@ class Comment {
         $this->conn = $db->getdatabase();
     }
 
+
     public function getCommentsByArticle($art_id) {
         try {
             $query = "SELECT c.content, c.creation_date, c.comm_id, 
@@ -33,8 +34,8 @@ class Comment {
 
     public function addComment($content, $art_id, $user_id) {
         try {
-            $query = "INSERT INTO commentaires (content, creation_date, art_id, user_id) 
-                      VALUES (:content, NOW(), :art_id, :user_id)";
+            $query = "INSERT INTO commentaires (content, art_id, user_id, creation_date) 
+                  VALUES (:content, :art_id, :user_id, NOW())";
             $stmt = $this->conn->prepare($query);
     
             $param = [
@@ -43,8 +44,8 @@ class Comment {
                 ":user_id" => $user_id
             ];
             
-            $stmt->execute($param);
-            return $this->conn->lastInsertId();
+            $result = $stmt->execute($param);
+            return $result;
         } catch (Exception $e) {
             throw new Error("Cannot add comment: " . $e->getMessage());
         }

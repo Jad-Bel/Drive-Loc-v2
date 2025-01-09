@@ -10,30 +10,44 @@ $articles = new article();
 $tag = new tag();
 
 
-echo "<pre>";
-print_r($_GET);
-echo "</pre>";
+// echo "<pre>";
+// print_r($_POST);
+// echo "</pre>";
 
+// if (!isset($_SESSION['user_id'])) {
+//     die("User not logged in.");
+// } else {
+//     echo "Session User ID: " . $_SESSION['user_id'];
+//     exit();
+// }
 
-if (isset($_GET['art_id']) && isset($_GET['user_id'])) {
-    $art_id = $_GET['art_id'];
-    
+if (isset($_GET['art_id'])) {
+    $art_id = intval($_GET['art_id']); 
+
     $setArt = $articles->getArticleById($art_id);
+    if (!$setArt) {
+        die("Article not found.");
+    }
 
-    $user = $articles['user_id'];
-    
     $tags = $tag->getTagsForArticle($art_id);
+
 }
 
+// print_r("user_id " . $_SESSION['user_id']);
 
-if (isset($_POST['content']) && isset($_POST['art_id'])) {
-    $art_id = $_GET['art_id'];
-
-    $user_id = $_SESSION['user_id'];
-
-    if ($comment->addComment($content, $art_id, $user_id)) {
-        header("Location: " . $_SERVER['HTTP_REFERER']);
-        exit();
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['art_id'])) {
+    $content = trim($_POST['content']); 
+    $art_id = intval($_POST['art_id']); 
+    $user_id = $_SESSION['user_id']; 
+    if (!empty($content)) {
+        if ($comment->addComment($content, $art_id, $user_id)) {
+            header("Location: " . $_SERVER['HTTP_REFERER']);
+            exit();
+        } else {
+            echo "Failed to add comment. Please try again.";
+        }
+    } else {
+        echo "Comment content cannot be empty.";
     }
 }
 
@@ -150,6 +164,7 @@ if (isset($_POST['content']) && isset($_POST['art_id'])) {
                             <i class="fas fa-envelope me-2"></i>jadthegamer06@gmail.com
                         </a>
                     </div>
+                        <a href="../../../includes/logout.php">log out</a>
                 </div>
                 <div class="col-md-6 text-center text-lg-end">
                     <div class="d-inline-flex align-items-center">
@@ -233,6 +248,7 @@ if (isset($_POST['content']) && isset($_POST['art_id'])) {
                 <div class="comment-section  p-4">
                     <h3 class="h5 mb-4">Comments</h3>
                     <form class="mb-4" method="POST">
+                        <input type="hidden" name="art_id" value="<?= htmlspecialchars($_GET['art_id']) ?>">
                         <textarea class="form-control mb-3" rows="3" name="content" placeholder="Write a comment..."></textarea>
                         <button type="submit" class="btn create-post-btn">Post Comment</button>
                     </form>
@@ -249,7 +265,7 @@ if (isset($_POST['content']) && isset($_POST['art_id'])) {
                     ?>
                             <div class="comment mb-4">
                                 <div class="d-flex mb-3">
-                                    <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="User avatar">
+                                    <img src="../../../img/profile.png" class="rounded-circle me-2" alt="User avatar">
                                     <div>
                                         <div class="fw-bold"><?= $comment['author_name'] ?></div>
                                         <div class="text-muted small">Posted on: <?= $comment['creation_date'] ?></div>
