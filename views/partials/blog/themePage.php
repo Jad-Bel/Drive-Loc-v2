@@ -1,4 +1,5 @@
 <?php 
+require_once '../../../includes/session_check.php';
 require_once '../../../models/themes.php';
 require_once '../../../models/Article.php';
 
@@ -216,12 +217,24 @@ function truncateText($text, $limit = 20) {
                             <div class="card-header border-secondary">
                                 <h5 class="card-title mb-0">Recent Posts</h5>
                             </div>
+                            <?php 
+
+if ($_SERVER['REQUEST_METHOD'] == "GET") {
+                                    // var_dump($_SESSION['user_id']);
+                                    // die;
+                                    if ($_SESSION['user_id']) {
+                                        $user_id = $_SESSION['user_id'];
+                                    }
+
+                                    $article = $articles->getLatestArticle($user_id);
+                                }
+                            ?>
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="community-icon small"></div>
                                     <div>
-                                        <h6 class="mb-0">r/Morocco</h6>
-                                        <small class="text-muted">How big is your ego?</small>
+                                        <h6 class="mb-0"><?= $article['title'] ?></h6>
+                                        <small class="text-muted"><?= truncateText($article['content']) ?></small>
                                     </div>
                                 </div>
                                 <div class="text-muted small">

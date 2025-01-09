@@ -111,6 +111,23 @@ class Article {
         }
     }
 
+    public function getLatestArticle ($user_id) {
+        try {
+            $stmt = $this->conn->prepare("
+            SELECT a.art_id, a.title, a.content, a.creation_date
+            FROM articles a
+            WHERE a.user_id = :user_id
+            ORDER BY a.creation_date DESC
+            LIMIT 1
+            ");
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            throw new Exception('Erreur fetching last articles posted ' . $e);
+        }
+    }
 
 }
 
