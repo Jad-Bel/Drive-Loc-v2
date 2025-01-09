@@ -21,6 +21,12 @@ $tag = new tag();
 //     exit();
 // }
 
+function dd($var){ 
+    echo "<pre>";
+    print_r($var);
+    exit;
+}
+
 if (isset($_GET['art_id'])) {
     $art_id = intval($_GET['art_id']); 
 
@@ -218,11 +224,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['ar
             <!-- Main Post Column -->
             <div class="col-lg-8">
                 <article class="post-card p-4 mb-4">
-                    <h1 class="h3 mb-3"><?= $setArt['title'] ?></h1>
+                    <h1 class="h3 mb-3"><?= $setArt['title']; ?></h1>
                     <div class="d-flex align-items-center mb-3">
                         <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Author avatar">
                         <div>
-                            <div class="fw-bold"><?= $user['author_name'] ?></div>
+                            <div class="fw-bold"><?= $setArt['author_name'] ?></div>
                             <div class="text-muted small">Posted: <?= $setArt['creation_date'] ?></div>
                         </div>
                     </div>
@@ -230,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['ar
                     <p><?= $setArt['content'] ?></p>
                     <div class="d-flex gap-2 mb-3">
                         <?php foreach ($tags as $tag) {
-                            echo "<span>" . htmlspecialchars($tag['nom']) . "</span>";
+                            echo "<span>" . $tag['nom'] . "</span>";
                         } ?>
                     </div>
                     <hr>

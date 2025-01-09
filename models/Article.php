@@ -25,7 +25,7 @@ class Article {
 
     public function getArticleById($art_id) {
         try {
-            $query = "SELECT a.art_id, a.title, CONCAT(u.user_name, ' ', u.user_last) AS author_name
+            $query = "SELECT a.art_id, a.title, creation_date, content, CONCAT(u.user_name, ' ', u.user_last) AS author_name
                       FROM articles a
                       JOIN users u ON a.user_id = u.user_id
                       WHERE a.art_id = :art_id";
@@ -34,8 +34,8 @@ class Article {
 
             $stmt->execute();
 
-            $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $articles;
+            $articles = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $articles ?? [];
         } catch (Exception $e) {
             throw new Error("Cannot get articles: " . $e->getMessage());
         }
