@@ -81,5 +81,22 @@ class Comment {
             throw new Error("Cannot update comment: " . $e->getMessage());
         }
     }
+
+    public function countComm ($art_id) {
+        try {
+            $query = "SELECT COUNT(*) AS total_comments FROM commentaires WHERE art_id = :art_id";
+            
+            $stmt = $this->conn->prepare($query);
+            
+            $stmt->execute([":art_id" => $art_id]);
+            
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            return $result['total_comments'];
+        } catch (PDOException $e) {
+            error_log("Error counting comments: " . $e->getMessage());
+            return 0;
+        }
+    }
 }
 
