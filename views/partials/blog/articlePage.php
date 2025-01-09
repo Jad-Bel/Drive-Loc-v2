@@ -1,12 +1,47 @@
 <?php
-    require_once '../../../models/Article.php';
-    require_once '../../../models/user.php';
-    require_once '../../../models/comment.php';
+include "../../../config/connect.php";
+require_once '../../../includes/session_check.php';
+require_once '../../../models/Article.php';
+require_once '../../../models/comment.php';
+require_once '../../../models/tag.php';
+
+$comment = new Comment();
+$articles = new article();
+$tag = new tag();
+
+
+echo "<pre>";
+print_r($_GET);
+echo "</pre>";
+
+
+if (isset($_GET['art_id']) && isset($_GET['user_id'])) {
+    $art_id = $_GET['art_id'];
+    
+    $setArt = $articles->getArticleById($art_id);
+
+    $user = $articles['user_id'];
+    
+    $tags = $tag->getTagsForArticle($art_id);
+}
+
+
+if (isset($_POST['content']) && isset($_POST['art_id'])) {
+    $art_id = $_GET['art_id'];
+
+    $user_id = $_SESSION['user_id'];
+
+    if ($comment->addComment($content, $art_id, $user_id)) {
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit();
+    }
+}
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,7 +80,7 @@
         .post-card {
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .tag {
@@ -78,7 +113,7 @@
         .social-link {
             width: 36px;
             height: 36px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -99,6 +134,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Topbar -->
     <div class="bg-dark py-2 d-none d-lg-block">
@@ -167,20 +203,20 @@
             <!-- Main Post Column -->
             <div class="col-lg-8">
                 <article class="post-card p-4 mb-4">
-                    <h1 class="h3 mb-3">Understanding Modern Web Development</h1>
+                    <h1 class="h3 mb-3"><?= $setArt['title'] ?></h1>
                     <div class="d-flex align-items-center mb-3">
                         <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Author avatar">
                         <div>
-                            <div class="fw-bold">John Doe</div>
-                            <div class="text-muted small">Posted 2 hours ago</div>
+                            <div class="fw-bold"><?= $user['author_name'] ?></div>
+                            <div class="text-muted small">Posted: <?= $setArt['creation_date'] ?></div>
                         </div>
                     </div>
                     <img src="https://via.placeholder.com/800x400" class="img-fluid rounded mb-3" alt="Post image">
-                    <p>This is a sample post about web development. Click to read more...</p>
+                    <p><?= $setArt['content'] ?></p>
                     <div class="d-flex gap-2 mb-3">
-                        <span class="tag">#WebDev</span>
-                        <span class="tag">#Tutorial</span>
-                        <span class="tag">#Programming</span>
+                        <?php foreach ($tags as $tag) {
+                            echo "<span>" . htmlspecialchars($tag['nom']) . "</span>";
+                        } ?>
                     </div>
                     <hr>
                     <div class="d-flex gap-3">
@@ -196,34 +232,33 @@
                 <!-- Comments Section -->
                 <div class="comment-section  p-4">
                     <h3 class="h5 mb-4">Comments</h3>
-                    <form class="mb-4">
-                        <textarea class="form-control mb-3" rows="3" placeholder="Write a comment..."></textarea>
+                    <form class="mb-4" method="POST">
+                        <textarea class="form-control mb-3" rows="3" name="content" placeholder="Write a comment..."></textarea>
                         <button type="submit" class="btn create-post-btn">Post Comment</button>
                     </form>
-                    
-                    <div class="comment mb-4">
-                        <div class="d-flex mb-3">
-                            <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="User avatar">
-                            <div>
-                                <div class="fw-bold">Jane Smith</div>
-                                <div class="text-muted small">1 hour ago</div>
-                            </div>
-                        </div>
-                        <p class="mb-2">Great article! Thanks for sharing this information.</p>
-                        <button class="btn btn-link btn-sm p-0">Reply</button>
-                    </div>
 
-                    <div class="comment ms-4">
-                        <div class="d-flex mb-3">
-                            <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="User avatar">
-                            <div>
-                                <div class="fw-bold">John Doe</div>
-                                <div class="text-muted small">30 minutes ago</div>
+                    <?php
+                    $comment = new Comment();
+                    $art_id = $_GET['art_id'];
+
+                    $comments = $comment->getCommentsByArticle($art_id);
+                    if (empty($comments)) {
+                        echo '<p>No comments yet. Be the first to comment!</p>';
+                    } else {
+                        foreach ($comments as $comment):
+                    ?>
+                            <div class="comment mb-4">
+                                <div class="d-flex mb-3">
+                                    <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="User avatar">
+                                    <div>
+                                        <div class="fw-bold"><?= $comment['author_name'] ?></div>
+                                        <div class="text-muted small">Posted on: <?= $comment['creation_date'] ?></div>
+                                    </div>
+                                </div>
+                                <p class="mb-2"><?= $comment['content'] ?></p>
                             </div>
-                        </div>
-                        <p class="mb-2">Thank you for the feedback!</p>
-                        <button class="btn btn-link btn-sm p-0">Reply</button>
-                    </div>
+                        <?php endforeach; ?>
+                    <?php } ?>
                 </div>
             </div>
 
@@ -343,7 +378,7 @@
             </div>
         </div>
         <div class="text-center py-4 border-top border-secondary">
-            <p class="mb-0 text-secondary">&copy; <a href="#" class="text-secondary">Drive-Loc</a>. All Rights Reserved. 
+            <p class="mb-0 text-secondary">&copy; <a href="#" class="text-secondary">Drive-Loc</a>. All Rights Reserved.
                 Designed by <a href="https://htmlcodex.com" class="text-secondary">HTML Codex</a></p>
         </div>
     </footer>
@@ -358,11 +393,17 @@
             const image = document.getElementById('postImage').files[0];
 
             // Here you would typically send this data to your server
-            console.log('Creating post:', { title, content, tags, image });
+            console.log('Creating post:', {
+                title,
+                content,
+                tags,
+                image
+            });
 
             // Close the modal
             bootstrap.Modal.getInstance(document.getElementById('createPostModal')).hide();
         });
     </script>
 </body>
+
 </html>

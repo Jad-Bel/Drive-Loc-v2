@@ -176,7 +176,7 @@ function truncateText($text, $limit = 20) {
 
                         <!-- Posts -->
                          <?php foreach($affArticlesByCat as $article): ?>
-                        <article class="post-card p-3" onclick="window.location.href='articlePage.php?art_id=<?php intval($article['art_id']) ?>'">
+                        <article class="post-card p-3" onclick="window.location.href='articlePage.php?art_id=<?php echo intval($article['art_id'])?>&user_id=<?= intval($article['user_id']) ?>'">
                             <div class="d-flex">
                                 <!-- Vote Buttons -->
                                 <div class="d-flex flex-column align-items-center me-3">

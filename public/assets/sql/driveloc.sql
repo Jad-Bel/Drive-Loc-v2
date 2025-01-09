@@ -120,8 +120,8 @@ JOIN commentaires c ON a.art_id = c.art_id;
 -- get all articles with their tags
 SELECT a.title, t.nom AS tag_name
 FROM articles a
-JOIN article_tags `at` ON a.art_id = at.art_id
-JOIN tags t ON at.tag_id = t.tag_id;
+JOIN article_tags `at` ON a.art_id = `at`.art_id
+JOIN tags t ON `at`.tag_id = t.tag_id;
 
 -- get all favorite articles for a user
 SELECT u.user_name, a.title
