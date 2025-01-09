@@ -21,14 +21,15 @@ $tag = new tag();
 //     exit();
 // }
 
-function dd($var){ 
+function dd($var)
+{
     echo "<pre>";
     print_r($var);
     exit;
 }
 
 if (isset($_GET['art_id'])) {
-    $art_id = intval($_GET['art_id']); 
+    $art_id = intval($_GET['art_id']);
 
     $setArt = $articles->getArticleById($art_id);
     if (!$setArt) {
@@ -36,15 +37,14 @@ if (isset($_GET['art_id'])) {
     }
 
     $tags = $tag->getTagsForArticle($art_id);
-
 }
 
 // print_r("user_id " . $_SESSION['user_id']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['art_id'])) {
-    $content = trim($_POST['content']); 
-    $art_id = intval($_POST['art_id']); 
-    $user_id = $_SESSION['user_id']; 
+    $content = trim($_POST['content']);
+    $art_id = intval($_POST['art_id']);
+    $user_id = $_SESSION['user_id'];
     if (!empty($content)) {
         if ($comment->addComment($content, $art_id, $user_id)) {
             header("Location: " . $_SERVER['HTTP_REFERER']);
@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['ar
                             <i class="fas fa-envelope me-2"></i>jadthegamer06@gmail.com
                         </a>
                     </div>
-                        <a href="../../../includes/logout.php">log out</a>
+                    <a href="../../../includes/logout.php">log out</a>
                 </div>
                 <div class="col-md-6 text-center text-lg-end">
                     <div class="d-inline-flex align-items-center">
@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['ar
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Home</a>
+                        <a class="nav-link" href="../../layouts/main.php">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">About</a>
@@ -203,10 +203,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['ar
                         <a class="nav-link" href="#">Service</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pages</a>
+                        <a class="nav-link" href="../vehicules/vehiculePage.php">Vehicule Page</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
+                        <a class="nav-link" href="themePage.php">Blogs</a>
                     </li>
                     <li class="nav-item ms-lg-3">
                         <button class="btn create-post-btn" data-bs-toggle="modal" data-bs-target="#createPostModal">
@@ -309,29 +309,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['ar
                     <h5 class="modal-title">Create a Post</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+                <?php
+                $articles = new article();
+
+
+                if ($_SERVER['REQUEST_METHOD'] === "POST") {
+                    $user_id = $_SESSION['user_id'];
+                    $title = $_POST['title'];
+                    $content = $_POST['content'];
+                    $tags = $_POST['tags'];
+                    $img = $_POST['img'];
+                    $thm_id = 1;
+
+                    $articleInsert = $articles->addArticle($title, $content, $user_id, $thm_id);
+                }
+                ?>
                 <div class="modal-body">
-                    <form id="createPostForm">
+                    <form id="createPostForm" method="POST">
+                        <input type="hidden" name="user_id" value="<?php echo intval($user_id); ?>">
                         <div class="mb-3">
                             <label for="postTitle" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="postTitle" required>
+                            <input type="text" name="title" class="form-control" id="postTitle" required>
                         </div>
                         <div class="mb-3">
                             <label for="postContent" class="form-label">Content</label>
-                            <textarea class="form-control" id="postContent" rows="5" required></textarea>
+                            <textarea class="form-control" name="content" id="postContent" rows="5" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="postTags" class="form-label">Tags</label>
-                            <input type="text" class="form-control" id="postTags" placeholder="Separate tags with commas">
+                            <input type="text" class="form-control" name="tags" id="postTags" placeholder="Separate tags with commas">
                         </div>
+                        <!-- <div class="mb-3">
+                            <label for="postTags" class="form-label">Theme</label>
+                            <select type="text" class="form-control" name="theme" id="postTheme" placeholder="">
+                        </div> -->
                         <div class="mb-3">
                             <label for="postImage" class="form-label">Image (optional)</label>
-                            <input type="file" class="form-control" id="postImage" accept="image/*">
+                            <input type="file" class="form-control" name="img" id="postImage" accept="image/*">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn create-post-btn" id="submitPost">Create Post</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn create-post-btn" id="submitPost">Create Post</button>
                 </div>
             </div>
         </div>
@@ -408,23 +428,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['content'], $_POST['ar
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Handle post submission
-        document.getElementById('submitPost').addEventListener('click', function() {
-            const title = document.getElementById('postTitle').value;
-            const content = document.getElementById('postContent').value;
-            const tags = document.getElementById('postTags').value;
-            const image = document.getElementById('postImage').files[0];
+        // document.getElementById('submitPost').addEventListener('click', function() {
+        //     const title = document.getElementById('postTitle').value;
+        //     const content = document.getElementById('postContent').value;
+        //     const tags = document.getElementById('postTags').value;
+        //     const image = document.getElementById('postImage').files[0];
 
-            // Here you would typically send this data to your server
-            console.log('Creating post:', {
-                title,
-                content,
-                tags,
-                image
-            });
+        //     // Here you would typically send this data to your server
+        //     console.log('Creating post:', {
+        //         title,
+        //         content,
+        //         tags,
+        //         image
+        //     });
 
-            // Close the modal
-            bootstrap.Modal.getInstance(document.getElementById('createPostModal')).hide();
-        });
+        //     // Close the modal
+        //     bootstrap.Modal.getInstance(document.getElementById('createPostModal')).hide();
+        // });
     </script>
 </body>
 
