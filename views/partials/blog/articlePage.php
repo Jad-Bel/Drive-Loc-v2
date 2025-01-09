@@ -1,4 +1,7 @@
-<?php 
+<?php
+    require_once '../../../models/Article.php';
+    require_once '../../../models/user.php';
+    require_once '../../../models/comment.php';
 
 ?>
 
@@ -7,93 +10,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reddit-Style Blog</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Blog Post | Royal Cars</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
-            --reddit-orange: #FF4500;
-            --text-primary: #1B2141;
-            --bg-light: #F9FAFB;
-            --border-color: #ccc;
+            --primary-color: #FF4D30;
+            --dark-bg: #191C24;
+            --secondary-text: #6C757D;
         }
 
         body {
-            background-color: var(--bg-light);
-            color: var(--text-primary);
-            font-family: -apple-system, BlinkMacSystemFont, 'IBM Plex Sans', sans-serif;
+            background-color: #F8F9FA;
         }
 
         .navbar {
-            background-color: white;
-            border-bottom: 1px solid var(--border-color);
+            background-color: var(--dark-bg);
         }
 
-        .search-bar {
-            max-width: 600px;
-            width: 100%;
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
         }
 
         .post-card {
             background: white;
-            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tag {
+            background-color: #E9ECEF;
+            color: var(--secondary-text);
+            padding: 4px 8px;
             border-radius: 4px;
-            margin-bottom: 1rem;
-        }
-
-        .vote-buttons {
-            padding: 0.5rem;
-            text-align: center;
-        }
-
-        .vote-buttons button {
-            background: none;
-            border: none;
-            color: #878A8C;
-            display: block;
-            width: 100%;
-        }
-
-        .vote-buttons button:hover {
-            color: var(--reddit-orange);
-        }
-
-        .post-content {
-            padding: 1rem;
-        }
-
-        .post-title {
-            color: var(--text-primary);
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-
-        .post-meta {
-            color: #878A8C;
-            font-size: 0.8rem;
-        }
-
-        .comment-section {
-            background: white;
-            border-radius: 4px;
-            margin-top: 1rem;
-            padding: 1rem;
-        }
-
-        .comment {
-            border-left: 2px solid #eee;
-            margin: 1rem 0;
-            padding-left: 1rem;
+            font-size: 0.875rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            display: inline-block;
         }
 
         .create-post-btn {
-            background-color: var(--reddit-orange);
+            background-color: var(--primary-color);
             border: none;
             color: white;
         }
 
         .create-post-btn:hover {
-            background-color: #cc3700;
+            background-color: #ff2c06;
+            color: white;
+        }
+
+        .footer {
+            background-color: var(--dark-bg);
+            color: white;
+        }
+
+        .social-link {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+
+        .social-link:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .gallery-img {
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -104,17 +106,21 @@
             <div class="row">
                 <div class="col-md-6 text-center text-lg-start">
                     <div class="d-inline-flex align-items-center">
-                        <a class="text-light me-3" href="tel:+212693305050"><i class="fas fa-phone-alt me-2"></i>+212 6933 05050</a>
-                        <span class="text-light">|</span>
-                        <a class="text-light ms-3" href="mailto:jadthegamer06@gmail.com"><i class="fas fa-envelope me-2"></i>jadthegamer06@gmail.com</a>
+                        <a class="text-secondary me-3" href="tel:+212693305050">
+                            <i class="fas fa-phone-alt me-2"></i>+212 6933 05050
+                        </a>
+                        <span class="text-secondary">|</span>
+                        <a class="text-secondary ms-3" href="mailto:jadthegamer06@gmail.com">
+                            <i class="fas fa-envelope me-2"></i>jadthegamer06@gmail.com
+                        </a>
                     </div>
                 </div>
                 <div class="col-md-6 text-center text-lg-end">
                     <div class="d-inline-flex align-items-center">
-                        <a class="text-light px-3" href="https://github.com/Jad-Bel"><i class="fab fa-github"></i></a>
-                        <a class="text-light px-3" href="https://www.linkedin.com/in/jad-belassiria-16390321b/"><i class="fab fa-linkedin-in"></i></a>
-                        <a class="text-light px-3" href="https://www.facebook.com/profile.php?id=100070651475648"><i class="fab fa-facebook-f"></i></a>
-                        <a class="text-light px-3" href="https://www.instagram.com/_69eei/"><i class="fab fa-instagram"></i></a>
+                        <a class="text-secondary px-3" href="#"><i class="fab fa-github"></i></a>
+                        <a class="text-secondary px-3" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="text-secondary px-3" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="text-secondary px-3" href="#"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
@@ -122,14 +128,14 @@
     </div>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">BlogIt</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="#">ROYAL CARS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" href="#">Home</a>
                     </li>
@@ -140,166 +146,98 @@
                         <a class="nav-link" href="#">Service</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="#">Pages</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#">Contact</a>
                     </li>
+                    <li class="nav-item ms-lg-3">
+                        <button class="btn create-post-btn" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                            Create Post
+                        </button>
+                    </li>
                 </ul>
-                <button class="btn create-post-btn" id="createPostBtn">Create Post</button>
             </div>
         </div>
     </nav>
 
-    <!-- Search Bar -->
-    <!-- <div class="bg-light py-3">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <input type="search" id="searchInput" class="form-control" placeholder="Search articles...">
-                </div>
-            </div>
-        </div>
-    </div> -->
-
-<!-- Topbar Start -->
-<div class="container-fluid bg-dark py-3 px-lg-5 d-none d-lg-block">
-        <div class="row">
-            <div class="col-md-6 text-center text-lg-left mb-2 mb-lg-0">
-                <div class="d-inline-flex align-items-center">
-                    <a class="text-body pr-3" href=""><i class="fa fa-phone-alt mr-2"></i>+212 6933 05050</a>
-                    <span class="text-body">|</span>
-                    <a class="text-body px-3" href=""><i class="fa fa-envelope mr-2"></i>jadthegamer06@gmail.com</a>
-                </div>
-            </div>
-            <div class="col-md-6 text-center text-lg-right">
-                <div class="d-inline-flex align-items-center">
-                    <a class="text-body px-3" href="https://github.com/Jad-Bel">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a class="text-body px-3" href="https://www.linkedin.com/in/jad-belassiria-16390321b/">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a class="text-body px-3" href="https://www.facebook.com/profile.php?id=100070651475648">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a class="text-body px-3" href="https://www.instagram.com/_69eei/">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Topbar End -->
-
-    <!-- Navbar Start -->
-    <div class="container-fluid position-relative nav-bar p-0">
-        <div class="position-relative px-lg-5" style="z-index: 9;">
-            <nav class="navbar navbar-expand-lg bg-secondary navbar-dark py-3 py-lg-0 pl-3 pl-lg-5">
-                <a href="" class="navbar-brand">
-                    <h1 class="text-uppercase text-primary mb-1">Royal Cars</h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
-                    <div class="navbar-nav ml-auto py-0">
-                        <a href="../../layouts/main.php" class="nav-item nav-link">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="service.html" class="nav-item nav-link">Service</a>
-                        <div class="nav-item dropdown">
-                            <!-- <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Cars</a> -->
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="../vehicules/vehiculePage.php" class="dropdown-item">Car Listing</a>
-                                <!-- <a href="#" class="dropdown-item">Car Detail</a> -->
-                            </div>
-                        </div>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="team.html" class="dropdown-item">The Team</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                            </div>
-                        </div>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </div>
-    <!-- Navbar End -->
-
     <!-- Main Content -->
-    <div class="container mt-4">
+    <div class="container py-5">
         <div class="row">
-            <!-- Posts Column -->
-            <div class="col-md-8">
-                <!-- Sample Post Card -->
-                <div class="post-card d-flex">
-                    <div class="vote-buttons">
-                        <button class="upvote"><i class="fas fa-chevron-up"></i></button>
-                        <span>42</span>
-                        <button class="downvote"><i class="fas fa-chevron-down"></i></button>
-                    </div>
-                    <div class="post-content flex-grow-1">
-                        <h2 class="post-title">Understanding Modern Web Development</h2>
-                        <div class="post-meta">
-                            Posted by <a href="#">@developer</a> • 2 hours ago
-                            <span class="tags">
-                                <span class="badge bg-light text-dark me-1">WebDev</span>
-                                <span class="badge bg-light text-dark">Tutorial</span>
-                            </span>
-                        </div>
-                        <div class="mt-3">
-                            <img src="https://via.placeholder.com/600x300" alt="Post image" class="img-fluid mb-3">
-                            <p>This is a sample post about web development. Click to read more...</p>
-                        </div>
-                        <div class="post-actions">
-                            <button class="btn btn-light btn-sm">
-                                <i class="far fa-comment me-1"></i> 24 Comments
-                            </button>
-                            <button class="btn btn-light btn-sm">
-                                <i class="fas fa-share me-1"></i> Share
-                            </button>
+            <!-- Main Post Column -->
+            <div class="col-lg-8">
+                <article class="post-card p-4 mb-4">
+                    <h1 class="h3 mb-3">Understanding Modern Web Development</h1>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Author avatar">
+                        <div>
+                            <div class="fw-bold">John Doe</div>
+                            <div class="text-muted small">Posted 2 hours ago</div>
                         </div>
                     </div>
-                </div>
+                    <img src="https://via.placeholder.com/800x400" class="img-fluid rounded mb-3" alt="Post image">
+                    <p>This is a sample post about web development. Click to read more...</p>
+                    <div class="d-flex gap-2 mb-3">
+                        <span class="tag">#WebDev</span>
+                        <span class="tag">#Tutorial</span>
+                        <span class="tag">#Programming</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-light btn-sm">
+                            <i class="far fa-comment me-1"></i> 24 Comments
+                        </button>
+                        <button class="btn btn-light btn-sm">
+                            <i class="fas fa-share me-1"></i> Share
+                        </button>
+                    </div>
+                </article>
 
-                <!-- Comment Section -->
-                <div class="comment-section mt-4">
-                    <h3>Comments</h3>
-                    <form id="commentForm" class="mb-4">
-                        <textarea class="form-control mb-2" id="commentContent" placeholder="What are your thoughts?"></textarea>
-                        <button type="submit" class="btn create-post-btn">Comment</button>
+                <!-- Comments Section -->
+                <div class="comment-section  p-4">
+                    <h3 class="h5 mb-4">Comments</h3>
+                    <form class="mb-4">
+                        <textarea class="form-control mb-3" rows="3" placeholder="Write a comment..."></textarea>
+                        <button type="submit" class="btn create-post-btn">Post Comment</button>
                     </form>
                     
-                    <div id="commentsContainer">
-                        <div class="comment">
-                            <div class="comment-meta">
-                                <strong>@user123</strong> • 1 hour ago
+                    <div class="comment mb-4">
+                        <div class="d-flex mb-3">
+                            <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="User avatar">
+                            <div>
+                                <div class="fw-bold">Jane Smith</div>
+                                <div class="text-muted small">1 hour ago</div>
                             </div>
-                            <p>This is a great article! Thanks for sharing.</p>
-                            <button class="btn btn-link btn-sm">Reply</button>
                         </div>
-                        
-                        <div class="comment ms-4">
-                            <div class="comment-meta">
-                                <strong>@author</strong> • 30 mins ago
+                        <p class="mb-2">Great article! Thanks for sharing this information.</p>
+                        <button class="btn btn-link btn-sm p-0">Reply</button>
+                    </div>
+
+                    <div class="comment ms-4">
+                        <div class="d-flex mb-3">
+                            <img src="https://via.placeholder.com/32" class="rounded-circle me-2" alt="User avatar">
+                            <div>
+                                <div class="fw-bold">John Doe</div>
+                                <div class="text-muted small">30 minutes ago</div>
                             </div>
-                            <p>Thank you for the feedback!</p>
                         </div>
+                        <p class="mb-2">Thank you for the feedback!</p>
+                        <button class="btn btn-link btn-sm p-0">Reply</button>
                     </div>
                 </div>
             </div>
 
             <!-- Sidebar -->
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Popular Tags</h5>
-                        <div class="tags">
-                            <span class="badge bg-light text-dark me-1 mb-1">#WebDev</span>
-                            <span class="badge bg-light text-dark me-1 mb-1">#JavaScript</span>
-                            <span class="badge bg-light text-dark me-1 mb-1">#Tutorial</span>
-                            <span class="badge bg-light text-dark me-1 mb-1">#Programming</span>
-                        </div>
+            <div class="col-lg-4">
+                <div class="post-card p-4 mb-4">
+                    <h4 class="h5 mb-3">Popular Tags</h4>
+                    <div>
+                        <span class="tag">#WebDev</span>
+                        <span class="tag">#JavaScript</span>
+                        <span class="tag">#Tutorial</span>
+                        <span class="tag">#Programming</span>
+                        <span class="tag">#React</span>
+                        <span class="tag">#NodeJS</span>
                     </div>
                 </div>
             </div>
@@ -307,12 +245,12 @@
     </div>
 
     <!-- Create Post Modal -->
-    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="createPostModal" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createPostModalLabel">Create a Post</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Create a Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="createPostForm">
@@ -342,143 +280,89 @@
         </div>
     </div>
 
-
-    <!-- Footer Start -->
-    <div class="container-fluid bg-secondary py-5 px-sm-3 px-md-5" style="margin-top: 90px;">
-        <div class="row pt-5">
-            <div class="col-lg-3 col-md-6 mb-5">
-                <h4 class="text-uppercase text-light mb-4">Get In Touch</h4>
-                <p class="mb-2"><i class="fa fa-map-marker-alt text-white mr-3"></i>123 Street, New York, USA</p>
-                <p class="mb-2"><i class="fa fa-phone-alt text-white mr-3"></i>+212 6933 05050</p>
-                <p><i class="fa fa-envelope text-white mr-3"></i>jadthegamer06@gmail.com</p>
-                <h6 class="text-uppercase text-white py-2">Follow Us</h6>
-                <div class="d-flex justify-content-start">
-                    <a class="btn btn-lg btn-dark btn-lg-square mr-2" href="https://github.com/Jad-Bel"><i class="fab fa-github"></i></a>
-                    <a class="btn btn-lg btn-dark btn-lg-square mr-2" href="https://www.linkedin.com/in/jad-belassiria-16390321b/"><i class="fab fa-linkedin-in"></i></a>
-                    <a class="btn btn-lg btn-dark btn-lg-square mr-2" href="https://www.facebook.com/profile.php?id=100070651475648"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-lg btn-dark btn-lg-square" href="https://www.instagram.com/_69eei/"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-5">
-                <h4 class="text-uppercase text-light mb-4">Usefull Links</h4>
-                <div class="d-flex flex-column justify-content-start">
-                    <a class="text-body mb-2" href="#"><i class="fa fa-angle-right text-white mr-2"></i>Private Policy</a>
-                    <a class="text-body mb-2" href="#"><i class="fa fa-angle-right text-white mr-2"></i>Term & Conditions</a>
-                    <a class="text-body mb-2" href="#"><i class="fa fa-angle-right text-white mr-2"></i>New Member Registration</a>
-                    <a class="text-body mb-2" href="#"><i class="fa fa-angle-right text-white mr-2"></i>Affiliate Programme</a>
-                    <a class="text-body mb-2" href="#"><i class="fa fa-angle-right text-white mr-2"></i>Return & Refund</a>
-                    <a class="text-body" href="#"><i class="fa fa-angle-right text-white mr-2"></i>Help & FQAs</a>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-5">
-                <h4 class="text-uppercase text-light mb-4">Car Gallery</h4>
-                <div class="row mx-n1">
-                    <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../img/gallery-1.jpg" alt=""></a>
-                    </div>
-                    <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../img/gallery-2.jpg" alt=""></a>
-                    </div>
-                    <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../img/gallery-3.jpg" alt=""></a>
-                    </div>
-                    <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../img/gallery-4.jpg" alt=""></a>
-                    </div>
-                    <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../img/gallery-5.jpg" alt=""></a>
-                    </div>
-                    <div class="col-4 px-1 mb-2">
-                        <a href=""><img class="w-100" src="../../img/gallery-6.jpg" alt=""></a>
+    <!-- Footer -->
+    <footer class="footer pt-5">
+        <div class="container">
+            <div class="row pb-4">
+                <div class="col-lg-3 mb-4">
+                    <h5 class="text-uppercase mb-4">Get In Touch</h5>
+                    <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Street, New York, USA</p>
+                    <p class="mb-2"><i class="fas fa-phone-alt me-2"></i> +212 6933 05050</p>
+                    <p class="mb-4"><i class="fas fa-envelope me-2"></i> jadthegamer06@gmail.com</p>
+                    <h6 class="text-uppercase mb-3">Follow Us</h6>
+                    <div class="d-flex">
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-5">
-                <h4 class="text-uppercase text-light mb-4">Newsletter</h4>
-                <p class="mb-4">Volup amet magna clita tempor. Tempor sea eos vero ipsum. Lorem lorem sit sed elitr sed kasd et</p>
-                <div class="w-100 mb-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-dark border-dark" style="padding: 25px;" placeholder="Your Email">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary text-uppercase px-3">Sign Up</button>
+                <div class="col-lg-3 mb-4">
+                    <h5 class="text-uppercase mb-4">Useful Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-secondary">Private Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary">Term & Conditions</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary">New Member Registration</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary">Affiliate Programme</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary">Return & Refund</a></li>
+                        <li><a href="#" class="text-secondary">Help & FAQs</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 mb-4">
+                    <h5 class="text-uppercase mb-4">Car Gallery</h5>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <img src="../../../img/gallery-1.jpg" class="gallery-img w-100" alt="Car 1">
+                        </div>
+                        <div class="col-4">
+                            <img src="../../../img/gallery-2.jpg" class="gallery-img w-100" alt="Car 2">
+                        </div>
+                        <div class="col-4">
+                            <img src="../../../img/gallery-3.jpg" class="gallery-img w-100" alt="Car 3">
+                        </div>
+                        <div class="col-4">
+                            <img src="../../../img/gallery-4.jpg" class="gallery-img w-100" alt="Car 4">
+                        </div>
+                        <div class="col-4">
+                            <img src="../../../img/gallery-5.jpg" class="gallery-img w-100" alt="Car 5">
+                        </div>
+                        <div class="col-4">
+                            <img src="../../../img/gallery-6.jpg" class="gallery-img w-100" alt="Car 6">
                         </div>
                     </div>
                 </div>
-                <i>Lorem sit sed elitr sed kasd et</i>
+                <div class="col-lg-3 mb-4">
+                    <h5 class="text-uppercase mb-4">Newsletter</h5>
+                    <p class="text-secondary mb-4">Subscribe to our newsletter for updates</p>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control bg-dark border-dark text-white" placeholder="Your Email">
+                        <button class="btn create-post-btn">Sign Up</button>
+                    </div>
+                    <p class="text-secondary"><small>We respect your privacy</small></p>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid bg-dark py-4 px-sm-3 px-md-5">
-        <p class="mb-2 text-center text-body">&copy; <a href="#">Drive-Loc</a>. All Rights Reserved.</p>
-		
-		<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->					
-        <p class="m-0 text-center text-body">Designed by <a href="https://htmlcodex.com">HTML Codex</a></p>
-    </div>
-    <!-- Footer End -->
+        <div class="text-center py-4 border-top border-secondary">
+            <p class="mb-0 text-secondary">&copy; <a href="#" class="text-secondary">Drive-Loc</a>. All Rights Reserved. 
+                Designed by <a href="https://htmlcodex.com" class="text-secondary">HTML Codex</a></p>
+        </div>
+    </footer>
 
-    
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // $(document).ready(function() {
-        //     $('.vote-buttons button').click(function() {
-        //         $(this).toggleClass('text-primary');
-        //     });
+        // Handle post submission
+        document.getElementById('submitPost').addEventListener('click', function() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const tags = document.getElementById('postTags').value;
+            const image = document.getElementById('postImage').files[0];
 
-        //     // Handle search with debounce
-        //     let searchTimeout;
-        //     $('#searchInput').on('input', function() {
-        //         clearTimeout(searchTimeout);
-        //         searchTimeout = setTimeout(() => {
-        //             // Implement search functionality here
-        //             console.log('Searching for:', $(this).val());
-        //             // You would typically make an AJAX call here to fetch search results
-        //         }, 500);
-        //     });
+            // Here you would typically send this data to your server
+            console.log('Creating post:', { title, content, tags, image });
 
-        //     // Handle create post modal
-            $('#createPostBtn').click(function() {
-                $('#createPostModal').modal('show');
-            });
-
-        //     // Handle form submission
-             $('#submitPost').click(function() {
-                 // Implement post creation here
-                 console.log('Creating post:', {
-                     title: $('#postTitle').val(),
-                     content: $('#postContent').val(),
-                     tags: $('#postTags').val().split(',').map(tag => tag.trim()),
-                     image: $('#postImage')[0].files[0]
-                 });
-                 $('#createPostModal').modal('hide');
-             });
-
-        //     // Handle comment submission
-        //     $('#commentForm').on('submit', function(e) {
-        //         e.preventDefault();
-        //         const commentContent = $('#commentContent').val();
-        //         if (commentContent.trim()) {
-        //             // You would typically make an AJAX call here to submit the comment
-        //             console.log('Submitting comment:', commentContent);
-        //             // For demonstration, let's add the comment to the DOM
-        //             const newComment = `
-        //                 <div class="comment">
-        //                     <div class="comment-meta">
-        //                         <strong>@currentUser</strong> • Just now
-        //                     </div>
-        //                     <p>${commentContent}</p>
-        //                     <button class="btn btn-link btn-sm">Reply</button>
-        //                 </div>
-        //             `;
-        //             $('#commentsContainer').prepend(newComment);
-        //             $('#commentContent').val('');
-        //         }
-        //     });
-        // });
+            // Close the modal
+            bootstrap.Modal.getInstance(document.getElementById('createPostModal')).hide();
+        });
     </script>
 </body>
 </html>
-
-
-

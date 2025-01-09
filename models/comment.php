@@ -11,28 +11,36 @@ class Comment {
 
     public function getCommentsByArticle($art_id) {
         try {
-            $query = "SELECT * FROM commentaires WHERE art_id = :art_id ORDER BY creation_date DESC";
+            $query = "SELECT c.content, c.creation_date, c.comm_id, 
+                             CONCAT(u.user_name, ' ', u.user_last) AS author_name
+                      FROM commentaires c
+                      JOIN users u ON c.user_id = u.user_id
+                      WHERE c.art_id = :art_id
+                      ORDER BY c.creation_date DESC";
             $stmt = $this->conn->prepare($query);
-
+    
             $param = [":art_id" => $art_id];
-
+    
             $stmt->execute($param);
-
+    
             $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $comments;
         } catch (Exception $e) {
             throw new Error("Cannot get comments: " . $e->getMessage());
         }
     }
+    
 
-    public function addComment($content, $art_id) {
+    public function addComment($content, $art_id, $user_id) {
         try {
-            $query = "INSERT INTO commentaires (content, creation_date, art_id) VALUES (:content, NOW(), :art_id)";
+            $query = "INSERT INTO commentaires (content, creation_date, art_id, user_id) 
+                      VALUES (:content, NOW(), :art_id, :user_id)";
             $stmt = $this->conn->prepare($query);
-
+    
             $param = [
                 ":content" => $content,
-                ":art_id" => $art_id
+                ":art_id" => $art_id,
+                ":user_id" => $user_id
             ];
             
             $stmt->execute($param);
@@ -41,6 +49,7 @@ class Comment {
             throw new Error("Cannot add comment: " . $e->getMessage());
         }
     }
+    
 
     public function deleteComment($comm_id) {
         try {
