@@ -3,6 +3,7 @@ require_once '../../../includes/session_check.php';
 require_once '../../../models/themes.php';
 require_once '../../../models/Article.php';
 require_once '../../../models/comment.php';
+// require_once '../../../includes/pagination.php';
 
 
 $articles = new article();
@@ -18,6 +19,22 @@ if ($thm_id) {
 }
 
 $commentCount = ($art_id) ? $comments->countComm($art_id) : 0;
+
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$itemsPerPage = isset($_GET['per_page']) ? max(5, min(15, intval($_GET['per_page']))) : 5;
+
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$totalArticles = $articles->countArticles($search);
+$totalPages = ceil($totalArticles / $itemsPerPage);
+$currentPage = max(1, min($page, $totalPages));
+$offset = ($currentPage - 1) * $itemsPerPage;
+
+try {
+    $articlesList = $articles->getArticlesByPage($itemsPerPage, $offset, $search);
+} catch (Exception $e) {
+    $articlesList = [];
+}
+
 
 function truncateText($text, $limit = 20)
 {
@@ -42,7 +59,6 @@ function truncateText($text, $limit = 20)
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-
         .navbar {
             background-color: var(--dark-bg);
         }
@@ -60,6 +76,7 @@ function truncateText($text, $limit = 20)
         .nav-link:hover {
             color: var(--primary-color) !important;
         }
+
         :root {
             --sidebar-width: 280px;
             --primary-color: #FF4D30;
@@ -139,6 +156,7 @@ function truncateText($text, $limit = 20)
             color: #d7dadc;
             box-shadow: none;
         }
+
         .create-post-btn {
             background-color: var(--primary-color);
             border: none;
@@ -149,13 +167,21 @@ function truncateText($text, $limit = 20)
             background-color: #ff2c06;
             color: white;
         }
-
     </style>
+
+    <script>
+        function changePerPage(value) {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('per_page', value);
+            urlParams.set('page', 1);
+            window.location.search = urlParams.toString();
+        }
+    </script>
 </head>
 
 <body>
 
-<div class="bg-dark py-2 d-none d-lg-block">
+    <div class="bg-dark py-2 d-none d-lg-block">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-lg-start">
@@ -182,7 +208,7 @@ function truncateText($text, $limit = 20)
         </div>
     </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="#">ROYAL CARS</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -277,7 +303,14 @@ function truncateText($text, $limit = 20)
                     }
                     ?>
                 </h1>
-
+                <div class="mb-3">
+                    <label for="perPage">Articles per page:</label>
+                    <select id="perPage" onchange="changeItemsPerPage(this.value)" class="form-select d-inline-block w-auto">
+                        <option value="5" <?= $itemsPerPage == 5 ? 'selected' : '' ?>>5</option>
+                        <option value="10" <?= $itemsPerPage == 10 ? 'selected' : '' ?>>10</option>
+                        <option value="15" <?= $itemsPerPage == 15 ? 'selected' : '' ?>>15</option>
+                    </select>
+                </div>
                 <?php if (empty($affArticlesByCat)): ?>
                     <div class="alert alert-info">
                         <?php
@@ -292,109 +325,125 @@ function truncateText($text, $limit = 20)
                     <div class="row">
                         <div class="col-lg-8">
                             <!-- Sort Options -->
-                            <div class="d-flex align-items-center mb-3">
-                                <button class="btn btn-outline-secondary me-2">
-                                    <i class="fas fa-rocket me-2"></i> Best
-                                </button>
-                                <button class="btn btn-outline-secondary">
-                                    <i class="fas fa-clock me-2"></i> New
-                                </button>
-                            </div>
+                            <nav aria-label="Page navigation" class="w-100 text-center mt-4">
+                                <ul class="pagination justify-content-center">
+                                    <?php if ($currentPage > 1): ?>
+                                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(1); return false;">First</a></li>
+                                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(<?= $currentPage - 1 ?>); return false;">Previous</a></li>
+                                    <?php endif; ?>
 
-                            <!-- Posts -->
-                            <?php foreach ($affArticlesByCat as $article): ?>
-                                <article class="post-card p-3" onclick="window.location.href='articlePage.php?art_id=<?php echo intval($article['art_id']) ?>&user_id=<?= intval($article['user_id']) ?>'">
-                                    <div class="d-flex">
-                                        <!-- Vote Buttons -->
-                                        <div class="d-flex flex-column align-items-center me-3">
-                                            <button class="vote-button"><i class="fas fa-arrow-up"></i></button>
-                                            <span class="my-1">1</span>
-                                            <button class="vote-button"><i class="fas fa-arrow-down"></i></button>
-                                        </div>
-                                        <!-- Post Content -->
+                                    <?php for ($i = max(1, $currentPage - 2); $i <= min($totalPages, $currentPage + 2); $i++): ?>
+                                        <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
+                                            <a class="page-link" href="#" onclick="changePage(<?= $i ?>); return false;"><?= $i ?></a>
+                                        </li>
+                                    <?php endfor; ?>
 
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <div class="community-icon"></div>
-                                                <span class="me-2"><?= htmlspecialchars($article['author_name']) ?></span>
-                                                <span class="text-muted">
-                                                    • <?php
-                                                        $date = new DateTime($article['creation_date']);
-                                                        echo $date->format('M j, T');
-                                                        ?>
-                                                </span>
-                                            </div>
-                                            <h2 class="h5 mb-2"><?= htmlspecialchars(truncateText($article['title'])); ?></h2>
-                                            <p class="mb-2"><?= htmlspecialchars(truncateText($article['content'])); ?></p>
-                                            <div class="d-flex align-items-center">
-                                                <button class="btn btn-link text-muted me-3">
-                                                    <?php
-                                                        $commentCount = $comments->countComm($article['art_id']); // Get comment count for each article
-                                                    ?>
-                                                    <i class="far fa-comment me-1"></i><?= htmlspecialchars($commentCount) ?> comments
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </article>
-                            <?php endforeach; ?>
+                                    <?php if ($currentPage < $totalPages): ?>
+                                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(<?= $currentPage + 1 ?>); return false;">Next</a></li>
+                                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(<?= $totalPages ?>); return false;">Last</a></li>
+                                    <?php endif; ?>
+                                </ul>
+                            </nav>
                         </div>
-                    <?php endif; ?>
-
-                    <!-- Right Sidebar -->
-                    <aside class="col-lg-4 d-none d-lg-block">
-                        <div class="card border-secondary">
-                            <div class="card-header border-secondary">
-                                <h5 class="card-title mb-0">Recent Posts</h5>
-                            </div>
-                            <?php
-
-                            if ($_SERVER['REQUEST_METHOD'] == "GET") {
-
-                                if ($_SESSION['user_id']) {
-                                    $user_id = $_SESSION['user_id'];
-
-                                    $article = $articles->getLatestArticle($user_id);
-
-                                    if ($article) {
-                                        $art_id = $article['art_id'];
-
-                                        $comments = new Comment();
-                                        $commentCount = $comments->countComm($art_id);
-                                    } else {
-                                        $commentCount = 0;
-                                    }
-                                }
-
-
-
-                                // $article = $articles->getLatestArticle($user_id);
-
-                                // $comments = new Comment();
-                                // $commentCount = $comments->countComm($art_id);
-                            }
-                            ?>
-                            <div class="card-body">
-                                <?php if (!empty($article)): ?>
-                                    <div class="d-flex align-items-center mb-3">
-                                        <div class="community-icon small"></div>
-                                        <div>
-                                            <h6 class="mb-0"><?= htmlspecialchars($article['title']) ?></h6>
-                                            <small class="text-muted"><?= htmlspecialchars(truncateText($article['content'])) ?></small>
-                                        </div>
-                                    </div>
-                                    <div class="text-muted small">
-                                        • <?= htmlspecialchars($commentCount) ?> comments
-                                    </div>
-                                <?php else: ?>
-                                    <p class="text-muted">No recent posts available.</p>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </aside>
                     </div>
+
+                    <!-- Posts -->
+                    <?php foreach ($affArticlesByCat as $article): ?>
+                        <article class="post-card p-3" onclick="window.location.href='articlePage.php?art_id=<?php echo intval($article['art_id']) ?>&user_id=<?= intval($article['user_id']) ?>'">
+                            <div class="d-flex">
+                                <!-- Vote Buttons -->
+                                <div class="d-flex flex-column align-items-center me-3">
+                                    <button class="vote-button"><i class="fas fa-arrow-up"></i></button>
+                                    <span class="my-1">1</span>
+                                    <button class="vote-button"><i class="fas fa-arrow-down"></i></button>
+                                </div>
+                                <!-- Post Content -->
+
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="community-icon"></div>
+                                        <span class="me-2"><?= htmlspecialchars($article['author_name']) ?></span>
+                                        <span class="text-muted">
+                                            • <?php
+                                                $date = new DateTime($article['creation_date']);
+                                                echo $date->format('M j, T');
+                                                ?>
+                                        </span>
+                                    </div>
+                                    <h2 class="h5 mb-2"><?= htmlspecialchars(truncateText($article['title'])); ?></h2>
+                                    <p class="mb-2"><?= htmlspecialchars(truncateText($article['content'])); ?></p>
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-link text-muted me-3">
+                                            <?php
+                                            $commentCount = $comments->countComm($article['art_id']); // Get comment count for each article
+                                            ?>
+                                            <i class="far fa-comment me-1"></i><?= htmlspecialchars($commentCount) ?> comments
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+
             </div>
-        </main>
+        <?php endif; ?>
+
+
+
+        <!-- Right Sidebar -->
+        <aside class="col-lg-4 d-none d-lg-block">
+            <div class="card border-secondary">
+                <div class="card-header border-secondary">
+                    <h5 class="card-title mb-0">Recent Posts</h5>
+                </div>
+                <?php
+
+                if ($_SERVER['REQUEST_METHOD'] == "GET") {
+
+                    if ($_SESSION['user_id']) {
+                        $user_id = $_SESSION['user_id'];
+
+                        $article = $articles->getLatestArticle($user_id);
+
+                        if ($article) {
+                            $art_id = $article['art_id'];
+
+                            $comments = new Comment();
+                            $commentCount = $comments->countComm($art_id);
+                        } else {
+                            $commentCount = 0;
+                        }
+                    }
+
+
+
+                    // $article = $articles->getLatestArticle($user_id);
+
+                    // $comments = new Comment();
+                    // $commentCount = $comments->countComm($art_id);
+                }
+                ?>
+                <div class="card-body">
+                    <?php if (!empty($article)): ?>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="community-icon small"></div>
+                            <div>
+                                <h6 class="mb-0"><?= htmlspecialchars($article['title']) ?></h6>
+                                <small class="text-muted"><?= htmlspecialchars(truncateText($article['content'])) ?></small>
+                            </div>
+                        </div>
+                        <div class="text-muted small">
+                            • <?= htmlspecialchars($commentCount) ?> comments
+                        </div>
+                    <?php else: ?>
+                        <p class="text-muted">No recent posts available.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </aside>
+    </div>
+    </div>
+    </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
