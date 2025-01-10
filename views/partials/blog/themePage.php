@@ -9,15 +9,52 @@ $articles = new article();
 $theme = new theme();
 $comments = new Comment();
 
+// print_r($_GET);
+// echo "</pre>";
+// exit;
 // print_r($_GET['art_id']);
 $thm_id = isset($_GET['thm_id']) ? $_GET['thm_id'] : null;
 $art_id = isset($_GET['art_id']) ? $_GET['art_id'] : null;
 
+$commentCount = ($art_id) ? $comments->countComm($art_id) : 0;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$articles_per_page = isset($_GET['articles_per_page']) ? (int)$_GET['articles_per_page'] : 5;
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+
+$total_articles = $articles->countArticles($search);
+$total_pages = $total_articles > 0 ? ceil($total_articles / $articles_per_page) : 1;
+
+$page = max(1, min($page, $total_pages));
+
+$offset = ($page - 1) * $articles_per_page;
+
+$pageArticles = $articles->getArticlesByPage($articles_per_page, $offset, $search);
+
 if ($thm_id) {
-    $affArticlesByCat = $articles->getArticlesByTheme($thm_id);
+    $affArticlesByCatAndSearch = $articles->getArticlesByThemeNsearch($thm_id, $articles_per_page, $offset, $search);
 }
 
-$commentCount = ($art_id) ? $comments->countComm($art_id) : 0;
+function pagination_link($thm_id, $page, $articles_per_page, $search)
+{
+    return "?thm_id=$thm_id&page=$page&articles_per_page=$articles_per_page&search=" . urlencode($search);
+}
+
+// if (!isset($_SESSION['user_id'])) {
+//     die("User not logged in.");
+// } else {
+//     echo "Session User ID: " . $_SESSION['user_id'];
+//     exit();
+// }
+echo "<pre>";
+print_r($articles_per_page);
+
+print_r($page);
+print_r($_GET);
+
+print_r($offset);
+echo "</pre>";
+// exit;
 
 function truncateText($text, $limit = 20)
 {
@@ -189,6 +226,18 @@ function truncateText($text, $limit = 20)
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                <h1>Article Pagination</h1>
+
+                <form method="get">
+                    <input type="text" name="search" value="<?php echo htmlspecialchars($search); ?>" placeholder="Search articles...">
+                    <button type="submit">Search</button>
+                    <label for="articles_per_page">Items per page:</label>
+                    <select name="articles_per_page" id="articles_per_page" onchange="this.form.submit()">
+                        <option value="5" <?php $articles_per_page == 2 ? 'selected' : ''; ?>>2</option>
+                        <option value="10" <?php  $articles_per_page == 10 ? 'selected' : ''; ?>>10</option>
+                        <option value="15" <?php  $articles_per_page == 15 ? 'selected' : ''; ?>>15</option>
+                    </select>
+                </form>
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
                         <a class="nav-link" href="../../layouts/main.php">Home</a>
@@ -215,6 +264,7 @@ function truncateText($text, $limit = 20)
         </div>
     </nav>
     <div class="d-flex">
+
         <!-- Left Sidebar -->
         <nav class="sidebar min-vh-100 p-3 d-none d-lg-block">
             <div class="mb-4">
@@ -223,16 +273,19 @@ function truncateText($text, $limit = 20)
                     <?php
                     $themes = new theme();
                     $allThemes = $themes->getAllThemes();
-                    foreach ($allThemes as $theme):
-                    ?>
-                        <option value="?thm_id=<?php echo $theme['thm_id']; ?>">
-                            <?php ($thm_id == $theme['thm_id']) ? 'selected' : ''; ?>
-                            <?php echo htmlspecialchars($theme['thm_nom']); ?>
-                        </option>
-                    <?php endforeach; ?>
+                    if (!$allThemes) {
+                        $allThemes = []; 
+                    }
+                    foreach ($allThemes as $theme) {
+                        if (isset($theme['thm_nom']) && isset($theme['thm_id'])) {
+                            echo '<option value="?thm_id=' . htmlspecialchars($theme['thm_id']) . '&articles_per_page=' . $articles_per_page . '&search=' . urlencode($search) . '">'
+                                 . htmlspecialchars($theme['thm_nom'])
+                                 . '</option>';
+                        }
+                    }?>
                 </select>
 
-                
+
             </div>
             <div class="nav flex-column">
                 <a href="#" class="nav-link active mb-1">
@@ -266,6 +319,23 @@ function truncateText($text, $limit = 20)
 
         <!-- Main Content -->
         <main class="flex-grow-1 p-3">
+            <nav>
+                <?php if ($page > 1): ?>
+                    <a href="<?php echo pagination_link($thm_id, $page - 1, $articles_per_page, $search); ?>">Previous</a>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <a href="<?php echo pagination_link($thm_id, $i, $articles_per_page, $search); ?>"
+                        <?php echo $i === $page ? 'style="font-weight: bold;"' : ''; ?>>
+                        <?php echo $i; ?>
+                    </a>
+                <?php endfor; ?>
+
+                <?php if ($page < $total_pages): ?>
+                    <a href="<?php echo pagination_link($thm_id, $page + 1, $articles_per_page, $search); ?>">Next</a>
+                <?php endif; ?>
+            </nav>
+
             <div class="container-fluid">
                 <h1 class="mb-4">
                     <?php
@@ -292,7 +362,7 @@ function truncateText($text, $limit = 20)
                     </div>
                 <?php else: ?>
                     <!-- Posts -->
-                    <?php foreach ($affArticlesByCat as $article): ?>
+                    <?php foreach ($affArticlesByCatAndSearch as $article): ?>
                         <article class="post-card p-3" onclick="window.location.href='articlePage.php?art_id=<?php echo intval($article['art_id']) ?>&user_id=<?= intval($article['user_id']) ?>'">
                             <div class="d-flex">
                                 <!-- Vote Buttons -->

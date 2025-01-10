@@ -102,19 +102,24 @@ class Article
         }
     }
 
-    public function getArticlesByTheme($thm_id)
+    public function getArticlesByThemeNsearch($thm_id, $articles_per_page, $offset, $search = '')
     {
         try {
             $query = "SELECT a.*, CONCAT(u.user_name, ' ', u.user_last) AS author_name
-                      FROM articles a
-                      JOIN  users u
-                      ON a.user_id = u.user_id
-                      WHERE a.thm_id = :thm_id";
-                      $stmt = $this->conn->prepare($query);
+                  FROM articles a
+                  JOIN users u
+                  ON a.user_id = u.user_id
+                  WHERE a.thm_id = :thm_id
+                  AND a.title LIKE :search
+                  LIMIT :limit OFFSET :offset";
+            $stmt = $this->conn->prepare($query);
 
-            $param = [":thm_id" => $thm_id];
+            $stmt->bindValue(':thm_id', $thm_id, PDO::PARAM_INT);
+            $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
+            $stmt->bindValue(':limit', (int)$articles_per_page, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
 
-            $stmt->execute($param);
+            $stmt->execute();
 
             $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $articles;
@@ -142,10 +147,12 @@ class Article
         }
     }
 
-    public function countArticles($search = '') {
+    public function countArticles($search = '')
+    {
         try {
-            $query = "SELECT COUNT(*) as total FROM articles WHERE title";
+            $query = "SELECT COUNT(*) as total FROM articles";
             $stmt = $this->conn->prepare($query);
+            // $stmt->bindParam(':search', "%$search%", PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return (int) $result['total'];
@@ -153,12 +160,13 @@ class Article
             throw new Error("Error counting articles: " . $e->getMessage());
         }
     }
-    
-    public function getArticlesByPage($limit, $offset, $search = '') {
+
+    public function getArticlesByPage($articles_per_page, $offset, $search = '')
+    {
         try {
-            $query = "SELECT * FROM articles WHERE title LIMIT :limit OFFSET :offset";
+            $query = "SELECT * FROM articles LIMIT :limit OFFSET :offset";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', $articles_per_page, PDO::PARAM_INT);
             $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
