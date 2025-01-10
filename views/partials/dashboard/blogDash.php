@@ -1,19 +1,22 @@
-
-<?php 
+<?php
 require_once '../../../models/Article.php';
 require_once '../../../models/themes.php';
 require_once '../../../models/tag.php';
 require_once '../../../models/comment.php';
 
-$articles = new article();
+$articles = new Article();
 $themes = new Theme();
-$tags = new tag();
+$tags = new Tag();
 $comments = new Comment();
 
 $affArticles = $articles->getAllArticles();
 $affThemes = $themes->getAllThemes();
 $affComments = $comments->getAllComments();
 $affTags = $tags->getAllTags();
+$TotalArticles = $articles->countArticles();
+$appArticles = $articles->appArticles();
+$penArticles = $articles->penArticles();
+print_r($TotalArticles);
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -29,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .statistics-card {
             transition: transform 0.3s;
             background: white;
-            border: 1px solid rgba(0,0,0,.125);
+            border: 1px solid rgba(0, 0, 0, .125);
             height: 100%;
         }
 
@@ -87,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
@@ -99,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </style>
 </head>
+
 <body class="bg-light">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -166,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="statistics-card">
                         <div class="card-body">
                             <h5 class="card-title text-muted">Total Articles</h5>
-                            <p class="card-text display-4">150</p>
+                            <p class="card-text display-4"><?php echo $TotalArticles ?></p>
                         </div>
                     </div>
                 </div>
@@ -174,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="statistics-card">
                         <div class="card-body">
                             <h5 class="card-title text-muted">Approved Articles</h5>
-                            <p class="card-text display-4">120</p>
+                            <p class="card-text display-4"><?= $appArticles ?></p>
                         </div>
                     </div>
                 </div>
@@ -182,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="statistics-card">
                         <div class="card-body">
                             <h5 class="card-title text-muted">Pending Articles</h5>
-                            <p class="card-text display-4">30</p>
+                            <p class="card-text display-4"><?= $penArticles ?></p>
                         </div>
                     </div>
                 </div>
@@ -214,18 +219,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Getting Started with Bootstrap</td>
-                        <td>2024-01-10</td>
-                        <td>John Doe</td>
-                        <td><span class="badge bg-warning">Pending</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-success accept-btn">Accept</button>
-                            <button class="btn btn-sm btn-danger decline-btn">Decline</button>
-                        </td>
-                    </tr>
+                    <?php
+                    $statusLabels = [
+                        0 => "Pending",
+                        1 => "Approved",
+                        -1 => "Declined"
+                    ];
+
+                    $statusStyles = [
+                        0 => "background-color: grey; color: white;",
+                        1 => "background-color: green; color: white;",
+                        -1 => "background-color: red; color: white;"
+                    ];
+                    foreach ($affArticles as $article):
+                    ?>
+                        <tr>
+                            <td><?= $article['art_id'] ?></td>
+                            <td><?= $article['title'] ?></td>
+                            <td><?= $article['creation_date'] ?></td>
+                            <td><?= $article['author_name'] ?></td>
+                            <td>
+                            <td>
+                                <div style="<?= $statusStyles[$article['status']] ?? '' ?>" class="badge">
+                                    <?= $statusLabels[$article['status']] ?? "" ?>
+                                </div>
+                            </td></span></td>
+                            <td class="d-flex gap-2">
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="accept_article">
+                                    <input type="hidden" name="art_id" value="<?= $article['art_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                                </form>
+
+                                <!-- Decline Reservation Form -->
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="decline_article">
+                                    <input type="hidden" name="art_id" value="<?= $article['art_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">Decline</button>
+                                </form>
+                            </td>
+                        </tr>
                 </tbody>
+            <?php endforeach; ?>
             </table>
         </div>
 
@@ -245,18 +280,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Great article! Very helpful.</td>
-                        <td>10</td>
-                        <td>1</td>
-                        <td>2024-01-10</td>
-                        <td>
-                            <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-                        </td>
-                    </tr>
-                </tbody>
+                <?php foreach ($affComments as $comment): ?>
+                    <tbody>
+                        <tr>
+                            <td><?= $comment['comm_id'] ?></td>
+                            <td><?= $comment['content'] ?></td>
+                            <td><?= $comment['user_id'] ?></td>
+                            <td><?= $comment['art_id'] ?></td>
+                            <td><?= $comment['creation_date'] ?></td>
+                            <td>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="delete_comment">
+                                    <input type="hidden" name="comm_id" value="<?= $comment['comm_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                <?php endforeach; ?>
             </table>
         </div>
 
@@ -276,16 +317,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Technology</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#updateThemeModal">Update</button>
-                            <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-                        </td>
-                    </tr>
-                </tbody>
+                <?php foreach ($affThemes as $theme): ?>
+                    <tbody>
+                        <tr>
+                            <td><?= $theme['thm_id'] ?></td>
+                            <td><?= $theme['thm_nom'] ?></td>
+                            <td class="d-flex gap-2">
+                                <button class="btn btn-sm btn-primary d-flex" data-bs-toggle="modal" data-bs-target="#updateThemeModal">Update</button>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="delete_theme">
+                                    <input type="hidden" name="thm_id" value="<?= $theme['thm_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                <?php endforeach; ?>
             </table>
         </div>
 
@@ -305,16 +352,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <th>Actions</th>
                     </tr>
                 </thead>
+                <?php foreach ($affTags as $tag): ?>
                 <tbody>
                     <tr>
-                        <td>1</td>
-                        <td>Web Development</td>
-                        <td>
+                        <td><?= $tag['tag_id'] ?></td>
+                        <td><?= $tag['nom'] ?></td>
+                        <td class="d-flex gap-2">
                             <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#updateTagModal">Update</button>
-                            <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+                            <form method="POST" action="">
+                                <input type="hidden" name="action" value="delete_tag">
+                                <input type="hidden" name="tag_id" value="<?= $tag['tag_id'] ?>">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 </tbody>
+                <?php endforeach; ?>
             </table>
         </div>
     </div>
@@ -484,4 +537,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         });
     </script>
 </body>
+
 </html>

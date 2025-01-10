@@ -14,7 +14,9 @@ class Article
     public function getAllArticles()
     {
         try {
-            $query = "SELECT * FROM articles";
+            $query = "SELECT a.*, CONCAT(u.user_name, ' ', u.user_last) AS author_name 
+            FROM articles AS a
+            JOIN users AS u ON a.user_id = u.user_id";
             $stmt = $this->conn->prepare($query);
 
             $stmt->execute();
@@ -147,15 +149,40 @@ class Article
         }
     }
 
-    public function countArticles($search = '')
+    public function countArticles()
     {
         try {
             $query = "SELECT COUNT(*) as total FROM articles";
             $stmt = $this->conn->prepare($query);
-            // $stmt->bindParam(':search', "%$search%", PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return (int) $result['total'];
+        } catch (Exception $e) {
+            throw new Error("Error counting articles: " . $e->getMessage());
+        }
+    }
+
+    public function appArticles()
+    {
+        try {
+            $query = "SELECT COUNT(*) as approved_art FROM articles WHERE status = 1";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int) $result['approved_art'];
+        } catch (Exception $e) {
+            throw new Error("Error counting articles: " . $e->getMessage());
+        }
+    }
+
+    public function penArticles()
+    {
+        try {
+            $query = "SELECT COUNT(*) as pending_art FROM articles WHERE status = 0";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int) $result['pending_art'];
         } catch (Exception $e) {
             throw new Error("Error counting articles: " . $e->getMessage());
         }
