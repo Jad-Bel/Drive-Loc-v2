@@ -144,9 +144,8 @@ class Article
 
     public function countArticles($search = '') {
         try {
-            $query = "SELECT COUNT(*) as total FROM articles WHERE title LIKE :search";
+            $query = "SELECT COUNT(*) as total FROM articles WHERE title";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return (int) $result['total'];
@@ -157,9 +156,8 @@ class Article
     
     public function getArticlesByPage($limit, $offset, $search = '') {
         try {
-            $query = "SELECT * FROM articles WHERE title LIKE :search LIMIT :limit OFFSET :offset";
+            $query = "SELECT * FROM articles WHERE title LIMIT :limit OFFSET :offset";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
             $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();

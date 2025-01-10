@@ -3,7 +3,6 @@ require_once '../../../includes/session_check.php';
 require_once '../../../models/themes.php';
 require_once '../../../models/Article.php';
 require_once '../../../models/comment.php';
-// require_once '../../../includes/pagination.php';
 
 
 $articles = new article();
@@ -19,22 +18,6 @@ if ($thm_id) {
 }
 
 $commentCount = ($art_id) ? $comments->countComm($art_id) : 0;
-
-$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-$itemsPerPage = isset($_GET['per_page']) ? max(5, min(15, intval($_GET['per_page']))) : 5;
-
-$search = isset($_GET['search']) ? $_GET['search'] : '';
-$totalArticles = $articles->countArticles($search);
-$totalPages = ceil($totalArticles / $itemsPerPage);
-$currentPage = max(1, min($page, $totalPages));
-$offset = ($currentPage - 1) * $itemsPerPage;
-
-try {
-    $articlesList = $articles->getArticlesByPage($itemsPerPage, $offset, $search);
-} catch (Exception $e) {
-    $articlesList = [];
-}
-
 
 function truncateText($text, $limit = 20)
 {
@@ -168,15 +151,6 @@ function truncateText($text, $limit = 20)
             color: white;
         }
     </style>
-
-    <script>
-        function changePerPage(value) {
-            const urlParams = new URLSearchParams(window.location.search);
-            urlParams.set('per_page', value);
-            urlParams.set('page', 1);
-            window.location.search = urlParams.toString();
-        }
-    </script>
 </head>
 
 <body>
@@ -257,6 +231,8 @@ function truncateText($text, $limit = 20)
                         </option>
                     <?php endforeach; ?>
                 </select>
+
+                
             </div>
             <div class="nav flex-column">
                 <a href="#" class="nav-link active mb-1">
@@ -303,14 +279,7 @@ function truncateText($text, $limit = 20)
                     }
                     ?>
                 </h1>
-                <div class="mb-3">
-                    <label for="perPage">Articles per page:</label>
-                    <select id="perPage" onchange="changeItemsPerPage(this.value)" class="form-select d-inline-block w-auto">
-                        <option value="5" <?= $itemsPerPage == 5 ? 'selected' : '' ?>>5</option>
-                        <option value="10" <?= $itemsPerPage == 10 ? 'selected' : '' ?>>10</option>
-                        <option value="15" <?= $itemsPerPage == 15 ? 'selected' : '' ?>>15</option>
-                    </select>
-                </div>
+
                 <?php if (empty($affArticlesByCat)): ?>
                     <div class="alert alert-info">
                         <?php
@@ -322,31 +291,6 @@ function truncateText($text, $limit = 20)
                         ?>
                     </div>
                 <?php else: ?>
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <!-- Sort Options -->
-                            <nav aria-label="Page navigation" class="w-100 text-center mt-4">
-                                <ul class="pagination justify-content-center">
-                                    <?php if ($currentPage > 1): ?>
-                                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(1); return false;">First</a></li>
-                                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(<?= $currentPage - 1 ?>); return false;">Previous</a></li>
-                                    <?php endif; ?>
-
-                                    <?php for ($i = max(1, $currentPage - 2); $i <= min($totalPages, $currentPage + 2); $i++): ?>
-                                        <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                                            <a class="page-link" href="#" onclick="changePage(<?= $i ?>); return false;"><?= $i ?></a>
-                                        </li>
-                                    <?php endfor; ?>
-
-                                    <?php if ($currentPage < $totalPages): ?>
-                                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(<?= $currentPage + 1 ?>); return false;">Next</a></li>
-                                        <li class="page-item"><a class="page-link" href="#" onclick="changePage(<?= $totalPages ?>); return false;">Last</a></li>
-                                    <?php endif; ?>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-
                     <!-- Posts -->
                     <?php foreach ($affArticlesByCat as $article): ?>
                         <article class="post-card p-3" onclick="window.location.href='articlePage.php?art_id=<?php echo intval($article['art_id']) ?>&user_id=<?= intval($article['user_id']) ?>'">
@@ -358,7 +302,6 @@ function truncateText($text, $limit = 20)
                                     <button class="vote-button"><i class="fas fa-arrow-down"></i></button>
                                 </div>
                                 <!-- Post Content -->
-
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center mb-2">
                                         <div class="community-icon"></div>
@@ -375,7 +318,7 @@ function truncateText($text, $limit = 20)
                                     <div class="d-flex align-items-center">
                                         <button class="btn btn-link text-muted me-3">
                                             <?php
-                                            $commentCount = $comments->countComm($article['art_id']); // Get comment count for each article
+                                            $commentCount = $comments->countComm($article['art_id']);
                                             ?>
                                             <i class="far fa-comment me-1"></i><?= htmlspecialchars($commentCount) ?> comments
                                         </button>
@@ -384,7 +327,6 @@ function truncateText($text, $limit = 20)
                             </div>
                         </article>
                     <?php endforeach; ?>
-
             </div>
         <?php endif; ?>
 
@@ -414,13 +356,6 @@ function truncateText($text, $limit = 20)
                             $commentCount = 0;
                         }
                     }
-
-
-
-                    // $article = $articles->getLatestArticle($user_id);
-
-                    // $comments = new Comment();
-                    // $commentCount = $comments->countComm($art_id);
                 }
                 ?>
                 <div class="card-body">
@@ -441,6 +376,62 @@ function truncateText($text, $limit = 20)
                 </div>
             </div>
         </aside>
+
+        <div class="modal fade" id="createPostModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create a Post</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <?php
+                    $articles = new article();
+
+
+                    if ($_SERVER['REQUEST_METHOD'] === "POST") {
+                        $user_id = $_SESSION['user_id'];
+                        $title = $_POST['title'];
+                        $content = $_POST['content'];
+                        $tags = $_POST['tags'];
+                        $img = $_POST['img'];
+                        $thm_id = 1;
+
+                        $articleInsert = $articles->addArticle($title, $content, $user_id, $thm_id);
+                    }
+                    ?>
+                    <div class="modal-body">
+                        <form id="createPostForm" method="POST">
+                            <input type="hidden" name="user_id" value="<?php echo intval($user_id); ?>">
+                            <div class="mb-3">
+                                <label for="postTitle" class="form-label">Title</label>
+                                <input type="text" name="title" class="form-control" id="postTitle" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="postContent" class="form-label">Content</label>
+                                <textarea class="form-control" name="content" id="postContent" rows="5" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="postTags" class="form-label">Tags</label>
+                                <input type="text" class="form-control" name="tags" id="postTags" placeholder="Separate tags with commas">
+                            </div>
+                            <!-- <div class="mb-3">
+                            <label for="postTags" class="form-label">Theme</label>
+                            <select type="text" class="form-control" name="theme" id="postTheme" placeholder="">
+                        </div> -->
+                            <div class="mb-3">
+                                <label for="postImage" class="form-label">Image (optional)</label>
+                                <input type="file" class="form-control" name="img" id="postImage" accept="image/*">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn create-post-btn" id="submitPost">Create Post</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     </div>
     </main>
