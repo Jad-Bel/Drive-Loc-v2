@@ -38,32 +38,32 @@ class Theme {
     }
 
     public function deleteTheme($thm_id) {
+        if (!is_numeric($thm_id) || $thm_id <= 0) {
+            throw new Exception("Invalid theme ID");
+        }
+    
         try {
-            $id = htmlspecialchars(intval($thm_id));
             $query = "DELETE FROM themes WHERE thm_id = :id";
             $stmt = $this->conn->prepare($query);
-
-            $param = [":id" => $id];
-
+            $param = [":id" => $thm_id];
             $stmt->execute($param);
-        } catch (Exception $e) {
-            throw new Error("Cannot delete theme: " . $e->getMessage());
+            return true; 
+        } catch (PDOException $e) {
+            error_log("Error deleting theme: " . $e->getMessage());
+            return false;
         }
     }
 
-    public function updateTheme($thm_id, $nom) {
+    public function updateTheme($thm_nom, $thm_id) {
         try {
             $query = "UPDATE themes SET thm_nom = :nom WHERE thm_id = :id";
             $stmt = $this->conn->prepare($query);
-
-            $param = [
-                ":id" => $thm_id,
-                ":nom" => $nom
-            ];
-
-            $stmt->execute($param);
+            $stmt->bindParam(':nom', $thm_nom, PDO::PARAM_STR);
+            $stmt->bindParam(':id', $thm_id, PDO::PARAM_INT);
+            $stmt->execute();
         } catch (Exception $e) {
             throw new Error("Cannot update theme: " . $e->getMessage());
+            return false;
         }
     }
 }

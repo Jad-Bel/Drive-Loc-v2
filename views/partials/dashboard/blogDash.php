@@ -20,6 +20,9 @@ $penArticles = $articles->penArticles();
 $totalComm = $comments->countTotalComm();
 print_r($TotalArticles);
 
+echo "<pre>";
+print_r($_POST);
+echo "</pre>";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
@@ -30,6 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $thm_nom = $_POST['themeName'];
 
                 $themes->addTheme($thm_nom);
+                break;
+            case 'update_theme':
+                $thm_id = $_POST['thm_id'];
+                $thm_nom = $_POST['thm_nom'];
+
+                $themes->updateTheme($thm_nom, $thm_id);
+                break;
         }
     }
 }
@@ -176,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="statistics-card">
                         <div class="card-body">
                             <h5 class="card-title text-muted">Total Articles</h5>
-                            <p class="card-text display-4"><?php echo $TotalArticles ?></p>
+                            <p class="card-text display-4"><?= $TotalArticles ?></p>
                         </div>
                     </div>
                 </div>
@@ -422,7 +432,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <input type="hidden" name="thm_id" id="updateThemeId">
                         <div class="mb-3">
                             <label for="updateThemeName" class="form-label">Theme Name</label>
-                            <input type="text" class="form-control" name="themeName" id="updateThemeName" required>
+                            <input type="text" class="form-control" name="thm_nom" id="updateThemeName" required>
                             <div class="invalid-feedback">Please provide a theme name.</div>
                         </div>
                         <div class="text-end">
@@ -444,10 +454,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addTagForm" class="needs-validation" novalidate>
+                    <form id="addTagForm" class="needs-validation" method="POST" action="" novalidate>
+                        <input type="hidden" name="action" value="add_tag">
                         <div class="mb-3">
                             <label for="tagName" class="form-label">Tag Name</label>
-                            <input type="text" class="form-control" id="tagName" required>
+                            <input type="text" class="form-control" id="tagName" name="nom" required>
                             <div class="invalid-feedback">Please provide a tag name.</div>
                         </div>
                         <div class="text-end">
@@ -469,10 +480,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="updateTagForm" class="needs-validation" novalidate>
+                    <form id="updateTagForm" class="needs-validation" method="POST" action="" novalidate>
+                        <input type="hidden" name="action" value="update_tag">
+                        <input type="hidden" name="tag_id" id="updateTagId">
                         <div class="mb-3">
                             <label for="updateTagName" class="form-label">Tag Name</label>
-                            <input type="text" class="form-control" id="updateTagName" required>
+                            <input type="text" class="form-control" id="updateTagName" name="nom" required>
                             <div class="invalid-feedback">Please provide a tag name.</div>
                         </div>
                         <div class="text-end">
@@ -487,67 +500,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Form validation
-        // const forms = document.querySelectorAll('.needs-validation');
-        // forms.forEach(form => {
-        //     form.addEventListener('submit', event => {
-        //         if (!form.checkValidity()) {
-        //             event.preventDefault();
-        //             event.stopPropagation();
-        //         } else {
-        //             event.preventDefault();
-        //             const modalId = form.closest('.modal').id;
-        //             const action = modalId.startsWith('add') ? 'added' : 'updated';
-        //             const type = modalId.includes('Theme') ? 'Theme' : 'Tag';
-        //             alert(`${type} ${action} successfully!`);
-        //             bootstrap.Modal.getInstance(form.closest('.modal')).hide();
-        //             form.reset();
-        //         }
-        //         form.classList.add('was-validated');
-        //     });
-        // });
+        document.addEventListener('DOMContentLoaded', function() {
+            var updateButtons = document.querySelectorAll('.btn-primary[data-bs-target="#updateThemeModal"]');
 
-        // Button actions
-        // document.querySelectorAll('.accept-btn').forEach(btn => {
-        //     btn.addEventListener('click', function() {
-        //         const row = this.closest('tr');
-        //         const statusCell = row.querySelector('td:nth-child(5)');
-        //         statusCell.innerHTML = '<span class="badge bg-success">Approved</span>';
-        //         this.closest('td').innerHTML = '<span class="text-muted">Processed</span>';
-        //     });
-        // });
+            updateButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var row = button.closest('tr');
 
-        // document.querySelectorAll('.decline-btn').forEach(btn => {
-        //     btn.addEventListener('click', function() {
-        //         const row = this.closest('tr');
-        //         const statusCell = row.querySelector('td:nth-child(5)');
-        //         statusCell.innerHTML = '<span class="badge bg-danger">Declined</span>';
-        //         this.closest('td').innerHTML = '<span class="text-muted">Processed</span>';
-        //     });
-        // });
+                    var themeId = row.querySelector('td:nth-child(1)').textContent;
 
-        // document.querySelectorAll('.delete-btn').forEach(btn => {
-        //     btn.addEventListener('click', function() {
-        //         if (confirm('Are you sure you want to delete this item?')) {
-        //             this.closest('tr').remove();
-        //         }
-        //     });
-        // });
+                    var themeName = row.querySelector('td:nth-child(2)').textContent;
 
-        // Pre-fill update modals
-        // document.querySelectorAll('[data-bs-target="#updateThemeModal"]').forEach(btn => {
-        //     btn.addEventListener('click', function() {
-        //         const themeName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-        //         document.getElementById('updateThemeName').value = themeName;
-        //     });
-        // });
+                    document.getElementById('updateThemeId').value = themeId;
 
-        // document.querySelectorAll('[data-bs-target="#updateTagModal"]').forEach(btn => {
-        //     btn.addEventListener('click', function() {
-        //         const tagName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-        //         document.getElementById('updateTagName').value = tagName;
-        //     });
-        // });
+                    document.getElementById('updateThemeName').value = themeName;
+                });
+            });
+        });
     </script>
 </body>
 
