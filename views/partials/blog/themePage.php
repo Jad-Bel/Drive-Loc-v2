@@ -46,15 +46,17 @@ function pagination_link($thm_id, $page, $articles_per_page, $search)
 //     echo "Session User ID: " . $_SESSION['user_id'];
 //     exit();
 // }
-echo "<pre>";
-print_r($articles_per_page);
+// echo "<pre>";
+// print_r($articles_per_page);
 
-print_r($page);
-print_r($_GET);
+// print_r($page);
+// print_r($_GET);
 
-print_r($offset);
-echo "</pre>";
-// exit;
+// var_dump($affArticlesByCatAndSearch);
+
+// print_r($offset);
+// echo "</pre>";
+// // exit;
 
 function truncateText($text, $limit = 20)
 {
@@ -233,7 +235,7 @@ function truncateText($text, $limit = 20)
                     <button type="submit">Search</button>
                     <label for="articles_per_page">Items per page:</label>
                     <select name="articles_per_page" id="articles_per_page" onchange="this.form.submit()">
-                        <option value="5" <?php $articles_per_page == 2 ? 'selected' : ''; ?>>2</option>
+                        <option value="5" <?php $articles_per_page == 5 ? 'selected' : ''; ?>>5</option>
                         <option value="10" <?php  $articles_per_page == 10 ? 'selected' : ''; ?>>10</option>
                         <option value="15" <?php  $articles_per_page == 15 ? 'selected' : ''; ?>>15</option>
                     </select>
@@ -350,7 +352,7 @@ function truncateText($text, $limit = 20)
                     ?>
                 </h1>
 
-                <?php if (empty($affArticlesByCat)): ?>
+                <?php if (empty($affArticlesByCatAndSearch)): ?>
                     <div class="alert alert-info">
                         <?php
                         if (!$thm_id) {
