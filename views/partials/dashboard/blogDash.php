@@ -14,8 +14,10 @@ $affThemes = $themes->getAllThemes();
 $affComments = $comments->getAllComments();
 $affTags = $tags->getAllTags();
 $TotalArticles = $articles->countArticles();
+// var_dump($TotalArticles);
 $appArticles = $articles->appArticles();
 $penArticles = $articles->penArticles();
+$totalComm = $comments->countTotalComm();
 print_r($TotalArticles);
 
 
@@ -24,7 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $action = $_POST['action'];
 
         switch ($action) {
-            case '':
+            case 'add_theme':
+                $thm_nom = $_POST['themeName'];
+
+                $themes->addTheme($thm_nom);
         }
     }
 }
@@ -195,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="statistics-card">
                         <div class="card-body">
                             <h5 class="card-title text-muted">Total Comments</h5>
-                            <p class="card-text display-4">500</p>
+                            <p class="card-text display-4"><?= $totalComm ?></p>
                         </div>
                     </div>
                 </div>
@@ -353,24 +358,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </tr>
                 </thead>
                 <?php foreach ($affTags as $tag): ?>
-                <tbody>
-                    <tr>
-                        <td><?= $tag['tag_id'] ?></td>
-                        <td><?= $tag['nom'] ?></td>
-                        <td class="d-flex gap-2">
-                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#updateTagModal">Update</button>
-                            <form method="POST" action="">
-                                <input type="hidden" name="action" value="delete_tag">
-                                <input type="hidden" name="tag_id" value="<?= $tag['tag_id'] ?>">
-                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
+                    <tbody>
+                        <tr>
+                            <td><?= $tag['tag_id'] ?></td>
+                            <td><?= $tag['nom'] ?></td>
+                            <td class="d-flex gap-2">
+                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#updateTagModal">Update</button>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="action" value="delete_tag">
+                                    <input type="hidden" name="tag_id" value="<?= $tag['tag_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
                 <?php endforeach; ?>
             </table>
         </div>
     </div>
+    <form method="POST" action="">
+        <input type="hidden" name="action" value="delete_theme">
+        <input type="hidden" name="thm_id" value="<?= $theme['thm_id'] ?>">
+        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+    </form>
 
     <!-- Add Theme Modal -->
     <div class="modal fade" id="addThemeModal" tabindex="-1">
@@ -381,10 +391,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addThemeForm" class="needs-validation" novalidate>
+                    <form method="POST" action="" class="needs-validation" novalidate>
+                        <input type="hidden" name="action" value="add_theme">
                         <div class="mb-3">
                             <label for="themeName" class="form-label">Theme Name</label>
-                            <input type="text" class="form-control" id="themeName" required>
+                            <input type="text" class="form-control" name="themeName" id="themeName" required>
                             <div class="invalid-feedback">Please provide a theme name.</div>
                         </div>
                         <div class="text-end">
@@ -406,10 +417,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="updateThemeForm" class="needs-validation" novalidate>
+                    <form method="POST" action="" class="needs-validation" novalidate>
+                        <input type="hidden" name="action" value="update_theme">
+                        <input type="hidden" name="thm_id" id="updateThemeId">
                         <div class="mb-3">
                             <label for="updateThemeName" class="form-label">Theme Name</label>
-                            <input type="text" class="form-control" id="updateThemeName" required>
+                            <input type="text" class="form-control" name="themeName" id="updateThemeName" required>
                             <div class="invalid-feedback">Please provide a theme name.</div>
                         </div>
                         <div class="text-end">
@@ -475,66 +488,66 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Form validation
-        const forms = document.querySelectorAll('.needs-validation');
-        forms.forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                } else {
-                    event.preventDefault();
-                    const modalId = form.closest('.modal').id;
-                    const action = modalId.startsWith('add') ? 'added' : 'updated';
-                    const type = modalId.includes('Theme') ? 'Theme' : 'Tag';
-                    alert(`${type} ${action} successfully!`);
-                    bootstrap.Modal.getInstance(form.closest('.modal')).hide();
-                    form.reset();
-                }
-                form.classList.add('was-validated');
-            });
-        });
+        // const forms = document.querySelectorAll('.needs-validation');
+        // forms.forEach(form => {
+        //     form.addEventListener('submit', event => {
+        //         if (!form.checkValidity()) {
+        //             event.preventDefault();
+        //             event.stopPropagation();
+        //         } else {
+        //             event.preventDefault();
+        //             const modalId = form.closest('.modal').id;
+        //             const action = modalId.startsWith('add') ? 'added' : 'updated';
+        //             const type = modalId.includes('Theme') ? 'Theme' : 'Tag';
+        //             alert(`${type} ${action} successfully!`);
+        //             bootstrap.Modal.getInstance(form.closest('.modal')).hide();
+        //             form.reset();
+        //         }
+        //         form.classList.add('was-validated');
+        //     });
+        // });
 
         // Button actions
-        document.querySelectorAll('.accept-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const statusCell = row.querySelector('td:nth-child(5)');
-                statusCell.innerHTML = '<span class="badge bg-success">Approved</span>';
-                this.closest('td').innerHTML = '<span class="text-muted">Processed</span>';
-            });
-        });
+        // document.querySelectorAll('.accept-btn').forEach(btn => {
+        //     btn.addEventListener('click', function() {
+        //         const row = this.closest('tr');
+        //         const statusCell = row.querySelector('td:nth-child(5)');
+        //         statusCell.innerHTML = '<span class="badge bg-success">Approved</span>';
+        //         this.closest('td').innerHTML = '<span class="text-muted">Processed</span>';
+        //     });
+        // });
 
-        document.querySelectorAll('.decline-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const statusCell = row.querySelector('td:nth-child(5)');
-                statusCell.innerHTML = '<span class="badge bg-danger">Declined</span>';
-                this.closest('td').innerHTML = '<span class="text-muted">Processed</span>';
-            });
-        });
+        // document.querySelectorAll('.decline-btn').forEach(btn => {
+        //     btn.addEventListener('click', function() {
+        //         const row = this.closest('tr');
+        //         const statusCell = row.querySelector('td:nth-child(5)');
+        //         statusCell.innerHTML = '<span class="badge bg-danger">Declined</span>';
+        //         this.closest('td').innerHTML = '<span class="text-muted">Processed</span>';
+        //     });
+        // });
 
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to delete this item?')) {
-                    this.closest('tr').remove();
-                }
-            });
-        });
+        // document.querySelectorAll('.delete-btn').forEach(btn => {
+        //     btn.addEventListener('click', function() {
+        //         if (confirm('Are you sure you want to delete this item?')) {
+        //             this.closest('tr').remove();
+        //         }
+        //     });
+        // });
 
         // Pre-fill update modals
-        document.querySelectorAll('[data-bs-target="#updateThemeModal"]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const themeName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-                document.getElementById('updateThemeName').value = themeName;
-            });
-        });
+        // document.querySelectorAll('[data-bs-target="#updateThemeModal"]').forEach(btn => {
+        //     btn.addEventListener('click', function() {
+        //         const themeName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+        //         document.getElementById('updateThemeName').value = themeName;
+        //     });
+        // });
 
-        document.querySelectorAll('[data-bs-target="#updateTagModal"]').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const tagName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
-                document.getElementById('updateTagName').value = tagName;
-            });
-        });
+        // document.querySelectorAll('[data-bs-target="#updateTagModal"]').forEach(btn => {
+        //     btn.addEventListener('click', function() {
+        //         const tagName = this.closest('tr').querySelector('td:nth-child(2)').textContent;
+        //         document.getElementById('updateTagName').value = tagName;
+        //     });
+        // });
     </script>
 </body>
 

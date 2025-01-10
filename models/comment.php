@@ -111,5 +111,23 @@ class Comment {
             return 0;
         }
     }
+
+    public function countTotalComm () {
+        try {
+            $query = "SELECT COUNT(*) AS total_comments FROM commentaires";
+            
+            $stmt = $this->conn->prepare($query);
+            
+            $stmt->execute();
+            
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            return $result['total_comments'];
+        } catch (PDOException $e) {
+            error_log("Error counting comments: " . $e->getMessage());
+            return 0;
+        }
+    }
+    
 }
 
