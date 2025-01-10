@@ -7,13 +7,23 @@ require_once '../../../models/comment.php';
 
 $articles = new article();
 $theme = new theme();
+$comments = new Comment();
 
-$thm_id = isset($_GET['thm_id']) ? intval($_GET['thm_id']) : null;
-$affArticlesByCat = $thm_id ? $articles->getArticlesByTheme($thm_id) : [];
+// print_r($_GET['art_id']);
+$thm_id = isset($_GET['thm_id']) ? $_GET['thm_id'] : null;
+$art_id = isset($_GET['art_id']) ? $_GET['art_id'] : null;
 
+if ($thm_id) {
+    $affArticlesByCat = $articles->getArticlesByTheme($thm_id);
+}
+
+$commentCount = ($art_id) ? $comments->countComm($art_id) : 0;
 
 function truncateText($text, $limit = 20)
 {
+    if (!is_string($text)) {
+        return '';
+    }
     $words = str_word_count($text, 1);
     if (count($words) > $limit) {
         return implode(' ', array_slice($words, 0, $limit)) . '...';
@@ -178,7 +188,13 @@ function truncateText($text, $limit = 20)
 
                 <?php if (empty($affArticlesByCat)): ?>
                     <div class="alert alert-info">
-                        <?php echo $thm_id ? "No articles found for this theme." : "Please select a theme to view articles."; ?>
+                        <?php
+                        if (!$thm_id) {
+                            "No articles found for this theme.";
+                        } else {
+                            "Please select a theme to view articles.";
+                        }
+                        ?>
                     </div>
                 <?php else: ?>
                     <div class="row">
@@ -204,6 +220,7 @@ function truncateText($text, $limit = 20)
                                             <button class="vote-button"><i class="fas fa-arrow-down"></i></button>
                                         </div>
                                         <!-- Post Content -->
+
                                         <div class="flex-grow-1">
                                             <div class="d-flex align-items-center mb-2">
                                                 <div class="community-icon"></div>
@@ -219,7 +236,10 @@ function truncateText($text, $limit = 20)
                                             <p class="mb-2"><?= htmlspecialchars(truncateText($article['content'])); ?></p>
                                             <div class="d-flex align-items-center">
                                                 <button class="btn btn-link text-muted me-3">
-                                                    <i class="far fa-comment me-1"></i> 13 comments
+                                                    <?php
+                                                        $commentCount = $comments->countComm($article['art_id']); // Get comment count for each article
+                                                    ?>
+                                                    <i class="far fa-comment me-1"></i><?= htmlspecialchars($commentCount) ?> comments
                                                 </button>
                                             </div>
                                         </div>
@@ -256,10 +276,10 @@ function truncateText($text, $limit = 20)
 
 
 
-                                $article = $articles->getLatestArticle($user_id);
+                                // $article = $articles->getLatestArticle($user_id);
 
-                                $comments = new Comment();
-                                $commentCount = $comments->countComm($art_id);
+                                // $comments = new Comment();
+                                // $commentCount = $comments->countComm($art_id);
                             }
                             ?>
                             <div class="card-body">
