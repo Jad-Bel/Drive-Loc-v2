@@ -42,8 +42,29 @@ function truncateText($text, $limit = 20)
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
+
+        .navbar {
+            background-color: var(--dark-bg);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
         :root {
             --sidebar-width: 280px;
+            --primary-color: #FF4D30;
+            --dark-bg: #191C24;
+            --secondary-text: #6C757D;
         }
 
         body {
@@ -118,10 +139,81 @@ function truncateText($text, $limit = 20)
             color: #d7dadc;
             box-shadow: none;
         }
+        .create-post-btn {
+            background-color: var(--primary-color);
+            border: none;
+            color: white;
+        }
+
+        .create-post-btn:hover {
+            background-color: #ff2c06;
+            color: white;
+        }
+
     </style>
 </head>
 
 <body>
+
+<div class="bg-dark py-2 d-none d-lg-block">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-lg-start">
+                    <div class="d-inline-flex align-items-center">
+                        <a class="text-secondary me-3" href="tel:+212693305050">
+                            <i class="fas fa-phone-alt me-2"></i>+212 6933 05050
+                        </a>
+                        <span class="text-secondary">|</span>
+                        <a class="text-secondary ms-3" href="mailto:jadthegamer06@gmail.com">
+                            <i class="fas fa-envelope me-2"></i>jadthegamer06@gmail.com
+                        </a>
+                    </div>
+                    <a href="../../../includes/logout.php">log out</a>
+                </div>
+                <div class="col-md-6 text-center text-lg-end">
+                    <div class="d-inline-flex align-items-center">
+                        <a class="text-secondary px-3" href="#"><i class="fab fa-github"></i></a>
+                        <a class="text-secondary px-3" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="text-secondary px-3" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="text-secondary px-3" href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">ROYAL CARS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../../layouts/main.php">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Service</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../vehicules/vehiculePage.php">Vehicule Page</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="themePage.php">Blogs</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <button class="btn create-post-btn" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                            Create Post
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="d-flex">
         <!-- Left Sidebar -->
         <nav class="sidebar min-vh-100 p-3 d-none d-lg-block">
