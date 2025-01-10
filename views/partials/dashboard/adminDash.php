@@ -20,46 +20,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
 
-        if ($action === 'add_vehicle') {
-            $marque = $_POST['marque'];
-            $vhc_name = $_POST['vhc_name'];
-            $disponibilite = $_POST['disponibilite'];
-            $description = $_POST['description'];
-            $vhc_image = $_POST['vhc_image'];
-            $model = $_POST['model'];
-            $transmition = $_POST['transmition'];
-            $mileage = $_POST['mileage'];
-            $prix = $_POST['prix'];
+        switch ($action) {
+            case 'add_vehicle':
+                $marque = $_POST['marque'];
+                $vhc_name = $_POST['vhc_name'];
+                $disponibilite = $_POST['disponibilite'];
+                $description = $_POST['description'];
+                $vhc_image = $_POST['vhc_image'];
+                $model = $_POST['model'];
+                $transmition = $_POST['transmition'];
+                $mileage = $_POST['mileage'];
+                $prix = $_POST['prix'];
 
-            $vehicules->ajouterVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image,  $mileage, $model, $transmition, $vhc_name);
-        } elseif ($action === 'edit_vehicle') {
-            $vehicule_id = $_POST['vehicule_id'];
-            $marque = $_POST['marque'];
-            $description = $_POST['description'];
-            $vhc_image = $_POST['vhc_image'];
-            $vhc_name = $_POST['vhc_name'];
-            $disponibilite = $_POST['disponibilite'];
-            $model = $_POST['model'];
-            $transmition = $_POST['transmition'];
-            $mileage = $_POST['mileage'];
-            $prix = $_POST['prix'];
+                $vehicules->ajouterVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name);
+                break;
 
-            $vehicules->modifierVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name);
-        } elseif ($action === 'delete_vehicle') {
-            $vehicule_id = $_POST['vehicule_id'];
-            $vehicules->supprimerVeh($vehicule_id);
-        } elseif ($action === 'accept_reservation') {
-            $rsv_id = $_POST['rsv_id'];
-            $reservation->accRes($rsv_id);
-        } elseif ($action === 'decline_reservation') {
-            $rsv_id = $_POST['rsv_id'];
-            $reservation->decRes($rsv_id);
-        } elseif ($action === 'delete_user') {
-            $user_id = $_POST['user_id'];
-            $user->supprimerUser($user_id);
+            case 'edit_vehicle':
+                $vehicule_id = $_POST['vehicule_id'];
+                $marque = $_POST['marque'];
+                $description = $_POST['description'];
+                $vhc_image = $_POST['vhc_image'];
+                $vhc_name = $_POST['vhc_name'];
+                $disponibilite = $_POST['disponibilite'];
+                $model = $_POST['model'];
+                $transmition = $_POST['transmition'];
+                $mileage = $_POST['mileage'];
+                $prix = $_POST['prix'];
+
+                $vehicules->modifierVeh($vehicule_id, $marque, $disponibilite, $prix, $description, $vhc_image, $mileage, $model, $transmition, $vhc_name);
+                break;
+
+            case 'delete_vehicle':
+                $vehicule_id = $_POST['vehicule_id'];
+                $vehicules->supprimerVeh($vehicule_id);
+                break;
+
+            case 'accept_reservation':
+                $rsv_id = $_POST['rsv_id'];
+                $reservation->accRes($rsv_id);
+                break;
+
+            case 'decline_reservation':
+                $rsv_id = $_POST['rsv_id'];
+                $reservation->decRes($rsv_id);
+                break;
+
+            case 'delete_user':
+                $user_id = $_POST['user_id'];
+                $user->supprimerUser($user_id);
+                break;
+
+            default:
+                echo "Unknown action: $action";
+                break;
         }
     }
 }
+?>
+
 ?>
 
 <!DOCTYPE html>
@@ -118,7 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="bi bi-person-circle"></i> Admin</a>
+                        <a class="nav-link" href="adminDash.php">Location</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="blogDash.php">Blog</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="../../../includes/logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a>

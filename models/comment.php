@@ -10,6 +10,19 @@ class Comment {
     }
 
 
+    public function getAllComments() {
+        try {
+            $query = "SELECT * FROM commentaires";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+    
+            $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $comments;
+        } catch (Exception $e) {
+            throw new Error("Cannot get comments: " . $e->getMessage());
+        }
+    }
+
     public function getCommentsByArticle($art_id) {
         try {
             $query = "SELECT c.content, c.creation_date, c.comm_id, 
